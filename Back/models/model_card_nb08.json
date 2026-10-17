@@ -1,0 +1,84 @@
+{
+  "nombre": "riesgo_credito",
+  "version": "1.0.0-nb08",
+  "fecha_entrenamiento": "2026-10-09",
+  "algoritmo": "Regresión logística optimizado (RandomizedSearchCV) + Sin calibrar",
+  "hiperparametros": {
+    "C": 0.07459,
+    "class_weight": null
+  },
+  "variables_entrada": [
+    "edad",
+    "antiguedad_laboral_anios",
+    "personas_a_cargo",
+    "ingreso_mensual",
+    "monto_credito",
+    "plazo_meses",
+    "tasa_interes_anual",
+    "num_creditos_activos",
+    "moras_ultimos_12m",
+    "relacion_deuda_ingreso",
+    "puntaje_buro",
+    "uso_cupo_tarjetas",
+    "cuota_estimada",
+    "ratio_cuota_ingreso",
+    "ratio_monto_ingreso",
+    "tiene_moras_previas",
+    "longitud_texto",
+    "estado_civil",
+    "nivel_educativo",
+    "situacion_laboral",
+    "tipo_vivienda",
+    "proposito"
+  ],
+  "variables_excluidas": [
+    "id_cliente",
+    "sexo (solo auditoría)",
+    "texto_solicitud (modelo NLP aparte)"
+  ],
+  "metricas_test": {
+    "roc_auc": 0.8454,
+    "pr_auc": 0.7683,
+    "accuracy": 0.7283,
+    "precision": 0.5813,
+    "recall": 0.8454,
+    "f1": 0.6889,
+    "ks": 0.5436,
+    "brier": 0.149
+  },
+  "umbral_decision": 0.25,
+  "costos": {
+    "falso_negativo": 4.0,
+    "falso_positivo": 1.0
+  },
+  "bandas_riesgo": {
+    "Bajo": [
+      0.0,
+      0.125
+    ],
+    "Medio": [
+      0.125,
+      0.25
+    ],
+    "Alto": [
+      0.25,
+      1.0
+    ]
+  },
+  "equidad": {
+    "disparate_impact_min_sexo": 0.965,
+    "disparate_impact_min_edad": 0.7386
+  },
+  "datos": {
+    "n_train": 9600,
+    "n_test": 2400,
+    "tasa_default": 0.3557
+  },
+  "limitaciones": [
+    "Dataset sintético/realista: debe revalidarse con datos reales antes de producción.",
+    "La PD está calibrada para la prevalencia observada (~36 %); cambios de población requieren recalibrar.",
+    "Edad es predictor y variable sensible: monitorear disparate impact por rango de edad.",
+    "No usa el texto libre; el modelo NLP se sirve por separado."
+  ],
+  "sklearn_version": "1.4.2"
+}

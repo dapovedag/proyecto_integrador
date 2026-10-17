@@ -1,0 +1,10 @@
+services:
+  api:
+    build: .
+    image: riesgo-credito-api:1.0.0
+    ports:
+      - "8000:8000"
+    environment:
+      - LOG_LEVEL=info
+      - CORS_ORIGINS=*
+    restart: unless-stopped

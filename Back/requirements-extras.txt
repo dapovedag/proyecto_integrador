@@ -1,0 +1,10 @@
+# Dependencias pesadas, solo para los notebooks 04 (plotnine), 06 (redes), 07 (NLP) y 09 (Spark).
+# No son necesarias para la API. PySpark requiere además Java 17 (JAVA_HOME).
+plotnine>=0.13
+tensorflow>=2.16,<2.20
+torch>=2.2
+transformers>=4.40
+sentence-transformers>=2.7
+nltk>=3.8
+pyspark>=3.5,<4
+pyarrow>=15

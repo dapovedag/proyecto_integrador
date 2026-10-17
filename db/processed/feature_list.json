@@ -1,0 +1,133 @@
+{
+  "target": "default",
+  "id": "id_cliente",
+  "texto": "texto_solicitud",
+  "random_state": 42,
+  "test_size": 0.2,
+  "numericas": [
+    "edad",
+    "antiguedad_laboral_anios",
+    "personas_a_cargo",
+    "ingreso_mensual",
+    "monto_credito",
+    "plazo_meses",
+    "tasa_interes_anual",
+    "num_creditos_activos",
+    "moras_ultimos_12m",
+    "relacion_deuda_ingreso",
+    "puntaje_buro",
+    "uso_cupo_tarjetas",
+    "cuota_estimada",
+    "ratio_cuota_ingreso",
+    "ratio_monto_ingreso",
+    "tiene_moras_previas",
+    "longitud_texto"
+  ],
+  "nominales_onehot": [
+    "estado_civil",
+    "situacion_laboral",
+    "tipo_vivienda",
+    "proposito"
+  ],
+  "ordinales": {
+    "nivel_educativo": [
+      "Primaria",
+      "Secundaria",
+      "Tecnico",
+      "Universitario",
+      "Posgrado"
+    ],
+    "rango_edad": [
+      "18-25",
+      "26-35",
+      "36-45",
+      "46-60",
+      ">60"
+    ]
+  },
+  "features_modelo": [
+    "edad",
+    "antiguedad_laboral_anios",
+    "personas_a_cargo",
+    "ingreso_mensual",
+    "monto_credito",
+    "plazo_meses",
+    "tasa_interes_anual",
+    "num_creditos_activos",
+    "moras_ultimos_12m",
+    "relacion_deuda_ingreso",
+    "puntaje_buro",
+    "uso_cupo_tarjetas",
+    "cuota_estimada",
+    "ratio_cuota_ingreso",
+    "ratio_monto_ingreso",
+    "tiene_moras_previas",
+    "longitud_texto",
+    "estado_civil",
+    "situacion_laboral",
+    "tipo_vivienda",
+    "proposito",
+    "nivel_educativo",
+    "rango_edad"
+  ],
+  "descartadas_por_seleccion": [],
+  "excluidas": {
+    "id_cliente": "identificador",
+    "sexo": "variable sensible: solo auditoría de equidad",
+    "texto_solicitud": "se modela en el paso 7 (NLP)"
+  },
+  "variables_sensibles_auditoria": [
+    "sexo",
+    "edad",
+    "rango_edad",
+    "estado_civil"
+  ],
+  "nuevas_variables": [
+    "cuota_estimada",
+    "ratio_cuota_ingreso",
+    "ratio_monto_ingreso",
+    "rango_edad",
+    "tiene_moras_previas",
+    "longitud_texto"
+  ],
+  "escalador": "StandardScaler",
+  "imputacion": {
+    "mediana": {
+      "edad": 49.0,
+      "antiguedad_laboral_anios": 9.0,
+      "personas_a_cargo": 1.0,
+      "ingreso_mensual": 2234000.0,
+      "monto_credito": 12263500.0,
+      "plazo_meses": 24.0,
+      "tasa_interes_anual": 26.2,
+      "num_creditos_activos": 1.0,
+      "moras_ultimos_12m": 0.0,
+      "relacion_deuda_ingreso": 0.5555,
+      "puntaje_buro": 715.0,
+      "uso_cupo_tarjetas": 0.453
+    },
+    "moda": {
+      "sexo": "M",
+      "estado_civil": "Soltero",
+      "nivel_educativo": "Secundaria",
+      "proposito": "Libre_inversion"
+    },
+    "desconocido": {
+      "situacion_laboral": "Desconocido",
+      "tipo_vivienda": "Desconocido"
+    }
+  },
+  "pca": {
+    "usado": false,
+    "componentes_95pct": 23,
+    "componentes_totales": 39
+  },
+  "filas": {
+    "train": 9600,
+    "test": 2400
+  },
+  "tasa_default": {
+    "train": 0.3556,
+    "test": 0.3558
+  }
+}

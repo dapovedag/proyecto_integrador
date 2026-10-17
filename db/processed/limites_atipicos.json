@@ -1,0 +1,33 @@
+{
+  "metodo": "capping p1-p99 calculado en train",
+  "limites": {
+    "ingreso_mensual": [
+      578000.0,
+      7816150.000000004
+    ],
+    "monto_credito": [
+      2006000.0,
+      144522390.00000006
+    ],
+    "cuota_estimada": [
+      76469.67230188703,
+      11020996.4013205
+    ],
+    "ratio_cuota_ingreso": [
+      0.05467068188981392,
+      3.5718212524645634
+    ],
+    "ratio_monto_ingreso": [
+      1.6378624139139024,
+      37.745802553648076
+    ],
+    "antiguedad_laboral_anios": [
+      0.0,
+      52.3
+    ],
+    "relacion_deuda_ingreso": [
+      0.0,
+      1.5
+    ]
+  }
+}

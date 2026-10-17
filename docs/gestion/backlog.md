@@ -1,0 +1,20 @@
+# Backlog del producto
+
+> Formato: *Como <rol>, quiero <acción>, para <beneficio>.* Estado: `Pendiente` | `En progreso` | `Hecho`.
+> Roles: **Analista de crédito** (usuario del modelo), **Científico de datos** (equipo), **Docente** (evaluador).
+
+| ID | Historia de usuario | Criterios de aceptación | Paso | IDs enunciado | Sprint | Estado |
+|---|---|---|---|---|---|---|
+| HU-00 | Como equipo, quiero un backlog, sprints y una definición de hecho, para gestionar el proyecto con metodología ágil. | Existen `backlog.md`, `sprints.md` y `definicion_de_hecho.md`; hay una retrospectiva por sprint. | 0 | E1, R3 | S1 | Hecho |
+| HU-01 | Como analista de crédito, quiero que el problema de impago esté definido con métricas y riesgos éticos, para confiar en el uso del modelo. | Notebook 01 con contexto, formulación, métricas, variables sensibles y medidas éticas. | 1 | IA1.1, IA1.3, E5, F1 | S1 | Hecho |
+| HU-02 | Como científico de datos, quiero explorar inicialmente el dataset, para entender su estructura y calidad. | Notebook 02 con entorno, librerías, inspección, operaciones básicas y visualizaciones interpretadas. | 2 | P1.1–P1.5, P1.E1–E4, E3 | S1 | Hecho |
+| HU-03 | Como científico de datos, quiero limpiar y preparar los datos en un pipeline reproducible, para entrenar modelos sin fugas de información. | Notebook 03; `features.py` con `build_preprocessor()`; `db/processed/` generado; sin nulos ni duplicados. | 3 | P2.1–P2.6, P2.E1–E4 | S2 | Hecho |
+| HU-04 | Como analista de crédito, quiero ver los patrones y las variables que más influyen en el impago, para entender los factores de riesgo. | Notebook 04 con Matplotlib, Seaborn y plotnine; atípicos tratados; PCA; ranking de variables. | 4 | IA1.2, IA1.E1–E2, IA2.1–IA2.5, IA2.E1–E2 | S2 | Hecho |
+| HU-05 | Como científico de datos, quiero entrenar modelos clásicos de ML, para tener una referencia sólida de desempeño. | Notebook 05; 4 modelos más la línea base; tabla de métricas; AUC ≥ 0.70. | 5 | IA3.3, F3 | S3 | En progreso (nb05 sin salidas guardadas) |
+| HU-06 | Como científico de datos, quiero entrenar una CNN y una RNN en Keras, para comparar el Deep Learning con los modelos clásicos. | Notebook 06; CNN y RNN evaluadas; curvas de aprendizaje; `.keras` guardado; tabla comparativa. | 6 | IA3.2, IA3.E2, IA3.3 | S3 | Bloqueado (falta TensorFlow) |
+| HU-07 | Como analista de crédito, quiero que el texto de la solicitud aporte a la evaluación del riesgo, para aprovechar la información no estructurada. | Notebook 07; sentimiento con BERT; embeddings BERT vs GPT; modelo NLP evaluado; ΔAUC del combinado. | 7 | IA3.1, IA3.E1, R2 | S3 | Parcial (TF-IDF servido; BERT/GPT bloqueado por dependencias) |
+| HU-08 | Como analista de crédito, quiero un modelo optimizado, calibrado y auditado en equidad, para tomar decisiones justas y confiables. | Notebook 08; `modelo_final.joblib`; `model_card.json`; tabla de equidad; umbral justificado. | 8 | F4, IA1.3, R1 | S3 | En revisión (modelo servido por train.py; nb08 exploratorio) |
+| HU-09 | Como científico de datos, quiero procesar y modelar los datos con Spark, para que la solución escale a grandes volúmenes. | Notebook 09; Parquet particionado; AUC de MLlib comparado con sklearn. | 9 | IA3.6 | S4 | Bloqueado (falta PySpark/Java) |
+| HU-10 | Como sistema del banco (y el Front), quiero consumir el modelo por una API REST, para integrarlo a los procesos de originación. | API FastAPI con 5 endpoints; pytest en verde; Docker funcionando; guía de nube. | 10 | IA3.4, IA3.5, IA3.E3, R4 | S4 | En revisión (API verificada en vivo; Docker sin probar) |
+| HU-11 | Como docente, quiero un notebook final integrador y un informe, para evaluar el proyecto completo. | Notebook 00 que corre de inicio a fin y predice; `06_informe_resultados.md`; checklist completo. | 11 | PF1, E2, E4 | S4 | En progreso (informe entregado; nb00 con flujo propio) |
+| HU-12 | Como equipo, quiero lanzar todo en local con comandos documentados, para demostrar que la solución funciona. | `Back/README.md`; `/health` = 200; `/predict` responde; Jupyter abre los notebooks. | 12 | R1, R4 | S4 | Hecho |

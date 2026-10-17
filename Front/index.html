@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Análisis predictivo de riesgo de crédito</title>
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <header class="hero">
+    <nav>
+      <a class="brand" href="#">Riesgo de Crédito</a>
+      <div class="links">
+        <a href="#f1">Proyecto</a>
+        <a href="#f4">Métricas</a>
+        <a href="#simulador">Simulador</a>
+        <a class="api-docs" href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener">API docs</a>
+        <span id="api-status" class="api-pill wait">Verificando API…</span>
+      </div>
+    </nav>
+    <div class="body">
+      <div>
+        <span class="eyebrow">Proyecto integrador · Analítica predictiva</span>
+        <h1>Análisis predictivo de riesgo de crédito</h1>
+        <p class="lead">Estimamos la probabilidad de impago de un cliente a partir de su información financiera, demográfica y del texto de su solicitud.</p>
+        <p id="hero-modelo" class="hero-modelo">Modelo: esperando la API…</p>
+        <div class="cta">
+          <a class="btn btn-light" href="#simulador">Probar simulador</a>
+          <a class="btn btn-ghost api-docs" href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener">Ver API docs</a>
+        </div>
+      </div>
+      <div id="hero-kpis" class="hero-card">
+        <div class="big">—</div><div>ROC-AUC en test</div>
+        <div class="mid">—</div><div>KS</div>
+        <div class="bandas"><span class="banda Bajo">Bajo</span> <span class="banda Medio">Medio</span> <span class="banda Alto">Alto</span></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="phases">
+    <a class="phase" href="#f1"><b>1</b>Definir</a>
+    <a class="phase" href="#f2"><b>2</b>Explorar</a>
+    <a class="phase" href="#f3"><b>3</b>Analizar</a>
+    <a class="phase" href="#f4"><b>4</b>Evaluar</a>
+    <a class="phase" href="#f5"><b>5</b>Desplegar</a>
+  </div>
+
+  <!-- 01 · Definir -->
+  <section class="step" id="f1">
+    <div class="txt">
+      <span class="num">01</span>
+      <h2>Definir el problema</h2>
+      <p>Una institución financiera necesita anticipar qué solicitantes no pagarán su crédito. El modelo clasifica cada solicitud en riesgo <b>Bajo</b>, <b>Medio</b> o <b>Alto</b> para apoyar la decisión del analista, no para reemplazarla.</p>
+      <p class="nota"><b>Ética y equidad:</b> la variable <code>sexo</code> se recibe solo para auditoría y <b>no entra al modelo</b>.</p>
+    </div>
+    <div class="panel">
+      <h3>Variables de entrada</h3>
+      <div class="chips"><span class="chip">Perfil · 8</span><span class="chip">Finanzas · 10</span><span class="chip">Texto de la solicitud · 1</span></div>
+      <p id="f1-variables" class="muted">La lista de variables del modelo se carga desde la API.</p>
+    </div>
+  </section>
+
+  <!-- 02 · Explorar -->
+  <section class="step" id="f2">
+    <div class="txt">
+      <span class="num">02</span>
+      <h2>Explorar y preparar los datos</h2>
+      <p>Solicitudes de crédito con variables demográficas, financieras e historial de pagos, más el texto libre de cada solicitud. Se trataron valores faltantes, duplicados y errores de captura (por ejemplo, edades imposibles).</p>
+    </div>
+    <div class="panel">
+      <div class="stats">
+        <div><b>12.144</b><span>clientes</span></div>
+        <div><b>21</b><span>columnas</span></div>
+        <div><b>35,6 %</b><span>tasa de impago</span></div>
+      </div>
+      <h3>Grupos con mayor tasa de impago</h3>
+      <div class="bars">
+        <div class="bar"><span>Desempleado</span><i style="--v:62%"></i><b>62 %</b></div>
+        <div class="bar"><span>Primaria</span><i style="--v:44%"></i><b>44 %</b></div>
+        <div class="bar"><span>Vivienda</span><i style="--v:43%"></i><b>43 %</b></div>
+        <div class="bar"><span>Arriendo</span><i style="--v:40%"></i><b>40 %</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · Analizar (NLP) -->
+  <section class="step purple" id="f3">
+    <div class="txt">
+      <span class="num">03</span>
+      <h2>Analizar el texto de la solicitud</h2>
+      <p>Además de las variables numéricas, un modelo de lenguaje natural (TF-IDF + regresión logística) lee el texto libre que escribe el cliente y estima su riesgo y su sentimiento.</p>
+      <p class="nota">Escriba o edite una solicitud y analícela solo por su texto.</p>
+    </div>
+    <div class="panel">
+      <form id="texto-form">
+        <label for="texto-input">Texto de la solicitud</label>
+        <textarea id="texto-input" rows="4">Necesito consolidar varias tarjetas de credito porque me atrase en los pagos tras perder el empleo.</textarea>
+        <button class="btn btn-purple" type="submit">Analizar texto</button>
+      </form>
+      <div id="texto-resultado" class="texto-resultado muted">El resultado aparecerá aquí.</div>
+    </div>
+  </section>
+
+  <!-- 04 · Evaluar -->
+  <section class="step purple" id="f4">
+    <div class="txt">
+      <span class="num">04</span>
+      <h2>Evaluar el modelo</h2>
+      <p>Métricas calculadas sobre el conjunto de prueba, el umbral de decisión y las bandas de riesgo que usa el simulador.</p>
+      <h3>Limitaciones</h3>
+      <ul id="f4-limitaciones" class="lista"><li class="muted">Se cargan desde la API.</li></ul>
+    </div>
+    <div class="panel">
+      <h3>Métricas en test</h3>
+      <div id="f4-metricas" class="muted">Cargando métricas…</div>
+    </div>
+  </section>
+
+  <!-- 05 · Desplegar -->
+  <section class="step purple" id="f5">
+    <div class="txt">
+      <span class="num">05</span>
+      <h2>Desplegar y comunicar</h2>
+      <p>El modelo se sirve con una API REST en FastAPI que este sitio consume en vivo. La documentación interactiva está en Swagger.</p>
+      <p><a class="btn btn-purple api-docs" href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener">Abrir Swagger /docs</a></p>
+    </div>
+    <div class="panel">
+      <h3>Estado de la API</h3>
+      <p id="f5-estado" class="muted">Verificando…</p>
+      <ul class="endpoints">
+        <li><code>GET /health</code> estado del servicio</li>
+        <li><code>GET /model/info</code> ficha del modelo</li>
+        <li><code>POST /predict</code> probabilidad de impago</li>
+        <li><code>POST /predict/text</code> análisis del texto</li>
+        <li><code>POST /predict/batch</code> hasta 1.000 clientes</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Simulador -->
+  <section class="sim" id="simulador">
+    <div class="sim-head">
+      <h2>Simulador de riesgo</h2>
+      <p>Complete los datos del cliente o cargue un cliente de demo y obtenga la probabilidad de impago.</p>
+    </div>
+    <div class="in">
+      <form id="form-cliente" novalidate>
+        <details open>
+          <summary>Perfil</summary>
+          <div class="grid">
+            <label>Edad <input name="edad" type="number" min="18" max="80" step="1" value="35" required></label>
+            <label>Sexo <small>(solo auditoría)</small>
+              <select name="sexo" required><option value="F" selected>Femenino</option><option value="M">Masculino</option></select>
+            </label>
+            <label>Estado civil
+              <select name="estado_civil" required>
+                <option value="Soltero">Soltero</option><option value="Casado" selected>Casado</option>
+                <option value="Union_libre">Unión libre</option><option value="Divorciado">Divorciado</option><option value="Viudo">Viudo</option>
+              </select>
+            </label>
+            <label>Nivel educativo
+              <select name="nivel_educativo" required>
+                <option value="Primaria">Primaria</option><option value="Secundaria">Secundaria</option><option value="Tecnico">Técnico</option>
+                <option value="Universitario" selected>Universitario</option><option value="Posgrado">Posgrado</option>
+              </select>
+            </label>
+            <label>Situación laboral
+              <select name="situacion_laboral" required>
+                <option value="Empleado" selected>Empleado</option><option value="Independiente">Independiente</option>
+                <option value="Pensionado">Pensionado</option><option value="Desempleado">Desempleado</option>
+              </select>
+            </label>
+            <label>Antigüedad laboral (años) <input name="antiguedad_laboral_anios" type="number" min="0" max="62" step="0.1" value="4.5" required></label>
+            <label>Personas a cargo <input name="personas_a_cargo" type="number" min="0" max="6" step="1" value="1" required></label>
+            <label>Tipo de vivienda
+              <select name="tipo_vivienda" required>
+                <option value="Arriendo" selected>Arriendo</option><option value="Propia">Propia</option><option value="Familiar">Familiar</option>
+              </select>
+            </label>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Finanzas</summary>
+          <div class="grid">
+            <label>Ingreso mensual (COP) <input name="ingreso_mensual" type="number" min="300000" max="65000000" step="1000" value="4500000" required></label>
+            <label>Monto del crédito (COP) <input name="monto_credito" type="number" min="1000000" max="1050000000" step="100000" value="20000000" required></label>
+            <label>Plazo (meses)
+              <select name="plazo_meses" required>
+                <option>6</option><option>12</option><option>18</option><option>24</option><option selected>36</option>
+                <option>48</option><option>60</option><option>72</option><option>84</option>
+              </select>
+            </label>
+            <label>Tasa de interés anual (% E.A.) <input name="tasa_interes_anual" type="number" min="10" max="42" step="0.1" value="24.5" required></label>
+            <label>Propósito
+              <select name="proposito" required>
+                <option value="Libre_inversion">Libre inversión</option><option value="Vehiculo" selected>Vehículo</option>
+                <option value="Consolidacion_deuda">Consolidación de deuda</option><option value="Vivienda">Vivienda</option>
+                <option value="Negocio">Negocio</option><option value="Educacion">Educación</option>
+              </select>
+            </label>
+            <label>Créditos activos <input name="num_creditos_activos" type="number" min="0" max="8" step="1" value="2" required></label>
+            <label>Moras últimos 12 meses <input name="moras_ultimos_12m" type="number" min="0" max="10" step="1" value="0" required></label>
+            <label>Relación deuda/ingreso <input name="relacion_deuda_ingreso" type="number" min="0" max="1.5" step="0.01" value="0.32" required></label>
+            <label>Puntaje de buró <input name="puntaje_buro" type="number" min="150" max="950" step="1" value="720" required></label>
+            <label>Uso de cupo de tarjetas (0–1) <input name="uso_cupo_tarjetas" type="number" min="0" max="1" step="0.01" value="0.4" required></label>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Solicitud</summary>
+          <label>Texto de la solicitud <textarea name="texto_solicitud" rows="3" required>Necesito el crédito para comprar un carro para trabajar.</textarea></label>
+        </details>
+
+        <div class="acciones">
+          <button id="btn-predecir" class="btn btn-orange" type="submit">Predecir</button>
+          <button id="btn-demo-bajo" class="btn btn-dark" type="button">Cliente riesgo bajo</button>
+          <button id="btn-demo-alto" class="btn btn-dark" type="button">Cliente riesgo alto</button>
+        </div>
+      </form>
+
+      <div id="resultado" class="resultado">
+        <div class="placeholder">Complete el formulario y pulse <b>Predecir</b>, o cargue un cliente de demo.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resultados: métricas del modelo -->
+  <section class="results" id="metricas">
+    <h2>Resultados del modelo</h2>
+    <div class="res" data-metrica="roc_auc"><div class="ico">RO</div><div class="val">—</div><div class="tit">ROC-AUC</div><div class="muted">Cargando…</div></div>
+    <div class="res" data-metrica="ks"><div class="ico">KS</div><div class="val">—</div><div class="tit">KS</div><div class="muted">Cargando…</div></div>
+    <div class="res" data-metrica="recall"><div class="ico">Re</div><div class="val">—</div><div class="tit">Recall</div><div class="muted">Cargando…</div></div>
+    <div class="res" data-metrica="f1"><div class="ico">F1</div><div class="val">—</div><div class="tit">F1</div><div class="muted">Cargando…</div></div>
+  </section>
+
+  <footer>
+    <span class="brand">Riesgo de Crédito</span>
+    <span id="footer-modelo">Proyecto Integrador · modelo sin cargar</span>
+  </footer>
+
+  <script src="js/app.js" defer></script>
+</body>
+</html>

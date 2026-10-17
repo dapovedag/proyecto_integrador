@@ -1,0 +1,151 @@
+body{--sk:#f1ece6;background:#fffaf5;scroll-behavior:smooth;color:#292524}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+h1,h2,h3{line-height:1.15}
+.muted{color:#78716c}
+code{font-family:Consolas,"Cascadia Code",monospace;font-size:.9em;background:#f5efe8;padding:1px 6px;border-radius:6px}
+
+/* Botones */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 22px;border-radius:12px;border:0;font:inherit;font-weight:700;cursor:pointer;transition:background .15s,transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.6;cursor:wait;transform:none}
+.btn-light{background:#fff;color:#c2410c}
+.btn-ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.55)}
+.btn-orange{background:#ea580c;color:#fff}
+.btn-orange:hover{background:#c2410c}
+.btn-dark{background:#292524;color:#e7e5e4;border:1px solid #44403c}
+.btn-dark:hover{background:#44403c}
+.btn-purple{background:#7c3aed;color:#fff}
+.btn-purple:hover{background:#6d28d9}
+
+/* Hero */
+.hero{min-height:88vh;background:linear-gradient(125deg,#ea580c 0%,#c2410c 35%,#6d28d9 100%);display:flex;flex-direction:column;padding:24px 56px;color:#fff}
+.hero nav{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.brand{font-weight:800;font-size:18px;letter-spacing:-.01em}
+.hero .links{display:flex;gap:22px;align-items:center;font-weight:600}
+.hero .links a{opacity:.85}
+.hero .links a:hover{opacity:1}
+.hero .body{flex:1;display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:center;padding:40px 0}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.8}
+.hero h1{font-size:clamp(34px,5vw,58px);font-weight:800;letter-spacing:-.02em;margin:14px 0 18px}
+.lead{font-size:18px;line-height:1.5;opacity:.92;max-width:560px}
+.hero-modelo{margin-top:14px;font-size:13px;opacity:.75}
+.cta{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+.hero-card{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:24px;padding:36px;backdrop-filter:blur(6px);display:flex;flex-direction:column;gap:2px}
+.hero-card .big{font-size:56px;font-weight:800;line-height:1.05}
+.hero-card .mid{font-size:32px;font-weight:800;margin-top:16px}
+.hero-card .bandas{margin-top:20px;display:flex;gap:8px;flex-wrap:wrap}
+
+/* Navegación por fases */
+.phases{position:sticky;top:0;z-index:5;background:#fffaf5ee;backdrop-filter:blur(8px);border-bottom:1px solid #f1ece6;display:flex;justify-content:center;gap:8px;padding:14px}
+.phase{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;background:#fff;border:1px solid #f1ece6;font-weight:600;color:#44403c}
+.phase:hover{border-color:#fed7aa}
+.phase b{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px;background:#ea580c}
+.phase:nth-child(n+3) b{background:#7c3aed}
+
+/* Secciones de fase */
+section.step{max-width:1120px;margin:0 auto;padding:90px 24px;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+section.step:nth-of-type(even) .txt{order:2}
+.txt{display:flex;flex-direction:column;gap:14px}
+.txt h2{font-size:32px;font-weight:800;letter-spacing:-.01em;color:#1c1917}
+.txt h3{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#78716c;margin-top:8px}
+.txt p{font-size:16px;line-height:1.6;color:#57534e}
+.num{font-size:64px;font-weight:800;color:#fed7aa;line-height:1}
+.purple .num{color:#ddd6fe}
+.nota{background:#fff;border-left:4px solid #ea580c;padding:12px 16px;border-radius:8px}
+.purple .nota{border-left-color:#7c3aed}
+.panel{background:#fff;border:1px solid #f1ece6;border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:14px;box-shadow:0 10px 30px rgba(28,25,23,.05)}
+.panel h3{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#78716c}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:6px 12px;border-radius:999px;background:#fff7ed;color:#c2410c;font-weight:600;font-size:12px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stats div{background:#fff7ed;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:2px}
+.stats b{font-size:26px;color:#c2410c}
+.stats span{font-size:12px;color:#78716c}
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar{display:grid;grid-template-columns:110px 1fr 48px;gap:12px;align-items:center;font-size:13px}
+.bar i{height:10px;border-radius:999px;background:linear-gradient(90deg,#ea580c var(--v),#f5efe8 var(--v))}
+.bar b{text-align:right}
+.lista{padding-left:18px;color:#57534e;line-height:1.7}
+.endpoints{list-style:none;display:flex;flex-direction:column;gap:8px;color:#57534e}
+#texto-form{display:flex;flex-direction:column;gap:10px}
+#texto-form label{font-weight:600;font-size:13px;color:#57534e}
+#texto-form textarea{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #e7e0d8;font:inherit;resize:vertical}
+#texto-form .btn{align-self:flex-start}
+.texto-resultado{min-height:80px;border-top:1px solid #f1ece6;padding-top:14px}
+.tabla{width:100%;border-collapse:collapse}
+.tabla td{padding:10px 0;border-bottom:1px solid #f1ece6}
+.tabla td:last-child{text-align:right;font-weight:700}
+.panel .bandas{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+
+/* Simulador */
+.sim{background:#1c1917;padding:90px 24px;color:#e7e5e4}
+.sim-head{max-width:1120px;margin:0 auto 32px}
+.sim-head h2{font-size:32px;font-weight:800;color:#fafaf9}
+.sim-head p{color:#a8a29e;margin-top:8px}
+.sim .in{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+#form-cliente{display:flex;flex-direction:column;gap:14px}
+#form-cliente details{background:#231f1d;border:1px solid #292524;border-radius:16px;padding:16px 18px}
+#form-cliente summary{cursor:pointer;font-weight:700;color:#fafaf9;font-size:15px}
+#form-cliente .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+#form-cliente label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#a8a29e}
+#form-cliente details > label{margin-top:14px}
+#form-cliente small{font-weight:400;color:#78716c}
+.acciones{display:flex;gap:10px;flex-wrap:wrap}
+.resultado{position:sticky;top:84px;background:#231f1d;border:1px solid #292524;border-radius:20px;padding:28px;min-height:320px}
+.resultado .placeholder{min-height:260px;display:grid;place-items:center;text-align:center;color:#78716c}
+.r-label{color:#a8a29e;font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.r-prob{font-size:64px;font-weight:800;line-height:1}
+.r-escala{position:relative;height:16px;color:#78716c;font-size:11px}
+.r-escala span{position:absolute;transform:translateX(-50%)}
+.r-escala span:first-child{left:0;transform:none}
+.r-escala span:last-child{transform:translateX(-100%)}
+.r-decision{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0;color:#e7e5e4}
+.r-factores{list-style:none;display:flex;flex-direction:column;gap:6px;color:#e7e5e4}
+.r-factores small{color:#a8a29e}
+.r-texto{margin-top:14px;color:#a8a29e}
+.r-version{margin-top:14px;color:#57534e;font-size:12px}
+
+/* Resultados */
+.results{max-width:1120px;margin:0 auto;padding:90px 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.results h2{grid-column:1/-1;font-size:32px;font-weight:800;color:#1c1917}
+.res{background:#fff;border-radius:18px;padding:22px;border:1px solid #f1ece6;display:flex;flex-direction:column;gap:8px}
+.res .ico{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;background:#ffedd5;color:#c2410c}
+.res:nth-of-type(n+3) .ico{background:#ede9fe;color:#6d28d9}
+.res .val{font-size:32px;font-weight:800;color:#1c1917}
+.res .tit{font-weight:700}
+
+footer{background:#0c0a09;padding:40px 56px;display:flex;justify-content:space-between;align-items:center;gap:16px;color:#a8a29e}
+footer .brand{color:#fafaf9}
+
+/* Bandas de riesgo, barra de probabilidad, estado de la API y errores (libreto §5.4) */
+:root{--bajo:#34d399;--bajo-bg:rgba(16,185,129,.15);--medio:#fbbf24;--medio-bg:rgba(245,158,11,.15);--alto:#f87171;--alto-bg:rgba(239,68,68,.15)}
+.banda{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;font-weight:700;font-size:13px}
+.banda.Bajo{color:var(--bajo);background:var(--bajo-bg)}
+.banda.Medio{color:var(--medio);background:var(--medio-bg)}
+.banda.Alto{color:var(--alto);background:var(--alto-bg)}
+.hero .banda{background:rgba(255,255,255,.9)}
+.hero .banda.Bajo,.results .banda.Bajo,.step .banda.Bajo{color:#047857;background:#d1fae5}
+.hero .banda.Medio,.results .banda.Medio,.step .banda.Medio{color:#b45309;background:#fef3c7}
+.hero .banda.Alto,.results .banda.Alto,.step .banda.Alto{color:#b91c1c;background:#fee2e2}
+.prob-bar{position:relative;height:12px;border-radius:999px;background:#292524;overflow:visible}
+.prob-bar .fill{height:100%;border-radius:999px;transition:width .5s}
+.prob-bar .umbral{position:absolute;top:-6px;bottom:-6px;width:2px;background:#fafaf9}
+.api-pill{display:inline-flex;gap:6px;align-items:center;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.18);color:#fff;font-weight:600;font-size:13px;white-space:nowrap}
+.api-pill::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.api-pill.ok{color:#bbf7d0}.api-pill.down{color:#fecaca}.api-pill.wait{color:#fde68a}
+.field-error{color:#f87171;font-size:12px;margin-top:4px}
+.sim input,.sim select,.sim textarea{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #57534e;background:#292524;color:#fafaf9;font:inherit}
+.sim textarea{resize:vertical}
+.sim input:focus,.sim select:focus,.sim textarea:focus{outline:2px solid #ea580c;outline-offset:1px;border-color:transparent}
+.sim input[aria-invalid="true"],.sim select[aria-invalid="true"]{border-color:#f87171}
+
+@media(max-width:860px){
+  .hero{padding:20px}
+  .hero .links a{display:none}
+  .hero .body,section.step,.sim .in,#form-cliente .grid{grid-template-columns:1fr}
+  section.step:nth-of-type(even) .txt{order:0}
+  .results{grid-template-columns:1fr 1fr}
+  .phases{flex-wrap:wrap}
+  .resultado{position:static}
+  footer{flex-direction:column;padding:32px 20px}
+}

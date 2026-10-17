@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Riesgo de Crédito · Tres propuestas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@800&family=Montserrat:wght@600&family=Poppins:wght@500&family=Rubik:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:#0e0e10;color:#f4f4f5;font:400 15px/1.6 Rubik,"Segoe UI",system-ui,sans-serif;padding:64px clamp(16px,5vw,72px)}
+  header{max-width:1200px;margin:0 auto 48px;display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap}
+  .eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#a1a1aa}
+  h1{font:500 clamp(36px,5vw,64px)/1.05 Poppins,sans-serif;letter-spacing:-.02em;margin-top:10px}
+  header p{color:#a1a1aa;max-width:380px}
+  .grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  a.card{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:440px;border-radius:22px;padding:28px;overflow:hidden;color:#fff;text-decoration:none;isolation:isolate;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+  a.card:hover{transform:translateY(-6px)}
+  a.card:focus-visible{outline:3px solid #fff;outline-offset:4px}
+  .num{font-size:12px;letter-spacing:.2em;opacity:.8}
+  .card h2{font-size:clamp(28px,2.6vw,38px);line-height:1.05;margin:10px 0 12px}
+  .card p{opacity:.85;font-size:14px;max-width:300px}
+  .go{display:inline-flex;align-items:center;gap:10px;font-weight:500;margin-top:22px}
+  .go span{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.18);transition:transform .3s}
+  a.card:hover .go span{transform:translateX(4px)}
+  .c1{background:linear-gradient(#DB3972 0 64%,#C21D57 64%)}
+  .c1 h2{font-family:Outfit,sans-serif;font-weight:800}
+  .c1::after{content:"";position:absolute;right:-30px;top:110px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFE29A,#FAC251 40%,#F88F2F 75%);box-shadow:inset -14px -18px 30px rgba(160,60,0,.35),0 26px 40px rgba(120,10,50,.35);z-index:-1}
+  .c2{background:linear-gradient(135deg,#212331,#2C2C4C 45%,#5749AA)}
+  .c2 h2{font-family:Montserrat,sans-serif;font-weight:600}
+  .c2::after{content:"";position:absolute;right:28px;top:96px;width:150px;height:150px;border-radius:28%;background:radial-gradient(circle at 15% 85%,#F1D6F5 0,transparent 55%),linear-gradient(225deg,#CB66FE,#9C5BEF 50%,#6B44BD);z-index:-1}
+  .c3{background:#2b2b2b}
+  .c3 h2{font-family:Poppins,sans-serif;font-weight:500;letter-spacing:-.02em}
+  .c3::before{content:"03/03";position:absolute;right:24px;top:84px;font:500 88px/1 Poppins,sans-serif;color:rgba(255,255,255,.06);z-index:-1}
+  .c3::after{content:"";position:absolute;inset:0;background:radial-gradient(rgba(255,255,255,.22) 1px,transparent 1.4px) 0 0/14px 14px;mask-image:linear-gradient(115deg,transparent 35%,#000 90%);z-index:-1}
+  footer{max-width:1200px;margin:40px auto 0;color:#71717a;font-size:13px}
+  footer a{color:#a1a1aa}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}a.card{min-height:320px}}
+</style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="eyebrow">Proyecto integrador · Riesgo de crédito</div>
+      <h1>Tres propuestas<br>de diseño</h1>
+    </div>
+    <p>El mismo producto, conectado a la API real, contado en tres lenguajes visuales. Elige el que mejor cuente la historia.</p>
+  </header>
+  <main class="grid">
+    <a class="card c1" href="p1/">
+      <div><div class="num">01 · VIBRANTE 3D</div><h2>Color, volumen y energía</h2><p>Claymorphism sobre rosa frambuesa: objetos 3D, CTA con brillo y un tono lúdico.</p></div>
+      <div class="go">Ver propuesta <span>→</span></div>
+    </a>
+    <a class="card c2" href="p2/">
+      <div><div class="num">02 · GRADIENTE OSCURO</div><h2>Tech, glass y gradientes</h2><p>Dark mode con mesh gradients, squircles y una píldora que rota el mensaje.</p></div>
+      <div class="go">Ver propuesta <span>→</span></div>
+    </a>
+    <a class="card c3" href="p3/">
+      <div><div class="num">03 · EDITORIAL OSCURO</div><h2>Sobrio, editorial, premium</h2><p>Minimalismo monocromo: los datos como fotografía y un marco fijo de revista.</p></div>
+      <div class="go">Ver propuesta <span>→</span></div>
+    </a>
+  </main>
+  <footer>Versión anterior: <a href="index.html">index.html</a></footer>
+</body>
+</html>

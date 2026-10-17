@@ -1,0 +1,21 @@
+{
+  "edad": 35,
+  "sexo": "F",
+  "estado_civil": "Casado",
+  "nivel_educativo": "Universitario",
+  "situacion_laboral": "Empleado",
+  "antiguedad_laboral_anios": 4.5,
+  "personas_a_cargo": 1,
+  "tipo_vivienda": "Arriendo",
+  "ingreso_mensual": 4500000,
+  "monto_credito": 20000000,
+  "plazo_meses": 36,
+  "tasa_interes_anual": 24.5,
+  "proposito": "Vehiculo",
+  "num_creditos_activos": 2,
+  "moras_ultimos_12m": 0,
+  "relacion_deuda_ingreso": 0.32,
+  "puntaje_buro": 720,
+  "uso_cupo_tarjetas": 0.4,
+  "texto_solicitud": "Necesito el crédito para comprar un carro para trabajar."
+}

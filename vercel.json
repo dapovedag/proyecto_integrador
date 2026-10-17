@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "",
+  "outputDirectory": "Front",
+  "functions": {
+    "api/index.py": {
+      "includeFiles": "{Back/api/**,Back/src/**,Back/models/modelo_final.joblib,Back/models/modelo_nlp.joblib,Back/models/model_card.json}",
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index" }
+  ]
+}
