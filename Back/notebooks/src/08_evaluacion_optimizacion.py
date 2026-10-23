@@ -90,9 +90,11 @@ figura_front("calibracion", "Curva de calibración en test (deciles)",
              opciones={"formato_x": "pct", "formato_y": "pct"})
 
 # %% [markdown]
-# **Interpretación.** Cuanto más cerca de la diagonal, más confiable es la probabilidad como estimación de la
-# PD. El Brier de ambas versiones se muestra en la leyenda; la regla de decisión depende de que la
-# probabilidad esté calibrada, porque los umbrales de Chow se derivan de costos, no del modelo.
+# **Interpretación.** Ambas curvas siguen de cerca la diagonal: la regresión logística ya sale bien calibrada
+# de fábrica (Brier 0,1490) y la calibración sigmoide la conserva (0,1491) sin mejorarla. Se mantiene porque la
+# regla de Chow exige probabilidades calibradas por construcción —también si mañana la familia ganadora fuera un
+# boosting— y porque con `ensemble=False` las contribuciones siguen siendo exactas. Calibrar no era necesario
+# aquí; verificarlo, sí.
 
 # %% [markdown]
 # ## 3. Política de decisión: aprobar, revisar o rechazar
@@ -124,9 +126,11 @@ figura_front("lineas", "Costo esperado por solicitud según el umbral",
              opciones={"formato_x": "pct", "formato_y": "dec3"})
 
 # %% [markdown]
-# **Interpretación.** La curva azul es el costo de una política de solo aprobar/rechazar; su mínimo está
-# cerca del umbral bayesiano. La franja ámbar es la zona donde enviar la solicitud a un analista cuesta menos
-# que equivocarse; la línea verde es el costo de la política de tres acciones servida.
+# **Interpretación.** La curva es el costo de una política de solo aprobar/rechazar: su mínimo empírico en test
+# (0,0563 por solicitud) está en el umbral 0,22, cerca del bayesiano teórico 0,25. La franja ámbar es la zona
+# donde revisar a mano cuesta menos que equivocarse; la línea de la política de tres acciones (0,0537) queda por
+# debajo de todo el mínimo de dos acciones: la banda de revisión ahorra un 4,5 % adicional frente al mejor umbral
+# posible y un 6,1 % frente al bayesiano.
 
 # %%
 decision = pd.Series(card["decision_test"]).to_frame("test")
@@ -135,9 +139,10 @@ display(decision)
 sens
 
 # %% [markdown]
-# **Interpretación.** La primera tabla resume cómo se reparten las solicitudes de test entre aprobar, revisar
-# y rechazar, y la tasa de impago que queda entre los aprobados. La segunda muestra que los umbrales se mueven
-# de forma razonable cuando cambian los supuestos de LGD y margen (análisis de sensibilidad del ADR-002).
+# **Interpretación.** En test se aprueba automáticamente el 39,7 %, se revisa el 28,8 % (por debajo de la
+# capacidad de alerta del 35 %) y se rechaza el 31,5 %; entre los aprobados el impago cae al 9,8 %, frente al
+# 35,6 % de la cartera. La sensibilidad muestra que con LGD más alta el umbral de aprobación baja (0,178 → 0,107)
+# y con margen más alto el de rechazo sube (0,20 → 0,60): la política responde a los supuestos de negocio.
 
 # %% [markdown]
 # ## 4. Comparación final de todos los modelos
@@ -174,9 +179,12 @@ figura_front("barras_h", "ROC-AUC en test por modelo y familia",
              ejes={"x": "ROC-AUC", "y": "Modelo"}, clave="comparacion_final", opciones={"color_por": "familia", "min_x": 0.45})
 
 # %% [markdown]
-# **Interpretación.** El color indica la familia (naranja: clásicos; morado: redes; cian: NLP; ámbar: Spark;
-# índigo: servido). El criterio de elección final combina desempeño, interpretabilidad y costo de servir: un
-# modelo que gana por milésimas de AUC pero no se puede explicar ni auditar no compensa en crédito.
+# **Interpretación.** Dieciséis modelos de cinco familias sobre el mismo test. El combinado con texto encabeza
+# (AUC 0,847), pero su ventaja frente al tabular no es demostrable (ΔAUC +0,0012, IC 95 % [−0,0003; +0,0028]) y el
+# texto del dataset está sobreestimado por construcción del generador (paso 7): no se sirve. El servido (0,8456)
+# prácticamente iguala a la logística clásica (0,8459): la mitigación de equidad y la calibración cuestan menos
+# de una milésima de AUC. Las redes (MLP 0,842) y Spark MLlib (0,840) no superan al modelo lineal, que además es
+# el más interpretable y el más barato de servir.
 
 # %% [markdown]
 # ## 5. Auditoría de equidad (IA1.3)
@@ -205,9 +213,10 @@ figura_front("dispersion", "Precio de la equidad: costo esperado frente a DI por
              clave="precio_equidad", opciones={"formato_y": "dec3", "tamano_punto": 18})
 
 # %% [markdown]
-# **Interpretación.** Cada punto es una variante del modelo. A la derecha de la línea roja se cumple la regla
-# de 4/5; entre las que la cumplen se elige la de menor costo. La distancia vertical entre variantes es el
-# "precio de la equidad": cuánto costo esperado se paga por mejorar el trato entre grupos.
+# **Interpretación.** Cada punto es una variante del modelo. Quitar la edad (sin_edad) no mejora la equidad por
+# edad (DI 0,72 → 0,71): la disparidad viaja por variables legítimas como ingreso y antigüedad. El reweighing sí
+# la lleva a 0,89, a la derecha de la regla de 4/5, con un "precio de la equidad" de +0,0003 de costo esperado por
+# solicitud (+0,6 %): por eso es la variante servida.
 
 # %%
 for atributo in ["sexo", "edad"]:
@@ -217,10 +226,10 @@ for atributo in ["sexo", "edad"]:
     display(pd.DataFrame(e["grupos"]).set_index("grupo"))
 
 # %% [markdown]
-# **Interpretación.** Además de la aprobación, la tabla muestra la aprobación entre **buenos pagadores**
-# (igualdad de oportunidades) y el error de calibración por grupo: un modelo puede aprobar menos a un grupo
-# porque ese grupo realmente incumple más (diferencia justificada por riesgo) o porque está mal calibrado
-# para él (sesgo). La columna `error_calibracion` permite distinguir ambos casos.
+# **Interpretación.** En test, el DI por sexo es 0,970 y por edad 0,896; entre buenos pagadores (igualdad de
+# oportunidades) 0,963 y 0,937. El error de calibración por grupo es pequeño (máximo 1,7 puntos en 30-59 años):
+# las diferencias de aprobación que quedan reflejan diferencias reales de riesgo, no un modelo mal calibrado para
+# un grupo. Con 2.400 casos, el IC del DI por edad [0,78; 0,98] roza el 0,8: se vigila en producción.
 
 # %% [markdown]
 # ## 6. Explicabilidad: global (SHAP) y tres casos individuales
@@ -302,9 +311,9 @@ figura_front("barras_h", "PSI por variable (train frente a test)",
              ejes={"x": "PSI", "y": "Variable"}, clave="psi_variables", opciones={"formato_x": "dec3"})
 
 # %% [markdown]
-# **Interpretación.** Train y test vienen de la misma población, así que el PSI debe ser bajo en todas las
-# variables; esta misma medición, aplicada mes a mes en producción, es la alarma que dispara la recalibración
-# (plan de operación en `docs/05_despliegue.md`).
+# **Interpretación.** Todas las variables quedan muy por debajo de 0,10 (máximo 0,008) y el PSI del puntaje es
+# 0,003: train y test son la misma población. Esta misma medición, aplicada mes a mes en producción, es la alarma
+# que dispara la recalibración (plan de operación en `docs/05_despliegue.md`).
 
 # %% [markdown]
 # ## 8. Consistencia con la model card servida
@@ -327,4 +336,15 @@ display(Markdown(
 # %% [markdown]
 # ## Conclusiones
 #
-# *(Se redactan después de la ejecución, a partir de las salidas reales de este notebook.)*
+# 1. **Optimización con disciplina:** la búsqueda aleatoria en train eligió la regresión logística (AUC CV 0,858)
+#    sobre el boosting (0,853); test se usó una sola vez y las cifras de este notebook coinciden con la card servida.
+# 2. **Calibración verificada:** el modelo ya estaba calibrado (Brier 0,149); la calibración se conserva como
+#    garantía para la regla de decisión.
+# 3. **Decisión con costos explícitos:** la política aprobar / revisar / rechazar ahorra un 6,1 % del costo
+#    esperado frente a la de dos acciones y deja un 9,8 % de impago entre los aprobados, con un 28,8 % de revisión.
+# 4. **Equidad medida y mitigada:** el reweighing corrige la disparidad por edad (DI 0,72 → 0,90 en test) a un
+#    precio de 0,6 % de costo; sexo 0,97. Queda vigilar el límite inferior del IC por edad.
+# 5. **Explicable y estable:** SHAP, coeficientes y permutación coinciden (buró, cupo, deuda/ingreso, moras); cada
+#    decisión trae contribuciones exactas, y el PSI confirma una población estable.
+# 6. **Elección final:** de 16 modelos comparados, se sirve la regresión logística calibrada con reweighing por
+#    su desempeño, su interpretabilidad, su equidad y su costo de servir (paso 10).
