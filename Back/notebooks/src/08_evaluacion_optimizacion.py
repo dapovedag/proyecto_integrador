@@ -183,8 +183,8 @@ figura_front("barras_h", "ROC-AUC en test por modelo y familia",
 # (AUC 0,847), pero su ventaja frente al tabular no es demostrable (ΔAUC +0,0012, IC 95 % [−0,0003; +0,0028]) y el
 # texto del dataset está sobreestimado por construcción del generador (paso 7): no se sirve. El servido (0,8456)
 # prácticamente iguala a la logística clásica (0,8459): la mitigación de equidad y la calibración cuestan menos
-# de una milésima de AUC. Las redes (MLP 0,842) y Spark MLlib (0,840) no superan al modelo lineal, que además es
-# el más interpretable y el más barato de servir.
+# de una milésima de AUC. Spark MLlib (0,844, la misma regresión logística entrenada de forma distribuida) y las
+# redes (MLP 0,842) no superan al modelo lineal de scikit-learn, que además es el más interpretable y barato de servir.
 
 # %% [markdown]
 # ## 5. Auditoría de equidad (IA1.3)

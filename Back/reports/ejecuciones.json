@@ -29,9 +29,9 @@
   },
   "09_spark_big_data.ipynb": {
     "estado": "ok",
-    "duracion_s": 180.9,
-    "modo": "rapido",
-    "fecha": "2026-10-23T17:40:07",
+    "duracion_s": 188.7,
+    "modo": "completo",
+    "fecha": "2026-10-23T17:55:42",
     "rutas_saneadas": 0
   },
   "07_nlp_riesgo.ipynb": {
@@ -57,9 +57,16 @@
   },
   "08_evaluacion_optimizacion.ipynb": {
     "estado": "ok",
-    "duracion_s": 28.2,
+    "duracion_s": 20.0,
     "modo": "completo",
-    "fecha": "2026-10-23T17:40:38",
+    "fecha": "2026-10-23T17:58:45",
+    "rutas_saneadas": 2
+  },
+  "00_proyecto_integrador_final.ipynb": {
+    "estado": "ok",
+    "duracion_s": 25.5,
+    "modo": "completo",
+    "fecha": "2026-10-23T17:59:58",
     "rutas_saneadas": 2
   }
 }

@@ -5,8 +5,8 @@
     "titulo": "Proyecto integrador · Análisis predictivo de riesgo de crédito",
     "celdas": 22,
     "celdas_codigo": 11,
-    "imagenes": 0,
-    "duracion_total_s": 0.0
+    "imagenes": 4,
+    "duracion_total_s": 12.0
   },
   {
     "id": "01",
@@ -78,7 +78,7 @@
     "celdas": 35,
     "celdas_codigo": 16,
     "imagenes": 7,
-    "duracion_total_s": 15.2
+    "duracion_total_s": 11.5
   },
   {
     "id": "09",
@@ -86,7 +86,7 @@
     "titulo": "Paso 9 · Integración con Big Data (PySpark)",
     "celdas": 38,
     "celdas_codigo": 19,
-    "imagenes": 0,
-    "duracion_total_s": 146.0
+    "imagenes": 3,
+    "duracion_total_s": 172.1
   }
 ]

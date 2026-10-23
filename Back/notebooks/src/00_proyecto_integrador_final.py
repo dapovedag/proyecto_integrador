@@ -68,7 +68,8 @@ print(f"Modelo servido v{CARD['version']} · {CARD['algoritmo']} · variante de 
 # %%
 crudo = cargar_datos()
 contrato = validar_dataset(crudo)
-print(f"Dataset: {crudo.shape[0]:,} filas × {crudo.shape[1]} columnas · tasa de impago {crudo[config.TARGET].mean():.2%}")
+print(f"Dataset: {crudo.shape[0]:,} filas × {crudo.shape[1]} columnas".replace(",", ".")
+      + f" · tasa de impago {crudo[config.TARGET].mean():.2%}".replace(".", ","))
 print("Contrato de datos:", "✔ cumple" if contrato["ok"] else "✘ no cumple")
 pd.Series(CARD["umbrales"], name="umbral").to_frame()
 
@@ -98,8 +99,9 @@ print(f"train: {train.shape} · test: {test.shape} · sin nulos en el modelo: "
       f"{train[config.NUM_COLS_RAW + config.CAT_COLS].isna().sum().sum() == 0}")
 
 # %% [markdown]
-# **Interpretación.** La tasa de impago cae a medida que sube el puntaje de buró: es la relación de negocio
-# más fuerte del dataset y anticipa por qué el puntaje domina las explicaciones del modelo.
+# **Interpretación.** La tasa de impago cae de forma monótona con el puntaje de buró: del 88,2 % en el decil más
+# bajo al 3,1 % en el más alto. Es la relación de negocio más fuerte del dataset y anticipa por qué el puntaje
+# domina las explicaciones del modelo.
 
 # %% [markdown]
 # ## 3. F3 · Analizar y modelar: todos los modelos comparados
@@ -192,9 +194,13 @@ demo
 # intermedio va a revisión y el de alto riesgo se rechaza. Las contribuciones exactas explican cada caso.
 
 # %%
+import logging
 import sys
 
 from fastapi.testclient import TestClient
+
+for nombre in ("api", "api.service", "httpx"):  # registros de la API fuera de la salida del notebook
+    logging.getLogger(nombre).setLevel(logging.WARNING)
 
 sys.path.insert(0, str(config.BACK_DIR))  # el paquete `api` vive en Back/ (ruta derivada de config, no absoluta)
 from api.main import app
@@ -219,8 +225,29 @@ display(Markdown(
 # %% [markdown]
 # ## Hallazgos, ética, limitaciones y próximos pasos
 #
-# *(Se redactan después de la ejecución, a partir de las salidas reales.)*
+# **Hallazgos.** Cuatro variables financieras —puntaje de buró, deuda/ingreso, uso de cupo y moras— concentran
+# casi toda la capacidad predictiva. Ninguna técnica más compleja (redes, boosting, Spark, texto) supera de forma
+# demostrable a la regresión logística calibrada, que además es explicable con contribuciones exactas.
+#
+# **Ética.** El sexo no entra al modelo. La disparidad por edad (DI 0,72 en la variante base) no desaparecía al
+# quitar la edad, porque viaja por variables legítimas; el *reweighing* la llevó a 0,90 en test con un costo del
+# 0,6 %. La regla de 4/5 se usa como alerta, con IC, y se monitorea en producción (Ley 1581 de 2012).
+#
+# **Limitaciones.** El dataset es sintético-realista: las cifras ilustran la metodología, no una cartera real (la
+# replicación en German Credit, real, da AUC 0,786 y una disparidad por edad mayor). El texto de la solicitud está
+# generado con plantillas y su aporte está sobreestimado; los costos de la política son supuestos documentados
+# con análisis de sensibilidad.
+#
+# **Próximos pasos.** Validar con datos de una cartera real y cosechas maduras; evaluar la versión 2.1 sin las
+# variables de señal débil (HU-36); activar el monitoreo de PSI, equidad y cosecha con champion–challenger.
 #
 # ## Conclusiones
 #
-# *(Se redactan después de la ejecución, a partir de las salidas reales.)*
+# 1. **El producto final cumple PF1:** este notebook explora, prepara, modela, evalúa y predice la probabilidad de
+#    impago de un cliente con el mismo artefacto que sirve la API v2.0.0.
+# 2. **Desempeño:** AUC 0,846 y KS 0,538 en test, muy por encima de la meta (0,70) y de la línea base (0,50).
+# 3. **Decisión responsable:** aprobar 39,7 %, revisar 28,8 % y rechazar 31,5 %, con 9,8 % de impago entre los
+#    aprobados frente al 35,6 % de la cartera, y equidad por sexo (0,97) y edad (0,90) dentro de la regla de 4/5.
+# 4. **Integración de los módulos:** programación (pasos 2–4), IA clásica, redes, NLP y Big Data (5–9), API y
+#    despliegue (10) y gestión ágil verificable (paso 0) convergen en una solución con potencial de implementación
+#    real (R4).

@@ -1,10 +1,10 @@
 {
-  "verificado": "2026-10-23T17:40:03",
-  "commit": "e42591b",
+  "verificado": "2026-10-23T17:59:59",
+  "commit": "5589ed8",
   "version": "2.0.0",
   "notebooks": {
     "00_proyecto_integrador_final.ipynb": {
-      "ejecutado": false,
+      "ejecutado": true,
       "sin_errores": true,
       "kernel_credit_risk": true,
       "celda_ids": true,
@@ -92,7 +92,7 @@
       "artefactos": true
     },
     "08_evaluacion_optimizacion.ipynb": {
-      "ejecutado": false,
+      "ejecutado": true,
       "sin_errores": true,
       "kernel_credit_risk": true,
       "celda_ids": true,
@@ -119,5 +119,5 @@
     "protocolo_documentado": true,
     "equidad_documentada": true
   },
-  "fallos": 2
+  "fallos": 0
 }

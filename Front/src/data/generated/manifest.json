@@ -1,8 +1,8 @@
 {
   "version": "2.0.0",
   "card_version": "2.0.0",
-  "git_sha": "e42591b",
-  "generado": "2026-10-23T17:40:46",
+  "git_sha": "5589ed8",
+  "generado": "2026-10-23T18:00:45",
   "datos": {
     "crudo_sha256": "63e1b695a1bae907a79d80b208ee665da6e6a41eaec7ed4fc493ed8e145dcc34",
     "train_sha256": "1ce71f5f0123edb39b1d0120fd142e73c2a2c066bca40bcbd0ead523b4e92e28",
@@ -14,20 +14,24 @@
       "bytes": 42582
     },
     "src/data/generated/api_capturas.json": {
-      "sha256": "b0b466a3f143aa2d7a7917eaef73e6259ec5bab9bf65297277eeae64d94cb948",
-      "bytes": 58420
+      "sha256": "24a37375d1d2ee45db12532130a1f90a76fe83079287a77fe94f755988022632",
+      "bytes": 58422
     },
     "src/data/generated/clientes_demo.json": {
       "sha256": "5cbf373e0878ffe48cab457c9714b23ddfaa77a9a8e980d62fdea36a982c2df1",
       "bytes": 2213
     },
+    "src/data/generated/docker_api.json": {
+      "sha256": "be52652921e8003af96ace37d37337956cae45a8980af02c71b96af878b8074a",
+      "bytes": 2253
+    },
     "src/data/generated/dod_status.json": {
-      "sha256": "b4cc577784195d7694c6e3dbedd0d8cc9d0e8b4d4d5e5eec697a03afca55921e",
-      "bytes": 3536
+      "sha256": "72048435e28eb8dd9501fd8d4b9baf010f1c2ccc2fa0cd4bbc60b263597a581b",
+      "bytes": 3534
     },
     "src/data/generated/ejecuciones.json": {
-      "sha256": "c272f672a505493c9e95761a15a7799feedcd1d34db9fb6b76ee49efd41c903a",
-      "bytes": 1414
+      "sha256": "94d71e4e0a40af1d5f512865cda0613b0c16ec7fcaa13169b532afdfa16165fd",
+      "bytes": 1778
     },
     "src/data/generated/evaluacion_final.json": {
       "sha256": "0295f333cab86dc7480d1f6bac37128ad5bee273e516f3fd3c8af5c2ab8ada46",
@@ -50,8 +54,8 @@
       "bytes": 9505
     },
     "src/data/generated/notebooks.json": {
-      "sha256": "824d48ddeb001969a90599a379ade209458f86aa57499f1e23efdfefda80f475",
-      "bytes": 2510
+      "sha256": "39d02a28d5f5a84ebee1ecab2ce8667bdcdfc11c51e57818ac5fe9b7980f17c9",
+      "bytes": 2511
     },
     "src/data/generated/resultados_clasicos.json": {
       "sha256": "0515de9fe452c68bcd8b16c609979f06e7113b13e231cbc3c425c34d484c85f6",
@@ -66,8 +70,8 @@
       "bytes": 249622
     },
     "src/data/generated/resultados_spark.json": {
-      "sha256": "e824c192c3d7f1dc021e504ec32d8d154921c62f15e68be6c1287fcb7226a0e9",
-      "bytes": 9416
+      "sha256": "c72afac01efd22d4a98f889e3f8df9aa70a0b7f4ec633ecf9ac6cec41b47c2ef",
+      "bytes": 9427
     },
     "src/data/generated/texto_export.json": {
       "sha256": "955446443d2a2f97de14fe2de7ba5c48a5a6df11e212e43ff115056209eeb4a5",
@@ -76,6 +80,10 @@
     "src/data/generated/train_log.json": {
       "sha256": "b280041dff15bd51ca125de1ea47c8212e18f81318b151125c5ec7ea8ebfb0cf",
       "bytes": 1441
+    },
+    "src/data/generated/variables_sensibles.json": {
+      "sha256": "7ffde20608f0babba2e1e71ee2a600ed98a78d9ea5dc363612bd2440239c4380",
+      "bytes": 1785
     },
     "public/run/data/credit_risk.csv": {
       "sha256": "63e1b695a1bae907a79d80b208ee665da6e6a41eaec7ed4fc493ed8e145dcc34",
@@ -90,12 +98,12 @@
       "bytes": 3023059
     },
     "public/run/figuras.json": {
-      "sha256": "6721573360778e7849366cb15cd9aa426b5ed76d6ecb07cb524ee9b40fa032ea",
-      "bytes": 454675
+      "sha256": "e6c6c23a9207ec0458d83424bd34554fb8c999cbddfb0d2ee8ec25ae3713cd61",
+      "bytes": 457023
     },
     "public/run/notebooks/00.json": {
-      "sha256": "9a733792fce19dfe439610d963ad2d3e6a7994b88c5a6d8167c7f70e79448ba6",
-      "bytes": 13723
+      "sha256": "e41ccea05bf231dbb20ffb30554a093d4ce29ec96c49d6f855e129da6ca580b3",
+      "bytes": 24220
     },
     "public/run/notebooks/01.json": {
       "sha256": "38b8d261a499d4c515fa5fae100d40fb4f2b7fc6b32f97fa132172b0c80a8e90",
@@ -126,12 +134,28 @@
       "bytes": 122747
     },
     "public/run/notebooks/08.json": {
-      "sha256": "f949f341ba4aa1ab17fc2fbf1dfbc19afd999bfcf0512a836be76e960b90da18",
-      "bytes": 41082
+      "sha256": "23c6a1d521722451f035182e6180b92842e2716d57227f047231464b8ae7c011",
+      "bytes": 43216
     },
     "public/run/notebooks/09.json": {
-      "sha256": "64277961c45158f598a86a29fd1cb2d4632a18947fadaee9439d4ae227abc53a",
-      "bytes": 59049
+      "sha256": "92d18d5882d6e7c655681083a3f7ac8cb203f9a5116d39aef2cede9f787fc6a5",
+      "bytes": 63689
+    },
+    "public/run/notebooks/img/00_c08_00.webp": {
+      "sha256": "a2b718e32891ad145390a57847715cd6e285f2783b8da3920cdd3535ab81228f",
+      "bytes": 11684
+    },
+    "public/run/notebooks/img/00_c11_01.webp": {
+      "sha256": "fc43b72ce2aada989936ff770a17a9fb20098350fb1dd03c690ccb9ba78b7cf3",
+      "bytes": 28462
+    },
+    "public/run/notebooks/img/00_c14_02.webp": {
+      "sha256": "2e43825a28f948e582917abfa6291462cc2f5a522c268d03b68ebfd688782204",
+      "bytes": 14358
+    },
+    "public/run/notebooks/img/00_c18_03.webp": {
+      "sha256": "93a8f1a2f3064731a3e0cec3a241ad547ae093a6d4813d20b5e9614df369f8e9",
+      "bytes": 10334
     },
     "public/run/notebooks/img/01_c07_00.webp": {
       "sha256": "701695aec1377acc3cd9a2ecfb7b7e0850c9074ff44d21a35ce7354f52b62645",
@@ -330,8 +354,8 @@
       "bytes": 22840
     },
     "public/run/notebooks/img/08_c17_02.webp": {
-      "sha256": "6dc467607a601340619f24e9c27e0f738713aa4ee9e185bc6df0e36c66b45b4b",
-      "bytes": 34642
+      "sha256": "5e8daa7ede4b892d9c4f297a50e9ac4d8b3f434a00b4f91564e53621e7f74e37",
+      "bytes": 34626
     },
     "public/run/notebooks/img/08_c21_03.webp": {
       "sha256": "cfcc67e41de621f8e06019b9f585cd7be0b68eccb4e145d3801f7f1d4641cc5b",
@@ -348,6 +372,18 @@
     "public/run/notebooks/img/08_c31_06.webp": {
       "sha256": "87a11711c9a41c78eaa37a9f772cac3b80f0ef23013d994810f53928768ca054",
       "bytes": 28694
+    },
+    "public/run/notebooks/img/09_c15_00.webp": {
+      "sha256": "0b0f7b8a64a2fd9a218ec89b6d99d2622fd0c469d3bd64c377ab0fbdb848209d",
+      "bytes": 31900
+    },
+    "public/run/notebooks/img/09_c22_01.webp": {
+      "sha256": "23186de6969bb2efbbd087c579d4486fc3bab6e30e7bfd7452fb85800b59c8c2",
+      "bytes": 15520
+    },
+    "public/run/notebooks/img/09_c30_02.webp": {
+      "sha256": "4a97b6580d4017d18f1c5e7bb48bf4e271a583d7a2eccc46118a4be8a5e3f4f5",
+      "bytes": 32534
     },
     "public/run/nube_pca.json": {
       "sha256": "00919b763db830e45aa853aaa4dae3fad738e7d07200f649b3f71164985cf61a",
