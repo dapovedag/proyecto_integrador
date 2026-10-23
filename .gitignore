@@ -15,3 +15,11 @@ __pycache__/
 # Salidas pesadas y regenerables
 db/processed/spark/
 db/processed/*.parquet
+
+# Ejecuciones temporales de papermill
+Back/notebooks/.ejecucion/
+Back/reports/.ejecucion.lock
+Front/node_modules/
+Front/dist/
+Front/test-results/
+Front/playwright-report/
