@@ -24,3 +24,5 @@ Front/dist/
 Front/test-results/
 Front/playwright-report/
 *.egg-info/
+Front/tsconfig.tsbuildinfo
+Front/*.tsbuildinfo

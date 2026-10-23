@@ -363,7 +363,9 @@ def main(argv: list[str] | None = None) -> int:
             shutil.copyfile(p, GEN / f"{nombre}.json")
     for origen, nombre in [(config.REPORTS_DIR / "evaluacion_final.json", "evaluacion_final.json"),
                            (config.REPORTS_DIR / "dod_status.json", "dod_status.json"),
-                           (config.REPORTS_DIR / "ejecuciones.json", "ejecuciones.json")]:
+                           (config.REPORTS_DIR / "ejecuciones.json", "ejecuciones.json"),
+                           (config.REPORTS_DIR / "docker_api.json", "docker_api.json"),
+                           (config.REPORTS_DIR / "variables_sensibles.json", "variables_sensibles.json")]:
         if origen.exists():
             shutil.copyfile(origen, GEN / nombre)
     log = config.REPORTS_DIR / "train_log.jsonl"

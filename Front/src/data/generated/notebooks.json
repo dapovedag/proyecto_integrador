@@ -1,0 +1,92 @@
+[
+  {
+    "id": "00",
+    "archivo": "00_proyecto_integrador_final.ipynb",
+    "titulo": "Proyecto integrador · Análisis predictivo de riesgo de crédito",
+    "celdas": 22,
+    "celdas_codigo": 11,
+    "imagenes": 0,
+    "duracion_total_s": 0.0
+  },
+  {
+    "id": "01",
+    "archivo": "01_definicion_problema_etica.ipynb",
+    "titulo": "Paso 1 · Definición del problema y análisis ético",
+    "celdas": 25,
+    "celdas_codigo": 12,
+    "imagenes": 2,
+    "duracion_total_s": 13.2
+  },
+  {
+    "id": "02",
+    "archivo": "02_exploracion_preliminar.ipynb",
+    "titulo": "Paso 2 · Exploración y análisis preliminar (Programación, Unidad 1)",
+    "celdas": 66,
+    "celdas_codigo": 35,
+    "imagenes": 7,
+    "duracion_total_s": 15.3
+  },
+  {
+    "id": "03",
+    "archivo": "03_limpieza_preparacion.ipynb",
+    "titulo": "Paso 3 · Limpieza, estructuración y preparación de los datos",
+    "celdas": 51,
+    "celdas_codigo": 23,
+    "imagenes": 5,
+    "duracion_total_s": 105.2
+  },
+  {
+    "id": "04",
+    "archivo": "04_eda_transformacion_visualizacion.ipynb",
+    "titulo": "Paso 4 · EDA avanzado, transformación y visualización",
+    "celdas": 82,
+    "celdas_codigo": 41,
+    "imagenes": 17,
+    "duracion_total_s": 114.0
+  },
+  {
+    "id": "05",
+    "archivo": "05_modelos_clasicos.ipynb",
+    "titulo": "Paso 5 · Modelos clásicos de Machine Learning",
+    "celdas": 25,
+    "celdas_codigo": 12,
+    "imagenes": 4,
+    "duracion_total_s": 365.5
+  },
+  {
+    "id": "06",
+    "archivo": "06_red_neuronal.ipynb",
+    "titulo": "Paso 6 · Redes neuronales (MLP, CNN 1D, GRU e híbrido) con TensorFlow/Keras",
+    "celdas": 37,
+    "celdas_codigo": 20,
+    "imagenes": 6,
+    "duracion_total_s": 273.4
+  },
+  {
+    "id": "07",
+    "archivo": "07_nlp_riesgo.ipynb",
+    "titulo": "Paso 7 · NLP aplicado al riesgo de crédito",
+    "celdas": 38,
+    "celdas_codigo": 18,
+    "imagenes": 6,
+    "duracion_total_s": 366.6
+  },
+  {
+    "id": "08",
+    "archivo": "08_evaluacion_optimizacion.ipynb",
+    "titulo": "Paso 8 · Evaluación, optimización, decisión y auditoría de equidad",
+    "celdas": 35,
+    "celdas_codigo": 16,
+    "imagenes": 7,
+    "duracion_total_s": 15.2
+  },
+  {
+    "id": "09",
+    "archivo": "09_spark_big_data.ipynb",
+    "titulo": "Paso 9 · Integración con Big Data (PySpark)",
+    "celdas": 38,
+    "celdas_codigo": 19,
+    "imagenes": 0,
+    "duracion_total_s": 146.0
+  }
+]

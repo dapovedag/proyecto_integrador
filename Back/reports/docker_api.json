@@ -1,0 +1,57 @@
+{
+  "capturado": "2026-10-23",
+  "fuente": "prueba real de docker compose en Back/ (build + up + health + predict + logs + down)",
+  "pasos": [
+    {
+      "comando": "docker compose build",
+      "salida": [
+        "#16 DONE 525.6s",
+        "#17 resolving provenance for metadata file",
+        "#17 DONE 2.5s",
+        " Image riesgo-credito-api:2.0.0 Built "
+      ]
+    },
+    {
+      "comando": "docker images riesgo-credito-api:2.0.0",
+      "salida": [
+        "riesgo-credito-api:2.0.0 653MB"
+      ]
+    },
+    {
+      "comando": "docker compose up -d",
+      "salida": [
+        " Container back-api-1 Starting ",
+        " Container back-api-1 Started "
+      ]
+    },
+    {
+      "comando": "docker inspect -f '{{.State.Health.Status}}' back-api-1",
+      "salida": [
+        "starting",
+        "healthy"
+      ]
+    },
+    {
+      "comando": "curl -s http://127.0.0.1:8000/health",
+      "salida": [
+        "{\"status\":\"ok\",\"modelo_version\":\"2.0.0\",\"modelo_cargado\":true,\"api_version\":\"2.0.0\"}"
+      ]
+    },
+    {
+      "comando": "curl -s -X POST http://127.0.0.1:8000/predict --data-binary @api/ejemplo_request.json",
+      "salida": [
+        "{\"probabilidad_impago\":0.1004,\"decision\":\"aprobar\",\"banda_riesgo\":\"Bajo\",\"prediccion\":0,\"etiqueta\":\"No impago\",\"umbrales\":{\"aprobar\":0.1778,\"rechazar\":0.4667,\"bayes\":0.25},\"factores_principales\":[{\"variable\":\"relacion_deuda_ingreso\",\"contribucion\":-0.5469,\"efecto\":\"reduce_riesgo\"},{\"variable\":\"moras_ultimos_12m\",\"contribucion\":-0.1925,\"efecto\":\"reduce_riesgo\"},{\"variable\":\"ingreso_mensual\",\"contri"
+      ]
+    },
+    {
+      "comando": "docker compose logs --tail 5 api",
+      "salida": [
+        "api-1  | 2026-10-23 21:55:36,057 INFO api.service prediccion p=0.1004 decision=aprobar",
+        "api-1  | 2026-10-23 21:55:36,061 INFO api rid=81b29a4397aa POST /predict -> 200 519.3ms",
+        "api-1  | INFO:     172.23.0.1:59816 - \"POST /predict HTTP/1.1\" 200 OK",
+        "api-1  | 2026-10-23 21:56:04,290 INFO api rid=2b8adb077dc3 GET /health -> 200 4.0ms",
+        "api-1  | INFO:     127.0.0.1:60588 - \"GET /health HTTP/1.1\" 200 OK"
+      ]
+    }
+  ]
+}

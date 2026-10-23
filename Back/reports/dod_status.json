@@ -1,0 +1,123 @@
+{
+  "verificado": "2026-10-23T17:40:03",
+  "commit": "e42591b",
+  "version": "2.0.0",
+  "notebooks": {
+    "00_proyecto_integrador_final.ipynb": {
+      "ejecutado": false,
+      "sin_errores": true,
+      "kernel_credit_risk": true,
+      "celda_ids": true,
+      "conclusiones": true,
+      "importa_credit_risk": true,
+      "sin_rutas_absolutas": true,
+      "figuras_interpretadas": true,
+      "artefactos": true
+    },
+    "01_definicion_problema_etica.ipynb": {
+      "ejecutado": true,
+      "sin_errores": true,
+      "kernel_credit_risk": true,
+      "celda_ids": true,
+      "conclusiones": true,
+      "importa_credit_risk": true,
+      "sin_rutas_absolutas": true,
+      "figuras_interpretadas": true,
+      "artefactos": true
+    },
+    "02_exploracion_preliminar.ipynb": {
+      "ejecutado": true,
+      "sin_errores": true,
+      "kernel_credit_risk": true,
+      "celda_ids": true,
+      "conclusiones": true,
+      "importa_credit_risk": true,
+      "sin_rutas_absolutas": true,
+      "figuras_interpretadas": true,
+      "artefactos": true
+    },
+    "03_limpieza_preparacion.ipynb": {
+      "ejecutado": true,
+      "sin_errores": true,
+      "kernel_credit_risk": true,
+      "celda_ids": true,
+      "conclusiones": true,
+      "importa_credit_risk": true,
+      "sin_rutas_absolutas": true,
+      "figuras_interpretadas": true,
+      "artefactos": true
+    },
+    "04_eda_transformacion_visualizacion.ipynb": {
+      "ejecutado": true,
+      "sin_errores": true,
+      "kernel_credit_risk": true,
+      "celda_ids": true,
+      "conclusiones": true,
+      "importa_credit_risk": true,
+      "sin_rutas_absolutas": true,
+      "figuras_interpretadas": true,
+      "artefactos": true
+    },
+    "05_modelos_clasicos.ipynb": {
+      "ejecutado": true,
+      "sin_errores": true,
+      "kernel_credit_risk": true,
+      "celda_ids": true,
+      "conclusiones": true,
+      "importa_credit_risk": true,
+      "sin_rutas_absolutas": true,
+      "figuras_interpretadas": true,
+      "artefactos": true
+    },
+    "06_red_neuronal.ipynb": {
+      "ejecutado": true,
+      "sin_errores": true,
+      "kernel_credit_risk": true,
+      "celda_ids": true,
+      "conclusiones": true,
+      "importa_credit_risk": true,
+      "sin_rutas_absolutas": true,
+      "figuras_interpretadas": true,
+      "artefactos": true
+    },
+    "07_nlp_riesgo.ipynb": {
+      "ejecutado": true,
+      "sin_errores": true,
+      "kernel_credit_risk": true,
+      "celda_ids": true,
+      "conclusiones": true,
+      "importa_credit_risk": true,
+      "sin_rutas_absolutas": true,
+      "figuras_interpretadas": true,
+      "artefactos": true
+    },
+    "08_evaluacion_optimizacion.ipynb": {
+      "ejecutado": false,
+      "sin_errores": true,
+      "kernel_credit_risk": true,
+      "celda_ids": true,
+      "conclusiones": true,
+      "importa_credit_risk": true,
+      "sin_rutas_absolutas": true,
+      "figuras_interpretadas": true,
+      "artefactos": true
+    },
+    "09_spark_big_data.ipynb": {
+      "ejecutado": true,
+      "sin_errores": true,
+      "kernel_credit_risk": true,
+      "celda_ids": true,
+      "conclusiones": true,
+      "importa_credit_risk": true,
+      "sin_rutas_absolutas": true,
+      "figuras_interpretadas": true,
+      "artefactos": true
+    }
+  },
+  "modelo": {
+    "card_version_coincide": true,
+    "protocolo_documentado": true,
+    "equidad_documentada": true
+  },
+  "fallos": 2
+}

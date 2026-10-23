@@ -1,0 +1,65 @@
+{
+  "01_definicion_problema_etica.ipynb": {
+    "estado": "ok",
+    "duracion_s": 36.6,
+    "modo": "completo",
+    "fecha": "2026-10-23T17:36:42",
+    "rutas_saneadas": 2
+  },
+  "03_limpieza_preparacion.ipynb": {
+    "estado": "ok",
+    "duracion_s": 162.4,
+    "modo": "completo",
+    "fecha": "2026-10-23T16:32:43",
+    "rutas_saneadas": 2
+  },
+  "06_red_neuronal.ipynb": {
+    "estado": "ok",
+    "duracion_s": 299.9,
+    "modo": "completo",
+    "fecha": "2026-10-23T17:36:03",
+    "rutas_saneadas": 2
+  },
+  "02_exploracion_preliminar.ipynb": {
+    "estado": "ok",
+    "duracion_s": 19.9,
+    "modo": "completo",
+    "fecha": "2026-10-23T17:37:02",
+    "rutas_saneadas": 2
+  },
+  "09_spark_big_data.ipynb": {
+    "estado": "ok",
+    "duracion_s": 180.9,
+    "modo": "rapido",
+    "fecha": "2026-10-23T17:40:07",
+    "rutas_saneadas": 0
+  },
+  "07_nlp_riesgo.ipynb": {
+    "estado": "ok",
+    "duracion_s": 411.2,
+    "modo": "completo",
+    "fecha": "2026-10-23T17:19:42",
+    "rutas_saneadas": 2
+  },
+  "05_modelos_clasicos.ipynb": {
+    "estado": "ok",
+    "duracion_s": 397.2,
+    "modo": "completo",
+    "fecha": "2026-10-23T17:26:22",
+    "rutas_saneadas": 2
+  },
+  "04_eda_transformacion_visualizacion.ipynb": {
+    "estado": "ok",
+    "duracion_s": 145.2,
+    "modo": "completo",
+    "fecha": "2026-10-23T17:30:52",
+    "rutas_saneadas": 2
+  },
+  "08_evaluacion_optimizacion.ipynb": {
+    "estado": "ok",
+    "duracion_s": 28.2,
+    "modo": "completo",
+    "fecha": "2026-10-23T17:40:38",
+    "rutas_saneadas": 2
+  }
+}
