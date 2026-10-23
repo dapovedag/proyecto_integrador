@@ -1,0 +1,10 @@
+# Datos con hash SHA-256 registrado (model card y manifest del front): sin conversión de fin de línea.
+*.csv -text
+*.parquet binary
+*.joblib binary
+*.keras binary
+*.webp binary
+*.png binary
+Front/public/run/** -text
+Front/src/data/generated/** -text
+Back/models/*.json -text
