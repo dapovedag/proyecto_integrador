@@ -1,0 +1,1208 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Umbral · Riesgo de crédito</title>
+<meta name="description" content="Análisis predictivo de riesgo de crédito: 12.144 clientes, un modelo de regresión logística y una API en vivo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: dark;
+  --panel: rgba(52,52,52,.9);
+  --frame:#393939;
+  --ink:#FFFFFF;
+  --mute:#9A9A9A;
+  --mute2:#A8A8A8;
+  --ghost: rgba(255,255,255,.06);
+  --accent:#505CFD;
+  --line: rgba(255,255,255,.12);
+  --line2: rgba(255,255,255,.2);
+  --sim:#2a2a2a;
+  --met:#232323;
+  --foot:#1a1a1a;
+  --bajo:#7FAE8E;
+  --medio:#D1A659;
+  --alto:#DB7C69;
+  --ft:"Poppins", "Segoe UI", system-ui, sans-serif;
+  --fb:"Rubik", "Segoe UI", system-ui, sans-serif;
+  --barw:45px;
+}
+*{box-sizing:border-box}
+html{scroll-snap-type:y proximity;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+body{margin:0;padding-left:var(--barw);background:#161616;color:var(--ink);font:400 15px/1.7 var(--fb);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:1px solid var(--accent);outline-offset:4px}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.num{font-variant-numeric:tabular-nums}
+
+/* ===== La fotografía de datos ===== */
+#foto{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block;
+  background:
+    radial-gradient(70% 45% at 64% 26%, #2e2e2e 0%, rgba(30,30,30,0) 70%),
+    radial-gradient(120% 90% at 60% 70%, #1f1f1f 0%, #141414 75%);}
+.dof{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity .8s;
+  -webkit-backdrop-filter:blur(2.6px);backdrop-filter:blur(2.6px);
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.6) 30%,transparent 46%,transparent 78%,#000 100%);
+          mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.6) 30%,transparent 46%,transparent 78%,#000 100%);}
+body[data-scene="0"] .dof{opacity:1}
+.veil{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(110% 85% at 66% 55%, rgba(0,0,0,0) 38%, rgba(8,8,8,.78) 100%),
+    linear-gradient(180deg, rgba(14,14,14,.5) 0%, rgba(14,14,14,0) 20%, rgba(14,14,14,0) 82%, rgba(14,14,14,.55) 100%);}
+.veil::after{content:"";position:absolute;inset:0;opacity:.09;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");}
+
+/* ===== Marco perimetral ===== */
+.rail{position:fixed;left:0;top:0;bottom:0;width:var(--barw);background:var(--frame);z-index:60;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:18px 0 22px}
+.burger{width:45px;height:34px;background:none;border:0;cursor:pointer;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;padding:0}
+.burger span{display:block;width:16px;height:1.5px;background:#fff;transition:transform .35s,width .35s}
+.burger span:nth-child(2){width:16px}
+.burger:hover span:nth-child(2){width:9px;transform:translateX(-3.5px)}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(3.25px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){transform:translateY(-3.25px) rotate(-45deg);width:16px}
+.rail-logo{display:none}
+.vtext{writing-mode:vertical-rl;transform:rotate(180deg);margin:0;font:500 9px/1 var(--fb);letter-spacing:.26em;text-transform:uppercase;color:rgba(255,255,255,.62);white-space:nowrap}
+.share{writing-mode:vertical-rl;transform:rotate(180deg);background:none;border:0;cursor:pointer;font:500 10px/1 var(--fb);letter-spacing:.22em;text-transform:uppercase;color:#fff;padding:4px 0;transition:color .25s}
+.share b{font-weight:400;font-size:14px;display:inline-block;margin-top:6px}
+.share:hover{color:var(--accent)}
+.toplinks{position:fixed;top:20px;right:26px;z-index:58;display:flex;align-items:center;gap:10px;
+  font:500 10px/1 var(--fb);letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.55);
+  background:rgba(40,40,40,.72);padding:9px 14px;border-radius:99px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.toplinks a{color:#fff;text-decoration:none;transition:color .25s}
+.toplinks a:hover{color:var(--accent)}
+.dot{width:6px;height:6px;border-radius:50%;background:#777;display:inline-block}
+.dot.ok{background:var(--bajo)} .dot.down{background:var(--alto)}
+.pager{position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:40;transition:opacity .4s}
+.pager ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.pager button{display:flex;align-items:center;gap:10px;background:none;border:0;cursor:pointer;padding:5px 0;color:rgba(255,255,255,.5);font:500 10px/1 var(--ft);letter-spacing:.08em;transition:color .3s}
+.pager button::after{content:"";width:12px;height:1px;background:currentColor;transition:width .35s}
+.pager .nm{font:500 9px/1 var(--fb);letter-spacing:.2em;text-transform:uppercase;opacity:0;transform:translateX(8px);transition:opacity .3s,transform .3s}
+.pager button:hover,.pager button.on{color:#fff}
+.pager button:hover .nm,.pager button.on .nm{opacity:1;transform:none}
+.pager button.on::after{width:30px}
+body.past .pager{opacity:.3}
+body.past .pager:hover{opacity:1}
+.arrows{position:fixed;right:22px;bottom:22px;z-index:40;display:flex;gap:8px}
+.arrows button{width:40px;height:40px;border-radius:50%;border:0;background:var(--frame);display:grid;place-items:center;cursor:pointer;transition:background .25s,transform .25s}
+.arrows button:hover{background:var(--accent)}
+.arrows button:active{transform:scale(.94)}
+.arrows svg{width:14px;height:14px}
+.scrollcue{position:fixed;left:calc(50% + 22px);bottom:24px;z-index:40;transform:translateX(-50%);display:flex;align-items:center;gap:12px;
+  font:500 10px/1 var(--fb);letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.72);transition:opacity .4s;pointer-events:none}
+.scrollcue i{position:relative;width:44px;height:1px;background:rgba(255,255,255,.28);overflow:hidden}
+.scrollcue i::after{content:"";position:absolute;inset:0;background:#fff;transform:translateX(-100%)}
+@media (prefers-reduced-motion: no-preference){.scrollcue i::after{animation:cue 2.6s cubic-bezier(.6,0,.2,1) infinite}}
+@keyframes cue{0%{transform:translateX(-100%)}55%{transform:translateX(0)}100%{transform:translateX(100%)}}
+body.past .scrollcue{opacity:0}
+.menu{position:fixed;left:var(--barw);top:0;bottom:0;width:min(460px,calc(100vw - var(--barw)));z-index:59;background:#343434;
+  padding:110px 52px 48px;display:flex;flex-direction:column;gap:6px;box-shadow:40px 0 90px rgba(0,0,0,.45)}
+.menu[hidden]{display:none}
+.menu a{display:flex;align-items:baseline;gap:18px;text-decoration:none;font:500 34px/1.3 var(--ft);letter-spacing:-.02em;color:#fff;transition:color .25s,transform .3s}
+.menu a small{font:500 10px/1 var(--fb);letter-spacing:.2em;color:var(--mute2);min-width:22px}
+.menu a:hover{color:var(--accent);transform:translateX(6px)}
+.menu p{margin:auto 0 0;font-size:13px;color:var(--mute)}
+
+/* ===== Diapositivas ===== */
+main{position:relative;z-index:2}
+.slide{position:relative;min-height:100vh;display:flex;scroll-snap-align:start;overflow:hidden}
+.panel{position:relative;width:clamp(420px,38vw,640px);flex:none;background:var(--panel);
+  padding:110px 56px 120px 64px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.panel > *:not(.ghost){position:relative;z-index:1}
+.logo{position:absolute;top:20px;left:64px;z-index:3;font:600 19px/1 var(--ft);letter-spacing:-.02em;color:#fff;text-decoration:none}
+.logo i,.rail-logo i,.foot-ghost i{font-style:normal;color:var(--accent)}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.6);border-radius:99px;padding:7px 13px 6px;
+  font:700 9.5px/1 var(--fb);letter-spacing:.17em;text-transform:uppercase;color:#fff;white-space:nowrap}
+.api-pill i{width:6px;height:6px;border-radius:50%;background:#8a8a8a;flex:none}
+.api-pill.ok i{background:var(--bajo);box-shadow:0 0 0 3px rgba(127,174,142,.2)}
+.api-pill.down{border-color:rgba(219,124,105,.8)}
+.api-pill.down i{background:var(--alto)}
+@media (prefers-reduced-motion: no-preference){.api-pill.ok i{animation:pulse 2.4s ease-in-out infinite}}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(127,174,142,0)}}
+.ttl{font:500 clamp(36px,3.9vw,58px)/1.08 var(--ft);letter-spacing:-.02em;margin:26px 0 22px;white-space:nowrap;color:#fff}
+.hero .ttl{font-size:clamp(42px,4.9vw,78px);line-height:1.04;margin-top:30px}
+.ttl .dim{color:rgba(255,255,255,.42)}
+.lede{color:var(--mute);font-size:15px;line-height:1.7;max-width:390px;margin:0}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:0 32px;margin:34px 0 38px;width:100%;max-width:400px}
+.kpis div{border-top:1px solid var(--line2);padding-top:14px}
+.kpis dt{font:500 10px/1.3 var(--fb);letter-spacing:.16em;text-transform:uppercase;color:var(--mute2)}
+.kpis dd{margin:8px 0 0;font:500 clamp(36px,3.3vw,50px)/1 var(--ft);letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.links{display:flex;flex-wrap:wrap;gap:14px 34px}
+.more{display:inline-flex;align-items:center;gap:12px;font:600 14px/1 var(--ft);color:#fff;text-decoration:none;padding:4px 0}
+.more::after{content:"";width:26px;height:1px;background:currentColor;transition:width .35s cubic-bezier(.2,.7,.2,1),background .35s}
+.more:hover::after{width:52px;background:var(--accent)}
+.more.sub{color:rgba(255,255,255,.62)}
+.more.sub:hover{color:#fff}
+.facts{margin:26px 0 32px;width:100%;max-width:400px}
+.facts div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:11px 0;border-top:1px solid var(--line)}
+.facts div:last-child{border-bottom:1px solid var(--line)}
+.facts dt{font:500 10px/1.3 var(--fb);letter-spacing:.15em;text-transform:uppercase;color:var(--mute2)}
+.facts dd{margin:0;font:500 15px/1.2 var(--ft);font-variant-numeric:tabular-nums;text-align:right}
+.ghost{position:absolute;left:56px;bottom:22px;z-index:0;margin:0;pointer-events:none;white-space:nowrap;
+  font:500 clamp(96px,11vw,176px)/.8 var(--ft);letter-spacing:-.05em;color:var(--ghost);font-variant-numeric:tabular-nums}
+.hero .ghost{font-size:clamp(80px,9.4vw,150px)}
+.fig{position:absolute;right:150px;bottom:34px;z-index:2;margin:0;max-width:360px;text-align:right;
+  font:500 10px/1.7 var(--fb);letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.66)}
+.fig span{color:rgba(255,255,255,.42)}
+.fig b{color:#fff;font-weight:500}
+@media (prefers-reduced-motion: no-preference){
+  .hero .pills,.hero .ttl,.hero .lede,.hero .kpis,.hero .links{animation:rise 1.1s cubic-bezier(.2,.7,.2,1) both}
+  .hero .ttl{animation-delay:.08s}.hero .lede{animation-delay:.18s}.hero .kpis{animation-delay:.26s}.hero .links{animation-delay:.34s}
+}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* ===== Secciones editoriales ===== */
+.sec{position:relative;z-index:2;padding:140px 116px 140px 64px}
+.sim{background:var(--sim)}
+.met{background:var(--met);border-top:1px solid rgba(255,255,255,.05)}
+.sec-head{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px 72px;align-items:end;position:relative}
+.sec-ttl{font:500 clamp(38px,4.4vw,66px)/1.04 var(--ft);letter-spacing:-.025em;margin:26px 0 0}
+.sec-ttl span{color:rgba(255,255,255,.4)}
+.sec-ghost{position:absolute;right:-8px;top:-70px;font:500 clamp(120px,15vw,240px)/.8 var(--ft);letter-spacing:-.06em;color:var(--ghost);pointer-events:none;margin:0}
+.sec .lede{max-width:440px}
+
+/* Simulador */
+.sim-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(330px,1fr);gap:72px;margin-top:80px;align-items:start}
+form fieldset{border:0;margin:0 0 6px;padding:0 0 34px;min-width:0}
+form legend{float:left;width:100%;padding:18px 0 0;margin:0 0 22px;border-top:1px solid var(--line2);display:flex;align-items:baseline;gap:14px}
+form legend b{font:500 11px/1 var(--ft);color:rgba(255,255,255,.45);letter-spacing:.06em}
+form legend span{font:500 22px/1.2 var(--ft);letter-spacing:-.015em}
+form legend small{margin-left:auto;font:500 10px/1 var(--fb);letter-spacing:.16em;text-transform:uppercase;color:var(--mute2)}
+.fields{clear:both;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:24px 28px}
+.f{display:flex;flex-direction:column;gap:5px;min-width:0}
+.f.wide{grid-column:1/-1}
+.f label{font:500 10px/1.3 var(--fb);letter-spacing:.14em;text-transform:uppercase;color:var(--mute2);transition:color .25s}
+.f label em{font-style:normal;color:rgba(255,255,255,.4);letter-spacing:.06em}
+.f input,.f select,.f textarea{-webkit-appearance:none;appearance:none;width:100%;background:transparent;border:0;border-bottom:1px solid var(--line2);border-radius:0;
+  color:#fff;font:400 15px/1.4 var(--fb);padding:8px 0 9px;font-variant-numeric:tabular-nums;transition:border-color .25s,box-shadow .25s}
+.f input[type=number]{-moz-appearance:textfield}
+.f input::-webkit-outer-spin-button,.f input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.f select{cursor:pointer;padding-right:20px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%23aaaaaa' stroke-width='1.2'/></svg>");background-repeat:no-repeat;background-position:right 2px center}
+.f select option{background:#2f2f2f;color:#fff}
+.f textarea{resize:vertical;min-height:76px;line-height:1.6}
+.f input:hover,.f select:hover,.f textarea:hover{border-bottom-color:rgba(255,255,255,.45)}
+.f input:focus,.f select:focus,.f textarea:focus{outline:none;border-bottom-color:var(--accent);box-shadow:0 1px 0 var(--accent)}
+.f:focus-within label{color:#fff}
+.f [aria-invalid="true"]{border-bottom-color:var(--alto);box-shadow:0 1px 0 var(--alto)}
+.field-error{font-size:11.5px;line-height:1.4;color:var(--alto)}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:18px 34px;padding-top:30px;border-top:1px solid var(--line2)}
+.btn-main{display:inline-flex;align-items:center;gap:16px;background:transparent;border:1px solid rgba(255,255,255,.7);border-radius:99px;
+  padding:15px 26px 15px 30px;cursor:pointer;font:500 12px/1 var(--ft);letter-spacing:.16em;text-transform:uppercase;color:#fff;transition:background .3s,border-color .3s}
+.btn-main svg{width:16px;height:16px;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.btn-main:hover{background:var(--accent);border-color:var(--accent)}
+.btn-main:hover svg{transform:translateX(4px)}
+.btn-main:disabled{opacity:.6;cursor:progress}
+.btn-txt{display:inline-flex;align-items:center;gap:10px;background:none;border:0;padding:6px 0;cursor:pointer;
+  font:500 13px/1 var(--ft);color:rgba(255,255,255,.78);border-bottom:1px solid transparent;transition:color .25s,border-color .25s}
+.btn-txt:hover{color:#fff;border-bottom-color:var(--accent)}
+.btn-txt i{width:7px;height:7px;border-radius:50%}
+.btn-txt i.bajo{background:var(--bajo)} .btn-txt i.alto{background:var(--alto)}
+
+.result{position:sticky;top:84px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.022);padding:30px 32px 26px;min-height:540px}
+.result::before{content:"";position:absolute;left:-1px;right:-1px;top:-1px;height:2px;background:var(--bc,transparent);transition:background .4s}
+.r-top{display:flex;justify-content:space-between;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line);
+  font:500 10px/1.3 var(--fb);letter-spacing:.16em;text-transform:uppercase;color:var(--mute2)}
+.r-top code{font:inherit;color:rgba(255,255,255,.5)}
+.r-prob{font:500 clamp(84px,8.2vw,134px)/.86 var(--ft);letter-spacing:-.05em;margin:30px 0 20px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.r-prob small{font-size:.3em;letter-spacing:0;margin-left:8px;color:rgba(255,255,255,.5);position:relative;top:-1.55em}
+.r-prob.empty{color:rgba(255,255,255,.1)}
+.r-tags{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+.band{display:inline-flex;align-items:center;gap:8px;border:1px solid currentColor;border-radius:99px;padding:7px 13px 6px;font:700 10px/1 var(--fb);letter-spacing:.16em;text-transform:uppercase;white-space:nowrap}
+.band i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.band.Bajo{color:var(--bajo)} .band.Medio{color:var(--medio)} .band.Alto{color:var(--alto)}
+.r-et{font-size:13.5px;color:var(--mute2)}
+.r-et b{color:#fff;font-weight:500}
+.gauge{position:relative;height:58px;margin:44px 0 6px}
+.seg{position:absolute;top:28px;height:3px;opacity:.6}
+.seg.Bajo{background:var(--bajo)} .seg.Medio{background:var(--medio)} .seg.Alto{background:var(--alto)}
+.seg.on{opacity:1;height:5px;top:27px}
+.g-p{position:absolute;left:var(--p);top:12px;height:36px;width:2px;margin-left:-1px;background:#fff}
+.g-p::before{content:"";position:absolute;top:-6px;left:-5px;width:12px;height:12px;border-radius:50%;background:var(--bc,#fff);border:2px solid #fff;box-sizing:border-box}
+.g-u{position:absolute;left:var(--u);top:4px;bottom:0;border-left:1px dashed rgba(255,255,255,.75)}
+.g-u em{position:absolute;top:-14px;left:7px;font:500 9.5px/1 var(--fb);font-style:normal;letter-spacing:.14em;text-transform:uppercase;color:#fff;white-space:nowrap}
+.g-scale{position:relative;height:16px;font:500 10px/1 var(--fb);color:var(--mute2);font-variant-numeric:tabular-nums}
+.g-scale span{position:absolute;transform:translateX(-50%)}
+.g-scale span:first-child{transform:none}.g-scale span:last-child{transform:translateX(-100%)}
+.r-sub{margin:34px 0 4px;font:500 10px/1.3 var(--fb);letter-spacing:.16em;text-transform:uppercase;color:var(--mute2)}
+.r-fac{list-style:none;margin:0;padding:0}
+.r-fac li{display:grid;grid-template-columns:26px 16px minmax(0,1fr) auto;gap:10px;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.r-fac .fn{font:500 10.5px/1 var(--ft);color:rgba(255,255,255,.4);font-variant-numeric:tabular-nums}
+.r-fac .up{color:var(--alto)} .r-fac .dn{color:var(--bajo)}
+.r-fac .fe{font-size:11px;color:var(--mute2);text-align:right}
+.r-txt{margin:18px 0 0;font-size:13px;color:var(--mute2);min-height:1em}
+.r-txt b{color:#fff;font-weight:500}
+.r-ver{margin:14px 0 0;font:500 10px/1.4 var(--fb);letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.r-empty p{color:var(--mute);margin:0;max-width:340px}
+.r-err h3{font:500 26px/1.2 var(--ft);margin:26px 0 10px;color:var(--alto)}
+.r-err p{color:var(--mute2);margin:0}
+.result[aria-busy="true"] .r-prob{opacity:.35}
+
+/* Métricas */
+.mcards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:64px 56px;margin-top:84px}
+.mc{position:relative;border-top:1px solid var(--line2);padding-top:18px}
+.mc::before{content:"";position:absolute;left:0;top:-1px;height:1px;width:0;background:var(--accent);transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.mc:hover::before{width:100%}
+.mc h3{display:flex;justify-content:space-between;margin:0;font:500 10px/1.3 var(--fb);letter-spacing:.16em;text-transform:uppercase;color:var(--mute2)}
+.mc h3 span{color:rgba(255,255,255,.4)}
+.mc-v{font:500 clamp(54px,5.6vw,92px)/1 var(--ft);letter-spacing:-.045em;margin:24px 0 20px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mc-v small{font-size:.36em;letter-spacing:0;color:rgba(255,255,255,.5);margin-left:4px}
+.mc-s{position:relative;height:1px;background:rgba(255,255,255,.14)}
+.mc-s i{position:absolute;left:0;top:-1px;height:3px;width:var(--w);background:rgba(255,255,255,.82)}
+.mc-s b{position:absolute;top:-5px;left:var(--w);width:1px;height:11px;background:#fff}
+.mc p{margin:14px 0 0;font-size:13.5px;line-height:1.6;color:var(--mute);max-width:34ch}
+.mgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:110px 88px;margin-top:130px}
+.mb-k{font:500 10px/1.3 var(--fb);letter-spacing:.16em;text-transform:uppercase;color:var(--mute2);margin:0}
+.mb h3{font:500 clamp(24px,2.1vw,32px)/1.15 var(--ft);letter-spacing:-.02em;margin:12px 0 10px}
+.mb > p.lede{font-size:14px;max-width:460px}
+.brs{margin-top:30px}
+.br{display:grid;grid-template-columns:minmax(110px,190px) minmax(0,1fr) 68px;gap:18px;align-items:center;padding:13px 0;border-top:1px solid var(--line);transition:background .25s}
+.br:last-child{border-bottom:1px solid var(--line)}
+.br:hover{background:rgba(255,255,255,.025)}
+.br .bn{font-size:13.5px;line-height:1.35;color:#fff;display:flex;gap:10px;align-items:baseline;min-width:0}
+.br .bn small{font:500 10px/1 var(--ft);color:rgba(255,255,255,.4)}
+.br .bn em{font-style:normal;font:700 8.5px/1 var(--fb);letter-spacing:.16em;text-transform:uppercase;border:1px solid rgba(255,255,255,.5);border-radius:99px;padding:4px 7px 3px;white-space:nowrap}
+.br .tr{position:relative;height:1px;background:rgba(255,255,255,.12)}
+.br .tr i{position:absolute;left:0;top:-3px;height:7px;width:var(--w);background:rgba(255,255,255,.55);transition:background .25s}
+.br:hover .tr i{background:var(--accent)}
+.br.sel .tr i{background:#fff}
+.br .v{font:500 15px/1 var(--ft);text-align:right;font-variant-numeric:tabular-nums}
+.axis{display:grid;grid-template-columns:minmax(110px,190px) minmax(0,1fr) 68px;gap:18px;padding-top:10px}
+.axis .ax{position:relative;height:14px;font:500 9.5px/1 var(--fb);color:rgba(255,255,255,.5);font-variant-numeric:tabular-nums}
+.axis .ax span{position:absolute;transform:translateX(-50%)}
+.di{display:flex;align-items:baseline;gap:22px;flex-wrap:wrap;margin-top:26px}
+.di-v{font:500 clamp(56px,5.4vw,84px)/1 var(--ft);letter-spacing:-.045em;font-variant-numeric:tabular-nums}
+.di-ok{display:inline-flex;align-items:center;gap:8px;color:var(--bajo);font:700 10px/1 var(--fb);letter-spacing:.16em;text-transform:uppercase;border:1px solid currentColor;border-radius:99px;padding:7px 12px 6px}
+.di-ok.no{color:var(--alto)}
+.scale{position:relative;height:56px;margin:26px 0 22px}
+.scale .tk{position:absolute;top:26px;left:0;right:0;height:1px;background:rgba(255,255,255,.18)}
+.scale .zn{position:absolute;top:18px;height:17px;background:rgba(127,174,142,.16);border-left:1px solid rgba(127,174,142,.7);border-right:1px solid rgba(127,174,142,.7)}
+.scale .mk{position:absolute;top:8px;height:38px;width:2px;margin-left:-1px;background:#fff}
+.scale .mk::before{content:"";position:absolute;top:-5px;left:-4px;width:10px;height:10px;border-radius:50%;background:#fff}
+.scale .lb{position:absolute;top:44px;transform:translateX(-50%);font:500 9.5px/1 var(--fb);color:rgba(255,255,255,.55);white-space:nowrap;font-variant-numeric:tabular-nums}
+.ficha{margin:26px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:0 36px}
+.ficha div{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.ficha dt{font:500 10px/1.3 var(--fb);letter-spacing:.14em;text-transform:uppercase;color:var(--mute2)}
+.ficha dd{margin:0;font:500 14px/1.3 var(--ft);text-align:right;font-variant-numeric:tabular-nums}
+.notas{margin-top:120px;padding-top:22px;border-top:1px solid var(--line2);display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px 56px}
+.notas ol{margin:0;padding:0;list-style:none;columns:2;column-gap:56px;counter-reset:n}
+.notas li{break-inside:avoid;counter-increment:n;font-size:13px;line-height:1.6;color:var(--mute);margin:0 0 16px;padding-left:30px;position:relative}
+.notas li::before{content:counter(n,decimal-leading-zero);position:absolute;left:0;top:1px;font:500 10.5px/1.6 var(--ft);color:rgba(255,255,255,.45)}
+.loading{color:var(--mute);font-size:14px}
+
+/* Pie */
+.foot{position:relative;z-index:2;background:var(--foot);padding:90px 116px 40px 64px;overflow:hidden}
+.foot-ghost{font:600 clamp(110px,19vw,300px)/.8 var(--ft);letter-spacing:-.06em;color:var(--ghost);margin:0 0 50px;white-space:nowrap}
+.foot-ghost i{opacity:.5}
+.foot-row{display:grid;grid-template-columns:1.2fr 1fr auto;gap:22px 48px;align-items:end;padding-top:22px;border-top:1px solid var(--line);font-size:13px;color:var(--mute)}
+.foot-row b{color:#fff;font-weight:500}
+.foot-row nav{display:flex;gap:24px}
+.foot-row nav a{text-decoration:none;color:#fff;font:500 10px/1 var(--fb);letter-spacing:.2em;text-transform:uppercase;transition:color .25s}
+.foot-row nav a:hover{color:var(--accent)}
+
+/* ===== Responsive ===== */
+@media (max-width:1180px){
+  .sim-grid{grid-template-columns:1fr;gap:56px}
+  .result{position:relative;top:0;min-height:0}
+  .mcards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mgrid{grid-template-columns:1fr;gap:90px}
+  .notas{grid-template-columns:1fr}
+}
+@media (max-width:1000px) and (min-width:760px){
+  .fig{display:none}
+  .panel{width:58vw}
+}
+@media (max-width:759px){
+  :root{--barw:0px}
+  html{scroll-padding-top:52px}
+  body{padding-left:0;padding-top:52px}
+  .rail{right:0;bottom:auto;width:auto;height:52px;flex-direction:row;justify-content:flex-start;gap:6px;padding:0 6px 0 2px}
+  .rail-logo{display:block;font:600 18px/1 var(--ft);color:#fff;text-decoration:none;letter-spacing:-.02em}
+  .vtext,.share,.pager,.arrows,.scrollcue,.fig,.logo{display:none}
+  .toplinks{top:9px;right:12px;background:transparent;padding:9px 6px}
+  .menu{left:0;top:52px;width:100%;padding:48px 24px}
+  .menu a{font-size:28px}
+  .slide{flex-direction:column;min-height:calc(100svh - 52px)}
+  .panel{width:100%;margin-top:34svh;padding:34px 20px 64px}
+  .ttl{white-space:normal;font-size:32px;margin:20px 0 16px}
+  .hero .ttl{font-size:38px}
+  .ghost{left:16px;bottom:14px;font-size:76px}
+  .hero .ghost{font-size:64px}
+  .kpis dd{font-size:36px}
+  .sec{padding:84px 20px 76px}
+  .sec-head{grid-template-columns:1fr}
+  .sec-ttl{font-size:36px}
+  .sec-ghost{top:-34px;font-size:120px}
+  .sim-grid{margin-top:48px}
+  .fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 18px}
+  .result{padding:24px 18px 22px}
+  .r-prob{font-size:84px}
+  .r-fac li{grid-template-columns:22px 14px minmax(0,1fr);}
+  .r-fac .fe{grid-column:3;text-align:left;margin-top:-6px}
+  .mcards{grid-template-columns:repeat(2,minmax(0,1fr));gap:44px 22px;margin-top:56px}
+  .mc-v{font-size:44px}
+  .mc p{font-size:12.5px}
+  .mgrid{margin-top:90px}
+  .br,.axis{grid-template-columns:92px minmax(0,1fr) 52px;gap:12px}
+  .br .bn em{display:none}
+  .ficha{grid-template-columns:1fr}
+  .notas ol{columns:1}
+  .foot{padding:64px 20px 32px}
+  .foot-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body data-scene="0">
+
+<canvas id="foto" aria-hidden="true"></canvas>
+<div class="dof" aria-hidden="true"></div>
+<div class="veil" aria-hidden="true"></div>
+
+<!-- ===== Marco perimetral fijo ===== -->
+<header class="rail">
+  <button class="burger" id="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu"><span></span><span></span></button>
+  <a class="rail-logo" href="#inicio">umbral<i>.</i></a>
+  <p class="vtext">© Proyecto integrador · Riesgo de crédito</p>
+  <button class="share" id="share" type="button" aria-label="Copiar el enlace de esta página"><span id="share-t">Share</span> <b>+</b></button>
+</header>
+
+<nav class="toplinks" aria-label="Enlaces de la API">
+  <span class="dot" id="top-dot" aria-hidden="true"></span>
+  <a class="api-health" href="http://127.0.0.1:8000/health" target="_blank" rel="noopener">API</a>
+  <span aria-hidden="true">·</span>
+  <a class="api-docs" href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener">Docs</a>
+</nav>
+
+<nav class="pager" aria-label="Fases del proyecto">
+  <ol>
+    <li><button type="button" data-go="f1"><span class="nm">Definir</span>01</button></li>
+    <li><button type="button" data-go="f2"><span class="nm">Explorar</span>02</button></li>
+    <li><button type="button" data-go="f3"><span class="nm">Analizar</span>03</button></li>
+    <li><button type="button" data-go="f4"><span class="nm">Evaluar</span>04</button></li>
+    <li><button type="button" data-go="f5"><span class="nm">Desplegar</span>05</button></li>
+  </ol>
+</nav>
+
+<div class="arrows">
+  <button type="button" id="prev" aria-label="Sección anterior"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.3"><path d="M13 8H3M7 4L3 8l4 4"/></svg></button>
+  <button type="button" id="next" aria-label="Sección siguiente"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.3"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+</div>
+
+<div class="scrollcue" aria-hidden="true"><i></i><span>Scroll</span></div>
+
+<nav class="menu" id="menu" hidden aria-label="Menú principal">
+  <a href="#inicio"><small>00</small>Inicio</a>
+  <a href="#f1"><small>01</small>Fases</a>
+  <a href="#simulador"><small>06</small>Simulador</a>
+  <a href="#metricas"><small>07</small>Métricas</a>
+  <a class="api-docs" href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener"><small>↗</small>Docs de la API</a>
+  <p>Proyecto integrador · Análisis predictivo de riesgo de crédito.</p>
+</nav>
+
+<main>
+  <!-- ===== Hero ===== -->
+  <section class="slide hero" id="inicio" data-scene="0" aria-labelledby="h-hero">
+    <a class="logo" href="#inicio">umbral<i>.</i></a>
+    <div class="panel">
+      <div class="pills">
+        <span class="pill api-pill wait" id="api-status" role="status"><i></i>Verificando API…</span>
+        <span class="pill">Riesgo de crédito</span>
+      </div>
+      <h1 class="ttl" id="h-hero">Ver el impago<br>antes de que ocurra.</h1>
+      <p class="lede">Un modelo de regresión logística estima la probabilidad de que un solicitante no pague. La imagen no es una fotografía: es la cartera completa, 12.144 clientes. Los puntos cálidos son el 35,6&nbsp;% que no pagó.</p>
+      <dl class="kpis">
+        <div><dt>ROC-AUC · test</dt><dd id="k-auc">—</dd></div>
+        <div><dt>KS · separación</dt><dd id="k-ks">—</dd></div>
+      </dl>
+      <div class="links">
+        <a class="more" href="#f1">Ver más</a>
+        <a class="more sub" href="#simulador">Probar el modelo</a>
+      </div>
+      <p class="ghost" aria-hidden="true">12.144</p>
+    </div>
+    <p class="fig"><b>Fig. 00</b> — La cartera como paisaje: cada punto, un cliente.<br><span>Distribución ilustrativa con la tasa real de impago</span></p>
+  </section>
+
+  <!-- ===== Fases ===== -->
+  <section class="slide fase" id="f1" data-scene="1" aria-labelledby="h-f1">
+    <div class="panel">
+      <span class="pill">Fase 01 · Definir</span>
+      <h2 class="ttl" id="h-f1">Una sola pregunta:<br><span class="dim">¿pagará o no?</span></h2>
+      <p class="lede">Una decisión de crédito convertida en clasificación: estimar la probabilidad de impago de cada solicitante y decidir con un umbral explícito, no con intuición.</p>
+      <dl class="facts">
+        <div><dt>Variable objetivo</dt><dd>Impago (0 / 1)</dd></div>
+        <div><dt>Campos por solicitud</dt><dd>19</dd></div>
+        <div><dt>Bandas de riesgo</dt><dd>Bajo · Medio · Alto</dd></div>
+      </dl>
+      <a class="more" href="#f2">Ver más</a>
+      <p class="ghost" aria-hidden="true">01/05</p>
+    </div>
+    <p class="fig"><b>Fig. 01</b> — La población en una matriz de 132 × 92.<br><span>Abajo, en cálido, quienes no pagaron</span></p>
+  </section>
+
+  <section class="slide fase" id="f2" data-scene="2" aria-labelledby="h-f2">
+    <div class="panel">
+      <span class="pill">Fase 02 · Explorar</span>
+      <h2 class="ttl" id="h-f2">12.144 clientes,<br><span class="dim">21 columnas.</span></h2>
+      <p class="lede">Antes de modelar, mirar. Se limpiaron nulos, duplicados y edades imposibles. El impago se concentra en desempleados (62&nbsp;%), educación primaria (44&nbsp;%) y vivienda en arriendo (40&nbsp;%).</p>
+      <dl class="facts">
+        <div><dt>Tasa de impago</dt><dd>35,6&nbsp;%</dd></div>
+        <div><dt>Registros</dt><dd>12.144</dd></div>
+        <div><dt>Columnas</dt><dd>21</dd></div>
+      </dl>
+      <a class="more" href="#f3">Ver más</a>
+      <p class="ghost" aria-hidden="true">02/05</p>
+    </div>
+    <p class="fig"><b>Fig. 02</b> — Puntaje de buró: quienes pagaron, arriba; quienes no, abajo.<br><span>Distribución ilustrativa</span></p>
+  </section>
+
+  <section class="slide fase" id="f3" data-scene="3" aria-labelledby="h-f3">
+    <div class="panel">
+      <span class="pill">Fase 03 · Analizar</span>
+      <h2 class="ttl" id="h-f3">Las señales<br><span class="dim">que separan.</span></h2>
+      <p class="lede">Tres variables derivadas (monto/ingreso, cuota estimada y cuota/ingreso) se suman a las de entrada. Se comparan regresión logística, gradient boosting y un modelo de texto TF-IDF.</p>
+      <dl class="facts">
+        <div><dt>Variables de entrada</dt><dd id="f3-nvars">17</dd></div>
+        <div><dt>Variables derivadas</dt><dd id="f3-nder">3</dd></div>
+        <div><dt>Mejor ROC-AUC</dt><dd id="f3-best">—</dd></div>
+      </dl>
+      <a class="more" href="#f4">Ver más</a>
+      <p class="ghost" aria-hidden="true">03/05</p>
+    </div>
+    <p class="fig"><b>Fig. 03</b> — Relación deuda/ingreso frente a puntaje de buró.<br><span>Distribución ilustrativa</span></p>
+  </section>
+
+  <section class="slide fase" id="f4" data-scene="4" aria-labelledby="h-f4">
+    <div class="panel">
+      <span class="pill">Fase 04 · Evaluar</span>
+      <h2 class="ttl" id="h-f4">Medido en clientes<br><span class="dim">que nunca vio.</span></h2>
+      <p class="lede">El umbral se ajustó para priorizar el recall: detectar ocho de cada diez impagos a cambio de algunas falsas alarmas. La equidad por sexo se audita con la regla del 80&nbsp;%.</p>
+      <dl class="facts">
+        <div><dt>ROC-AUC</dt><dd id="f4-auc">—</dd></div>
+        <div><dt>Recall</dt><dd id="f4-recall">—</dd></div>
+        <div><dt>Umbral de decisión</dt><dd id="f4-umbral">—</dd></div>
+      </dl>
+      <a class="more" href="#metricas">Ver más</a>
+      <p class="ghost" aria-hidden="true">04/05</p>
+    </div>
+    <p class="fig"><b>Fig. 04</b> — Clientes ordenados por probabilidad predicha.<br><span>La línea discontinua es el umbral</span></p>
+  </section>
+
+  <section class="slide fase" id="f5" data-scene="5" aria-labelledby="h-f5">
+    <div class="panel">
+      <span class="pill">Fase 05 · Desplegar</span>
+      <h2 class="ttl" id="h-f5">Un cliente,<br><span class="dim">una respuesta.</span></h2>
+      <p class="lede">El modelo vive detrás de una API FastAPI. Recibe los 19 campos y devuelve probabilidad, banda, etiqueta y los factores que más pesaron.</p>
+      <dl class="facts">
+        <div><dt>Estado</dt><dd id="f5-estado">—</dd></div>
+        <div><dt>Versión</dt><dd id="f5-ver">—</dd></div>
+        <div><dt>Endpoint</dt><dd>POST /predict</dd></div>
+      </dl>
+      <a class="more" href="#simulador">Ver más</a>
+      <p class="ghost" aria-hidden="true">05/05</p>
+    </div>
+    <p class="fig"><b>Fig. 05</b> — La cartera en espiral: riesgo bajo al centro, alto en el borde.<br><span>El punto azul es la próxima solicitud</span></p>
+  </section>
+
+  <!-- ===== Simulador ===== -->
+  <section class="sec sim" id="simulador" aria-labelledby="h-sim">
+    <div class="sec-head">
+      <div>
+        <span class="pill">06 · Simulador</span>
+        <h2 class="sec-ttl" id="h-sim">Pruebe a un cliente.<br><span>La API responde en vivo.</span></h2>
+      </div>
+      <p class="lede">Ajuste los 19 campos de la solicitud o cargue uno de los dos perfiles de ejemplo. El resultado llega de <code>POST /predict</code>, con el umbral que devuelve el propio modelo.</p>
+      <p class="sec-ghost" aria-hidden="true">06</p>
+    </div>
+
+    <div class="sim-grid">
+      <form id="form-cliente" novalidate>
+        <fieldset>
+          <legend><b>01</b><span>Perfil</span><small>8 campos</small></legend>
+          <div class="fields">
+            <div class="f"><label for="edad">Edad <em>años</em></label><input id="edad" name="edad" type="number" min="18" max="80" step="1" value="35" inputmode="numeric"></div>
+            <div class="f"><label for="sexo">Sexo <em>auditoría</em></label>
+              <select id="sexo" name="sexo"><option value="F" selected>Femenino</option><option value="M">Masculino</option></select></div>
+            <div class="f"><label for="estado_civil">Estado civil</label>
+              <select id="estado_civil" name="estado_civil"><option value="Soltero">Soltero</option><option value="Casado" selected>Casado</option><option value="Union_libre">Unión libre</option><option value="Divorciado">Divorciado</option><option value="Viudo">Viudo</option></select></div>
+            <div class="f"><label for="nivel_educativo">Nivel educativo</label>
+              <select id="nivel_educativo" name="nivel_educativo"><option value="Primaria">Primaria</option><option value="Secundaria">Secundaria</option><option value="Tecnico">Técnico</option><option value="Universitario" selected>Universitario</option><option value="Posgrado">Posgrado</option></select></div>
+            <div class="f"><label for="situacion_laboral">Situación laboral</label>
+              <select id="situacion_laboral" name="situacion_laboral"><option value="Empleado" selected>Empleado</option><option value="Independiente">Independiente</option><option value="Pensionado">Pensionado</option><option value="Desempleado">Desempleado</option></select></div>
+            <div class="f"><label for="antiguedad_laboral_anios">Antigüedad <em>años</em></label><input id="antiguedad_laboral_anios" name="antiguedad_laboral_anios" type="number" min="0" max="62" step="0.1" value="4.5" inputmode="decimal"></div>
+            <div class="f"><label for="personas_a_cargo">Personas a cargo</label><input id="personas_a_cargo" name="personas_a_cargo" type="number" min="0" max="6" step="1" value="1" inputmode="numeric"></div>
+            <div class="f"><label for="tipo_vivienda">Vivienda</label>
+              <select id="tipo_vivienda" name="tipo_vivienda"><option value="Arriendo" selected>Arriendo</option><option value="Propia">Propia</option><option value="Familiar">Familiar</option></select></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><b>02</b><span>Finanzas</span><small>6 campos</small></legend>
+          <div class="fields">
+            <div class="f"><label for="ingreso_mensual">Ingreso mensual <em>COP</em></label><input id="ingreso_mensual" name="ingreso_mensual" type="number" min="300000" max="65000000" step="1000" value="4500000" inputmode="numeric"></div>
+            <div class="f"><label for="num_creditos_activos">Créditos activos</label><input id="num_creditos_activos" name="num_creditos_activos" type="number" min="0" max="8" step="1" value="2" inputmode="numeric"></div>
+            <div class="f"><label for="moras_ultimos_12m">Moras <em>12 meses</em></label><input id="moras_ultimos_12m" name="moras_ultimos_12m" type="number" min="0" max="10" step="1" value="0" inputmode="numeric"></div>
+            <div class="f"><label for="relacion_deuda_ingreso">Deuda / ingreso <em>0–1,5</em></label><input id="relacion_deuda_ingreso" name="relacion_deuda_ingreso" type="number" min="0" max="1.5" step="0.01" value="0.32" inputmode="decimal"></div>
+            <div class="f"><label for="puntaje_buro">Puntaje de buró <em>150–950</em></label><input id="puntaje_buro" name="puntaje_buro" type="number" min="150" max="950" step="1" value="720" inputmode="numeric"></div>
+            <div class="f"><label for="uso_cupo_tarjetas">Uso de cupo <em>0–1</em></label><input id="uso_cupo_tarjetas" name="uso_cupo_tarjetas" type="number" min="0" max="1" step="0.01" value="0.4" inputmode="decimal"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><b>03</b><span>Solicitud</span><small>5 campos</small></legend>
+          <div class="fields">
+            <div class="f"><label for="monto_credito">Monto <em>COP</em></label><input id="monto_credito" name="monto_credito" type="number" min="1000000" max="1050000000" step="100000" value="20000000" inputmode="numeric"></div>
+            <div class="f"><label for="plazo_meses">Plazo <em>meses</em></label>
+              <select id="plazo_meses" name="plazo_meses"><option value="6">6</option><option value="12">12</option><option value="18">18</option><option value="24">24</option><option value="36" selected>36</option><option value="48">48</option><option value="60">60</option><option value="72">72</option><option value="84">84</option></select></div>
+            <div class="f"><label for="tasa_interes_anual">Tasa <em>% E.A.</em></label><input id="tasa_interes_anual" name="tasa_interes_anual" type="number" min="10" max="42" step="0.1" value="24.5" inputmode="decimal"></div>
+            <div class="f"><label for="proposito">Propósito</label>
+              <select id="proposito" name="proposito"><option value="Libre_inversion">Libre inversión</option><option value="Vehiculo" selected>Vehículo</option><option value="Consolidacion_deuda">Consolidación de deuda</option><option value="Vivienda">Vivienda</option><option value="Negocio">Negocio</option><option value="Educacion">Educación</option></select></div>
+            <div class="f wide"><label for="texto_solicitud">Texto de la solicitud <em>2–3 frases</em></label><textarea id="texto_solicitud" name="texto_solicitud" rows="3">Necesito el crédito para comprar un carro para trabajar.</textarea></div>
+          </div>
+        </fieldset>
+
+        <div class="actions">
+          <button type="submit" class="btn-main" id="btn-predecir"><span id="btn-predecir-t">Predecir</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M2 8h12M10 4l4 4-4 4"/></svg></button>
+          <button type="button" class="btn-txt" id="btn-demo-bajo"><i class="bajo" aria-hidden="true"></i>Cliente riesgo bajo</button>
+          <button type="button" class="btn-txt" id="btn-demo-alto"><i class="alto" aria-hidden="true"></i>Cliente riesgo alto</button>
+        </div>
+      </form>
+
+      <aside class="result" id="resultado" aria-live="polite" aria-label="Resultado de la predicción">
+        <div class="r-empty">
+          <div class="r-top"><span>Probabilidad de impago</span><code>POST /predict</code></div>
+          <div class="r-prob empty">—<small>%</small></div>
+          <p>Aún no hay cliente evaluado. Ajuste los campos y presione <b>Predecir</b>, o cargue uno de los perfiles de ejemplo.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== Métricas ===== -->
+  <section class="sec met" id="metricas" aria-labelledby="h-met">
+    <div class="sec-head">
+      <div>
+        <span class="pill">07 · Métricas</span>
+        <h2 class="sec-ttl" id="h-met">Lo que el modelo sabe,<br><span>y cuánto se equivoca.</span></h2>
+      </div>
+      <p class="lede" id="met-lede">Evaluado sobre clientes que el modelo nunca vio durante el entrenamiento. Todas las cifras llegan en vivo de <code>GET /model/info</code>.</p>
+      <p class="sec-ghost" aria-hidden="true">07</p>
+    </div>
+
+    <div class="mcards" id="met-cards"><p class="loading">Cargando métricas del modelo…</p></div>
+
+    <div class="mgrid">
+      <article class="mb">
+        <p class="mb-k">Comparación · ROC-AUC en test</p>
+        <h3>Gana la regresión logística.</h3>
+        <p class="lede">Más simple, más explicable y ligeramente mejor que el gradient boosting. El modelo que solo lee el texto queda lejos.</p>
+        <div id="met-models"><p class="loading">Cargando…</p></div>
+      </article>
+      <article class="mb">
+        <p class="mb-k">Equidad · atributo <span id="eq-attr">sexo</span></p>
+        <h3>Impacto dispar</h3>
+        <p class="lede">Cociente entre las tasas de aprobación de ambos grupos. Dentro de 0,80–1,25 se cumple la regla del 80&nbsp;%.</p>
+        <div id="met-equidad"><p class="loading">Cargando…</p></div>
+      </article>
+      <article class="mb">
+        <p class="mb-k">Importancia por permutación · top 5</p>
+        <h3>Lo que más pesa</h3>
+        <p class="lede">Cuánto cae el ROC-AUC al desordenar cada variable. El buró y el endeudamiento dominan.</p>
+        <div id="met-imp"><p class="loading">Cargando…</p></div>
+      </article>
+      <article class="mb">
+        <p class="mb-k">Ficha técnica</p>
+        <h3>El modelo, en una línea</h3>
+        <p class="lede" id="ficha-lede">Entrenamiento, partición y umbral de decisión.</p>
+        <dl class="ficha" id="met-ficha"><div><dt>Estado</dt><dd>Cargando…</dd></div></dl>
+      </article>
+    </div>
+
+    <div class="notas">
+      <p class="mb-k">Limitaciones declaradas</p>
+      <ol id="met-lim"><li>Cargando…</li></ol>
+    </div>
+  </section>
+</main>
+
+<footer class="foot" id="pie">
+  <p class="foot-ghost" aria-hidden="true">umbral<i>.</i></p>
+  <div class="foot-row">
+    <p id="footer-modelo" style="margin:0"><b>Modelo v—</b> · fecha de entrenamiento no disponible</p>
+    <p style="margin:0">Proyecto integrador · Análisis predictivo de riesgo de crédito</p>
+    <nav aria-label="Pie"><a class="api-health" href="http://127.0.0.1:8000/health" target="_blank" rel="noopener">API</a><a class="api-docs" href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener">Docs</a><a href="#inicio">Arriba ↑</a></nav>
+  </div>
+</footer>
+
+<script>
+"use strict";
+// ===== Config y cliente API (adaptado de js/app.js) =====
+const API_BASE = window.API_BASE || "http://127.0.0.1:8000";
+const TIMEOUT_MS = 8000;
+const REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+class ApiError extends Error {
+  constructor(kind, message, status = null, fields = {}) { super(message); this.kind = kind; this.status = status; this.fields = fields; }
+}
+async function api(path, { method = "GET", body } = {}) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  let res;
+  try {
+    res = await fetch(API_BASE + path, { method, headers: body ? { "Content-Type": "application/json" } : undefined, body: body ? JSON.stringify(body) : undefined, signal: ctrl.signal });
+  } catch (e) {
+    throw new ApiError("red", "No se pudo conectar con la API (" + API_BASE + "). Verifique que uvicorn esté corriendo en el puerto 8000 y que el front se abra desde 127.0.0.1.");
+  } finally { clearTimeout(t); }
+  let data = null;
+  try { data = await res.json(); } catch (e) { /* sin JSON */ }
+  if (res.ok) return data;
+  if (res.status === 422) {
+    const fields = {};
+    (Array.isArray(data && data.detail) ? data.detail : []).forEach(d => {
+      const campo = Array.isArray(d.loc) ? d.loc[d.loc.length - 1] : "general";
+      fields[campo] = d.msg || "Valor inválido";
+    });
+    throw new ApiError("validacion", "Hay campos inválidos.", 422, fields);
+  }
+  const msg = (data && (typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail))) || res.statusText;
+  throw new ApiError("servidor", "Error " + res.status + ": " + msg, res.status);
+}
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const nf = (v, d = 3) => (v == null || isNaN(v)) ? "—" : Number(v).toLocaleString("es-CO", { minimumFractionDigits: d, maximumFractionDigits: d });
+const pc = (v, d = 1) => (v == null || isNaN(v)) ? "—" : nf(v * 100, d) + " %";
+const setText = (sel, txt) => { const el = $(sel); if (el) el.textContent = txt; };
+
+const ETIQUETAS = {
+  edad: "Edad", sexo: "Sexo", estado_civil: "Estado civil", nivel_educativo: "Nivel educativo",
+  situacion_laboral: "Situación laboral", antiguedad_laboral_anios: "Antigüedad laboral",
+  personas_a_cargo: "Personas a cargo", tipo_vivienda: "Tipo de vivienda", ingreso_mensual: "Ingreso mensual",
+  monto_credito: "Monto del crédito", plazo_meses: "Plazo", tasa_interes_anual: "Tasa de interés",
+  proposito: "Propósito", num_creditos_activos: "Créditos activos", moras_ultimos_12m: "Moras últimos 12 meses",
+  relacion_deuda_ingreso: "Relación deuda/ingreso", puntaje_buro: "Puntaje de buró",
+  uso_cupo_tarjetas: "Uso de cupo de tarjetas", texto_solicitud: "Texto de la solicitud",
+  ratio_monto_ingreso: "Monto / ingreso", cuota_estimada: "Cuota estimada", ratio_cuota_ingreso: "Cuota / ingreso",
+};
+const etiqueta = v => ETIQUETAS[v] || ETIQUETAS[String(v).split("__").pop()] || String(v).replace(/_/g, " ");
+const MODELOS = { LogisticRegression: "Regresión logística", HistGradientBoostingClassifier: "Gradient boosting (HGB)" };
+
+// ===== GET /health =====
+let MODEL_INFO = null;
+async function verificarSalud() {
+  const pill = $("#api-status"), dot = $("#top-dot");
+  try {
+    const h = await api("/health");
+    const ok = h.status === "ok" && h.modelo_cargado;
+    pill.className = "pill api-pill " + (ok ? "ok" : "down");
+    pill.innerHTML = "<i></i>" + (ok ? "API en línea · v" + esc(h.modelo_version) : "API sin modelo cargado");
+    dot.className = "dot " + (ok ? "ok" : "down");
+    setText("#f5-estado", ok ? "En línea" : "Sin modelo");
+    setText("#f5-ver", "v" + h.modelo_version);
+    if (ok && !MODEL_INFO) cargarModelo();
+    return ok;
+  } catch (e) {
+    pill.className = "pill api-pill down"; pill.innerHTML = "<i></i>API fuera de línea";
+    dot.className = "dot down";
+    setText("#f5-estado", "Fuera de línea");
+    return false;
+  }
+}
+
+// ===== GET /model/info =====
+const METRICAS = [
+  ["roc_auc", "ROC-AUC", "Capacidad de ordenar a buenos y malos pagadores. 0,5 es azar; 1, perfección.", v => nf(v, 3)],
+  ["ks", "KS", "Máxima distancia entre las distribuciones de quienes pagan y quienes no.", v => nf(v, 3)],
+  ["recall", "Recall", "De cada cien impagos reales, cuántos detecta el modelo.", v => nf(v * 100, 1) + "<small>%</small>"],
+  ["precision", "Precisión", "De los señalados como impago, cuántos lo eran de verdad.", v => nf(v * 100, 1) + "<small>%</small>"],
+  ["f1", "F1", "Media armónica entre precisión y recall.", v => nf(v, 3)],
+  ["brier", "Brier", "Error cuadrático de las probabilidades. Aquí, menor es mejor.", v => nf(v, 3)],
+];
+
+async function cargarModelo() {
+  try {
+    const m = await api("/model/info");
+    MODEL_INFO = m;
+    const mt = m.metricas_test || {};
+    const version = m.version || m.modelo_version || "—";
+
+    setText("#k-auc", nf(mt.roc_auc, 3));
+    setText("#k-ks", nf(mt.ks, 3));
+    setText("#f4-auc", nf(mt.roc_auc, 3));
+    setText("#f4-recall", pc(mt.recall, 1));
+    setText("#f4-umbral", nf(m.umbral_decision, 3));
+    setText("#f3-nvars", String((m.variables_entrada || []).length || 17));
+    setText("#f3-nder", String((m.variables_derivadas || []).length || 3));
+    const comp = Object.entries(m.comparacion_roc_auc_test || {}).sort((a, b) => b[1] - a[1]);
+    if (comp.length) setText("#f3-best", (comp[0][0] === "LogisticRegression" ? "Logística" : comp[0][0]) + " · " + nf(comp[0][1], 3));
+    if (window.__foto) window.__foto.setUmbral(m.umbral_decision);
+
+    // Tarjetas de métricas
+    $("#met-cards").innerHTML = METRICAS.map(([k, t, d, f], i) => {
+      const v = mt[k];
+      if (v == null) return "";
+      return `<article class="mc"><h3>${t}<span>${String.fromCharCode(97 + i)}</span></h3>
+        <div class="mc-v">${f(v)}</div>
+        <div class="mc-s" style="--w:${(Math.max(0, Math.min(1, v)) * 100).toFixed(1)}%"><i></i><b></b></div>
+        <p>${d}</p></article>`;
+    }).join("");
+    if (m.n_test) setText("#met-lede", `Evaluado sobre ${Number(m.n_test).toLocaleString("es-CO")} clientes que el modelo nunca vio durante el entrenamiento. Todas las cifras llegan en vivo de GET /model/info.`);
+
+    // Comparación de modelos (eje 0,5 → 1,0)
+    const filas = comp.map(([k, v]) => ({ n: MODELOS[k] || k, v, sel: k === m.algoritmo }));
+    if (m.metricas_nlp && m.metricas_nlp.roc_auc != null) filas.push({ n: "Solo texto (TF-IDF)", v: m.metricas_nlp.roc_auc, sel: false });
+    const w = v => (Math.max(0, (v - 0.5) / 0.5) * 100).toFixed(1) + "%";
+    $("#met-models").innerHTML = `<div class="brs">${filas.map((r, i) => `
+        <div class="br ${r.sel ? "sel" : ""}"><span class="bn"><small>0${i + 1}</small>${esc(r.n)}${r.sel ? "<em>Elegido</em>" : ""}</span>
+        <span class="tr" style="--w:${w(r.v)}"><i></i></span><span class="v">${nf(r.v, 3)}</span></div>`).join("")}</div>
+      <div class="axis"><span></span><span class="ax">${[0.5, 0.6, 0.7, 0.8, 0.9, 1].map((t, i) => `<span style="left:${i * 20}%;${i === 0 ? "transform:none" : i === 5 ? "transform:translateX(-100%)" : ""}">${nf(t, 1)}</span>`).join("")}</span><span></span></div>`;
+
+    // Equidad
+    const eq = m.equidad || {};
+    setText("#eq-attr", eq.atributo || "sexo");
+    if (eq.disparate_impact != null) {
+      const pos = v => ((Math.max(0.6, Math.min(1.4, v)) - 0.6) / 0.8 * 100).toFixed(2) + "%";
+      const tasas = Object.entries(eq.tasa_aprobacion || {});
+      const nom = { F: "Mujeres", M: "Hombres" };
+      $("#met-equidad").innerHTML = `
+        <div class="di"><span class="di-v">${nf(eq.disparate_impact, 3)}</span>
+          <span class="di-ok ${eq.regla_80 ? "" : "no"}">${eq.regla_80 ? "✓ Cumple la regla del 80&nbsp;%" : "✕ No cumple la regla del 80&nbsp;%"}</span></div>
+        <div class="scale" aria-hidden="true"><span class="tk"></span>
+          <span class="zn" style="left:${pos(0.8)};width:calc(${pos(1.25)} - ${pos(0.8)})"></span>
+          <span class="mk" style="left:${pos(eq.disparate_impact)}"></span>
+          <span class="lb" style="left:0;transform:none">0,60</span><span class="lb" style="left:${pos(0.8)}">0,80</span>
+          <span class="lb" style="left:${pos(1)}">1,00</span><span class="lb" style="left:${pos(1.25)}">1,25</span>
+          <span class="lb" style="left:100%;transform:translateX(-100%)">1,40</span></div>
+        <div class="brs">${tasas.map(([k, v]) => `<div class="br"><span class="bn">Aprobación · ${esc(nom[k] || k)}</span>
+          <span class="tr" style="--w:${(v * 100).toFixed(1)}%"><i></i></span><span class="v">${pc(v, 1)}</span></div>`).join("")}</div>`;
+    }
+
+    // Importancia (top 5)
+    const imp = Object.entries(m.importancia_permutacion || {}).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const max = imp.length ? imp[0][1] : 1;
+    $("#met-imp").innerHTML = `<div class="brs">${imp.map(([k, v], i) => `
+      <div class="br ${i === 0 ? "sel" : ""}"><span class="bn"><small>0${i + 1}</small>${esc(etiqueta(k))}</span>
+      <span class="tr" style="--w:${(Math.max(0, v) / max * 100).toFixed(1)}%"><i></i></span><span class="v">${nf(v, 4)}</span></div>`).join("")}</div>`;
+
+    // Ficha técnica
+    const bandas = Object.entries(m.bandas_riesgo || {}).map(([b, [a, z]]) => `${b} ${nf(a * 100, 0)}–${nf(z * 100, 0)}`).join(" · ");
+    const ficha = [
+      ["Algoritmo", m.algoritmo === "LogisticRegression" ? "Regresión logística" : m.algoritmo],
+      ["Versión", "v" + version],
+      ["Entrenado", m.fecha_entrenamiento],
+      ["Umbral", nf(m.umbral_decision, 4)],
+      ["Entrenamiento", Number(m.n_train).toLocaleString("es-CO") + " clientes"],
+      ["Prueba", Number(m.n_test).toLocaleString("es-CO") + " clientes"],
+      ["Impago (train)", pc(m.tasa_default_train, 1)],
+      ["Variables", `${(m.variables_entrada || []).length} + ${(m.variables_derivadas || []).length} derivadas`],
+    ];
+    $("#met-ficha").innerHTML = ficha.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("");
+    if (bandas) setText("#ficha-lede", "Bandas de riesgo (%): " + bandas + ".");
+
+    // Limitaciones
+    $("#met-lim").innerHTML = (m.limitaciones || []).map(l => `<li>${esc(l)}</li>`).join("") || "<li>Sin limitaciones declaradas.</li>";
+
+    // Pie
+    $("#footer-modelo").innerHTML = `<b>Modelo v${esc(version)}</b> · ${esc(m.algoritmo)} · entrenado el ${esc(m.fecha_entrenamiento)}`;
+  } catch (e) {
+    const msg = "Métricas no disponibles: la API no responde. Se cargarán solas cuando vuelva.";
+    $("#met-cards").innerHTML = `<p class="loading">${msg}</p>`;
+    ["#met-models", "#met-equidad", "#met-imp"].forEach(s => { $(s).innerHTML = `<p class="loading">Sin datos.</p>`; });
+    $("#met-ficha").innerHTML = `<div><dt>Estado</dt><dd>Sin conexión</dd></div>`;
+    $("#met-lim").innerHTML = `<li>${msg}</li>`;
+  }
+}
+
+// ===== POST /predict =====
+const NUMERICOS_INT = ["edad", "personas_a_cargo", "plazo_meses", "num_creditos_activos", "moras_ultimos_12m", "puntaje_buro"];
+const NUMERICOS_FLOAT = ["antiguedad_laboral_anios", "ingreso_mensual", "monto_credito", "tasa_interes_anual", "relacion_deuda_ingreso", "uso_cupo_tarjetas"];
+
+function leerFormulario(form) {
+  const o = {};
+  for (const [k, v] of new FormData(form).entries()) {
+    if (NUMERICOS_INT.includes(k)) o[k] = parseInt(v, 10);
+    else if (NUMERICOS_FLOAT.includes(k)) o[k] = parseFloat(String(v).replace(",", "."));
+    else o[k] = String(v).trim();
+  }
+  return o;
+}
+function limpiarErrores(form) {
+  form.querySelectorAll(".field-error").forEach(e => e.remove());
+  form.querySelectorAll("[aria-invalid]").forEach(e => { e.removeAttribute("aria-invalid"); e.removeAttribute("aria-describedby"); });
+}
+function pintarErrores(form, fields) {
+  Object.entries(fields).forEach(([campo, msg]) => {
+    const el = form.elements[campo];
+    if (!el) return;
+    el.setAttribute("aria-invalid", "true");
+    const p = document.createElement("div");
+    p.className = "field-error"; p.id = "err-" + campo; p.textContent = msg;
+    el.setAttribute("aria-describedby", p.id);
+    el.insertAdjacentElement("afterend", p);
+  });
+  const primero = form.querySelector("[aria-invalid='true']");
+  if (primero) primero.focus({ preventScroll: false });
+}
+
+function pintarResultado(r) {
+  const box = $("#resultado");
+  const p = Number(r.probabilidad_impago), u = Number(r.umbral), b = r.banda_riesgo;
+  const bandas = (MODEL_INFO && MODEL_INFO.bandas_riesgo) || { Bajo: [0, 0.2], Medio: [0.2, 0.5], Alto: [0.5, 1] };
+  const color = { Bajo: "var(--bajo)", Medio: "var(--medio)", Alto: "var(--alto)" }[b] || "#fff";
+  box.style.setProperty("--bc", color);
+  const segs = Object.entries(bandas).map(([k, [a, z]]) => `<i class="seg ${esc(k)} ${k === b ? "on" : ""}" style="left:${a * 100}%;width:${(z - a) * 100}%"></i>`).join("");
+  const cortes = [0, ...Object.values(bandas).map(x => x[1])];
+  const facs = (r.factores_principales || []).map((f, i) => {
+    const up = f.efecto === "aumenta_riesgo";
+    return `<li><span class="fn">${String(i + 1).padStart(2, "0")}</span><span class="${up ? "up" : "dn"}" aria-hidden="true">${up ? "▲" : "▼"}</span><span>${esc(etiqueta(f.variable))}</span><span class="fe">${up ? "aumenta el riesgo" : "reduce el riesgo"}</span></li>`;
+  }).join("");
+  box.innerHTML = `
+    <div class="r-top"><span>Probabilidad de impago</span><code>POST /predict</code></div>
+    <div class="r-prob">${nf(p * 100, 1)}<small>%</small></div>
+    <div class="r-tags"><span class="band ${esc(b)}"><i></i>Riesgo ${esc(String(b).toLowerCase())}</span>
+      <span class="r-et"><b>${esc(r.etiqueta)}</b> · predicción ${esc(r.prediccion)}</span></div>
+    <div class="gauge" style="--p:${(p * 100).toFixed(2)}%;--u:${(u * 100).toFixed(2)}%" role="img" aria-label="Probabilidad ${pc(p, 1)} frente a umbral ${pc(u, 1)}">
+      ${segs}<span class="g-u"><em>Umbral ${pc(u, 1)}</em></span><span class="g-p"></span></div>
+    <div class="g-scale" aria-hidden="true">${cortes.map(c => `<span style="left:${c * 100}%">${nf(c * 100, 0)}</span>`).join("")}</div>
+    <h3 class="r-sub">Factores principales</h3>
+    <ol class="r-fac">${facs || "<li><span></span><span></span><span>Sin factores reportados</span></li>"}</ol>
+    <p class="r-txt" id="resultado-texto"></p>
+    <p class="r-ver">Modelo v${esc(r.modelo_version)} · umbral ${nf(u, 4)}</p>`;
+}
+function pintarErrorResultado(titulo, msg) {
+  const box = $("#resultado");
+  box.style.setProperty("--bc", "var(--alto)");
+  box.innerHTML = `<div class="r-err"><div class="r-top"><span>Probabilidad de impago</span><code>POST /predict</code></div>
+    <h3>${esc(titulo)}</h3><p>${esc(msg)}</p></div>`;
+}
+
+let DEMO_SCROLL = false;
+async function predecir(ev) {
+  ev.preventDefault();
+  const form = ev.currentTarget;
+  const btn = $("#btn-predecir"), bt = $("#btn-predecir-t"), box = $("#resultado");
+  limpiarErrores(form);
+  btn.disabled = true; bt.textContent = "Calculando…"; box.setAttribute("aria-busy", "true");
+  try {
+    const cliente = leerFormulario(form);
+    const r = await api("/predict", { method: "POST", body: cliente });
+    pintarResultado(r);
+    if (cliente.texto_solicitud) {
+      api("/predict/text", { method: "POST", body: { texto: cliente.texto_solicitud } })
+        .then(t => { const el = $("#resultado-texto"); if (el) el.innerHTML = `Lectura del texto: <b>${esc(t.sentimiento)}</b> · ${pc(t.probabilidad_impago_texto, 1)} · banda ${esc(t.banda_riesgo)}`; })
+        .catch(() => {});
+    }
+  } catch (e) {
+    if (e.kind === "validacion") { pintarErrores(form, e.fields); pintarErrorResultado("Revise los campos marcados", "La API rechazó algunos valores. Cada campo indica qué corregir."); }
+    else if (e.kind === "red") pintarErrorResultado("La API no responde", e.message);
+    else pintarErrorResultado("No se pudo predecir", e.message);
+  } finally {
+    btn.disabled = false; bt.textContent = "Predecir"; box.removeAttribute("aria-busy");
+    if (DEMO_SCROLL) { DEMO_SCROLL = false; requestAnimationFrame(() => document.getElementById("simulador").scrollIntoView({ behavior: "auto", block: "start" })); }
+  }
+}
+
+const CLIENTE_BAJO = { edad: 42, sexo: "F", estado_civil: "Casado", nivel_educativo: "Posgrado", situacion_laboral: "Empleado",
+  antiguedad_laboral_anios: 12.0, personas_a_cargo: 1, tipo_vivienda: "Propia", ingreso_mensual: 9500000, monto_credito: 15000000,
+  plazo_meses: 24, tasa_interes_anual: 14.5, proposito: "Educacion", num_creditos_activos: 1, moras_ultimos_12m: 0,
+  relacion_deuda_ingreso: 0.18, puntaje_buro: 870, uso_cupo_tarjetas: 0.12,
+  texto_solicitud: "Solicito el credito para financiar una maestria. Tengo un empleo estable desde hace varios anios y he cumplido puntualmente con todas mis obligaciones anteriores." };
+const CLIENTE_ALTO = { edad: 24, sexo: "M", estado_civil: "Soltero", nivel_educativo: "Primaria", situacion_laboral: "Desempleado",
+  antiguedad_laboral_anios: 0.0, personas_a_cargo: 3, tipo_vivienda: "Arriendo", ingreso_mensual: 1100000, monto_credito: 35000000,
+  plazo_meses: 72, tasa_interes_anual: 38.5, proposito: "Consolidacion_deuda", num_creditos_activos: 5, moras_ultimos_12m: 4,
+  relacion_deuda_ingreso: 1.25, puntaje_buro: 380, uso_cupo_tarjetas: 0.95,
+  texto_solicitud: "Necesito consolidar varias tarjetas de credito porque me atrase en los pagos tras perder el empleo. Tengo deudas acumuladas y dificultades para cubrir la cuota." };
+function llenarFormulario(form, datos) { Object.entries(datos).forEach(([k, v]) => { if (form.elements[k]) form.elements[k].value = v; }); }
+
+// ===== La fotografía de datos: 12.144 clientes en un canvas =====
+(function foto() {
+  const cv = document.getElementById("foto");
+  const ctx = cv.getContext("2d");
+  if (!ctx) return;
+  const N = 12144, COLS = 132, ROWS = 92;          // 132 × 92 = 12.144
+  let seed = 20261009;
+  const rnd = () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296);
+  const gauss = () => { let u = 0; while (!u) u = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.2831853 * rnd()); };
+  const terr = (c, r, t) => Math.sin(c * 0.075 + t * 0.6) * 0.5 + Math.sin(r * 0.11 - t * 0.9 + c * 0.03) * 0.6 + Math.sin((c + r) * 0.045 + 1.3) * 0.4;
+
+  const def = new Uint8Array(N), buro = new Float32Array(N), dti = new Float32Array(N), prob = new Float32Array(N), z = new Float32Array(N), jit = new Float32Array(N);
+  const sc = new Float32Array(N);
+  for (let i = 0; i < N; i++) sc[i] = terr(i % COLS, (i / COLS) | 0, 0) + gauss() * 0.55;
+  const thr = Float32Array.from(sc).sort()[Math.round(N * (1 - 0.356))];
+  for (let i = 0; i < N; i++) {
+    const d = def[i] = sc[i] >= thr ? 1 : 0;
+    buro[i] = Math.min(950, Math.max(150, d ? 560 + gauss() * 110 : 705 + gauss() * 95));
+    dti[i] = Math.min(1.5, Math.max(0, d ? 0.58 + gauss() * 0.24 : 0.30 + gauss() * 0.15));
+    const lg = -0.6 + 2.2 * (dti[i] - 0.4) - 0.012 * (buro[i] - 650) + gauss() * 0.8;
+    prob[i] = 1 / (1 + Math.exp(-lg));
+    z[i] = rnd(); jit[i] = Math.max(-2.6, Math.min(2.6, gauss()));
+  }
+  const idx = Array.from({ length: N }, (_, i) => i);
+  const rankDef = new Uint32Array(N), rankProb = new Uint32Array(N);
+  idx.slice().sort((a, b) => def[a] - def[b] || a - b).forEach((i, k) => { rankDef[i] = k; });
+  idx.slice().sort((a, b) => prob[a] - prob[b]).forEach((i, k) => { rankProb[i] = k; });
+  let nDef = 0; for (let i = 0; i < N; i++) nDef += def[i];
+  const nNon = N - nDef;
+  const BINS = 80, bin = new Uint16Array(N), stk = new Uint16Array(N);
+  const cnt = [new Uint16Array(BINS), new Uint16Array(BINS)];
+  for (let i = 0; i < N; i++) { const b = Math.min(BINS - 1, ((buro[i] - 150) / 10) | 0); bin[i] = b; stk[i] = cnt[def[i]][b]++; }
+  let maxNon = 0, maxDef = 0; for (let b = 0; b < BINS; b++) { maxNon = Math.max(maxNon, cnt[0][b]); maxDef = Math.max(maxDef, cnt[1][b]); }
+  let n20 = 0, n50 = 0; for (let i = 0; i < N; i++) { if (prob[i] < 0.2) n20++; if (prob[i] < 0.5) n50++; }
+
+  const px = new Float32Array(N), py = new Float32Array(N), ps = new Float32Array(N), pa = new Float32Array(N);
+  const tx = new Float32Array(N), ty = new Float32Array(N), ts = new Float32Array(N), ta = new Float32Array(N);
+  let W = 0, H = 0, DPR = 1, scene = 0, prog = 1, raf = 0, active = true, umbral = 0.4396, labels = [];
+  const NONC = "#C3CBBF", DEFC = "#E0956F", WARM = "rgba(224,149,111,.95)";
+
+  const area = () => W < 760
+    ? { x: 22, y: 70, w: W - 44, h: Math.max(140, H * 0.34 - 34), mob: true }
+    : { x: W * 0.475, y: H * 0.17, w: W * 0.42, h: H * 0.62, mob: false };
+  const T = (x, y, s, a, c) => labels.push({ k: "t", x, y, s, a, c });
+  const Ln = (x1, y1, x2, y2, d, c) => labels.push({ k: "l", x1, y1, x2, y2, d, c });
+  const Ci = (x, y, r, d, c) => labels.push({ k: "c", x, y, r, d, c });
+  const Dt = (x, y, r, c) => labels.push({ k: "dot", x, y, r, c });
+  const f2 = v => v.toFixed(2).replace(".", ",");
+
+  function targets(t) {
+    const a = area(), m = a.mob; labels = [];
+    if (scene === 0) {
+      const cx = m ? W * 0.5 : W * 0.64, hor = m ? H * 0.085 + 40 : H * 0.24, sy = m ? H * 0.28 : H * 0.95, sx = m ? W * 0.9 : W * 0.55;
+      for (let i = 0; i < N; i++) {
+        const c = i % COLS, r = (i / COLS) | 0, d = 1 + (1 - r / (ROWS - 1)) * 6.5;
+        const y = terr(c, r, t) * 0.22;
+        tx[i] = cx + ((c / (COLS - 1) - 0.5) * 3.2) / d * sx;
+        ty[i] = hor + (0.55 - y) / d * sy;
+        ts[i] = Math.max(0.6, (m ? 2.2 : 3.4) / d);
+        ta[i] = Math.min(1, 0.1 + 1.05 / d) * (def[i] ? 1 : 0.68);
+      }
+    } else if (scene === 1) {
+      const step = Math.min(a.w / (COLS - 1), a.h / (ROWS - 1)), gw = step * (COLS - 1), gh = step * (ROWS - 1);
+      const ox = a.x + (a.w - gw) / 2, oy = a.y + (a.h - gh) / 2, sz = Math.max(1, Math.min(2.4, step * 0.46));
+      for (let i = 0; i < N; i++) {
+        const k = rankDef[i];
+        tx[i] = ox + (k % COLS) * step; ty[i] = oy + ((k / COLS) | 0) * step;
+        ts[i] = sz; ta[i] = def[i] ? 0.95 : 0.36 + z[i] * 0.22;
+      }
+      const by = oy + (Math.floor(nNon / COLS) + 0.5) * step;
+      T(ox, oy - 16, "12.144 CLIENTES · 132 × 92");
+      T(ox + gw, oy - 16, "64,4 % PAGÓ", "right");
+      Ln(ox - 18, by, ox - 6, by);
+      T(ox + gw, oy + gh + 18, "35,6 % NO PAGÓ", "right", WARM);
+    } else if (scene === 2) {
+      const kpr = m ? 2 : 3, colW = a.w / BINS, base = a.y + a.h * 0.58;
+      const dy = Math.min((a.h * 0.56) / Math.ceil(maxNon / kpr), (a.h * 0.4) / Math.ceil(maxDef / kpr));
+      for (let i = 0; i < N; i++) {
+        const j = stk[i], row = ((j / kpr) | 0) + 1;
+        tx[i] = a.x + bin[i] * colW + ((j % kpr) + 0.5) * (colW / kpr);
+        ty[i] = def[i] ? base + row * dy : base - row * dy;
+        ts[i] = m ? 1.1 : 1.6; ta[i] = def[i] ? 0.92 : 0.55 + z[i] * 0.15;
+      }
+      Ln(a.x - 8, base, a.x + a.w + 8, base, null, "rgba(255,255,255,.4)");
+      T(a.x, a.y - 8, "PAGARON ↑");
+      T(a.x, a.y + a.h + 14, "NO PAGARON ↓", "left", WARM);
+      [300, 500, 700, 900].forEach(v => { const x = a.x + ((v - 150) / 10) * colW; Ln(x, base - 4, x, base + 4, null, "rgba(255,255,255,.6)"); if (v > 300 || !m) T(x, a.y + a.h + 34, String(v), "center"); });
+      T(a.x + a.w, a.y + a.h + 14, "PUNTAJE DE BURÓ →", "right");
+    } else if (scene === 3) {
+      for (let i = 0; i < N; i++) {
+        tx[i] = a.x + (dti[i] / 1.5) * a.w + jit[i] * 0.8;
+        ty[i] = a.y + a.h - ((buro[i] - 150) / 800) * a.h;
+        ts[i] = m ? 1 : 1.5; ta[i] = def[i] ? 0.85 : 0.42 + z[i] * 0.2;
+      }
+      Ln(a.x, a.y, a.x, a.y + a.h, null, "rgba(255,255,255,.35)");
+      Ln(a.x, a.y + a.h, a.x + a.w, a.y + a.h, null, "rgba(255,255,255,.35)");
+      T(a.x + 10, a.y + 2, "PUNTAJE DE BURÓ ↑");
+      T(a.x - 8, a.y + 2, "950", "right"); T(a.x - 8, a.y + a.h, "150", "right");
+      [0, 0.5, 1].forEach(v => T(a.x + (v / 1.5) * a.w, a.y + a.h + 18, f2(v).replace(",00", ""), v === 0 ? "left" : "center"));
+      T(a.x + a.w, a.y + a.h + 18, "DEUDA / INGRESO →", "right");
+    } else if (scene === 4) {
+      const yN = a.y + a.h * 0.3, yD = a.y + a.h * 0.74, sp = a.h * 0.07;
+      for (let i = 0; i < N; i++) {
+        tx[i] = a.x + prob[i] * a.w;
+        ty[i] = (def[i] ? yD : yN) + jit[i] * sp;
+        ts[i] = m ? 1 : 1.5; ta[i] = def[i] ? 0.9 : 0.45 + z[i] * 0.2;
+      }
+      const ux = a.x + umbral * a.w;
+      Ln(ux, a.y - 6, ux, a.y + a.h + 6, [4, 4], "rgba(255,255,255,.85)");
+      T(ux + 8, a.y - 2, "UMBRAL " + f2(umbral));
+      T(a.x, yN - sp * 3 - 8, "PAGARON");
+      T(a.x, yD - sp * 3 - 8, "NO PAGARON", "left", WARM);
+      Ln(a.x, a.y + a.h + 6, a.x + a.w, a.y + a.h + 6, null, "rgba(255,255,255,.3)");
+      T(a.x, a.y + a.h + 22, "0"); T(a.x + a.w * 0.5, a.y + a.h + 22, "0,5", "center");
+      T(a.x + a.w, a.y + a.h + 22, "PROBABILIDAD PREDICHA · 1", "right");
+    } else {
+      const cx = a.x + a.w / 2, cy = a.y + a.h / 2, R = Math.min(a.w, a.h) * 0.5;
+      for (let i = 0; i < N; i++) {
+        const k = rankProb[i], r = R * Math.sqrt((k + 0.5) / N), th = k * 2.399963;
+        tx[i] = cx + Math.cos(th) * r; ty[i] = cy + Math.sin(th) * r;
+        ts[i] = m ? 1 : 1.45; ta[i] = def[i] ? 0.9 : 0.42 + z[i] * 0.22;
+      }
+      const r20 = R * Math.sqrt(n20 / N), r50 = R * Math.sqrt(n50 / N);
+      Ci(cx, cy, r20, [2, 4], "rgba(255,255,255,.45)"); Ci(cx, cy, r50, [2, 4], "rgba(255,255,255,.45)");
+      Ci(cx, cy, R + 8, null, "rgba(255,255,255,.18)");
+      T(cx + r20 + 8, cy - 10, "BAJO"); T(cx + r50 + 8, cy - 10, "MEDIO"); T(cx + R + 16, cy - 10, "ALTO", "left", WARM);
+      Ci(cx, cy, 12, null, "rgba(80,92,253,.9)"); Dt(cx, cy, 4.5, "#505CFD");
+    }
+  }
+
+  function draw() {
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    for (let g = 0; g < 2; g++) {
+      ctx.fillStyle = g ? DEFC : NONC;
+      for (let i = 0; i < N; i++) {
+        if (def[i] !== g) continue;
+        const x = px[i], y = py[i], s = ps[i];
+        if (x < -6 || y < -6 || x > W + 6 || y > H + 6) continue;
+        ctx.globalAlpha = pa[i];
+        if (s > 2.3) { ctx.beginPath(); ctx.arc(x, y, s / 2, 0, 6.2832); ctx.fill(); }
+        else ctx.fillRect(x - s / 2, y - s / 2, s, s);
+      }
+    }
+    ctx.globalAlpha = 1;
+    const al = Math.max(0, (prog - 0.55) / 0.45);
+    if (al > 0 && labels.length) {
+      ctx.save(); ctx.globalAlpha = al;
+      ctx.font = "500 10px Rubik, 'Segoe UI', system-ui, sans-serif";
+      if ("letterSpacing" in ctx) ctx.letterSpacing = "1.6px";
+      ctx.textBaseline = "middle"; ctx.lineWidth = 1;
+      for (const L of labels) {
+        if (L.k === "t") { ctx.fillStyle = L.c || "rgba(255,255,255,.66)"; ctx.textAlign = L.a || "left"; ctx.fillText(L.s, L.x, L.y); }
+        else if (L.k === "l") { ctx.strokeStyle = L.c || "rgba(255,255,255,.3)"; ctx.setLineDash(L.d || []); ctx.beginPath(); ctx.moveTo(L.x1, L.y1); ctx.lineTo(L.x2, L.y2); ctx.stroke(); }
+        else if (L.k === "c") { ctx.strokeStyle = L.c || "rgba(255,255,255,.3)"; ctx.setLineDash(L.d || []); ctx.beginPath(); ctx.arc(L.x, L.y, L.r, 0, 6.2832); ctx.stroke(); }
+        else if (L.k === "dot") { ctx.fillStyle = L.c; ctx.beginPath(); ctx.arc(L.x, L.y, L.r, 0, 6.2832); ctx.fill(); }
+      }
+      ctx.setLineDash([]); ctx.restore();
+    }
+  }
+
+  function snap() { px.set(tx); py.set(ty); ps.set(ts); pa.set(ta); prog = 1; }
+  function tick(now) {
+    raf = 0;
+    if (!active) return;
+    if (scene === 0) targets(now * 0.00018);
+    let moving = false;
+    for (let i = 0; i < N; i++) {
+      const k = 0.05 + (i % 9) * 0.004;
+      const dx = tx[i] - px[i], dy = ty[i] - py[i];
+      if (!moving && dx * dx + dy * dy > 0.05) moving = true;
+      px[i] += dx * k; py[i] += dy * k; ps[i] += (ts[i] - ps[i]) * k; pa[i] += (ta[i] - pa[i]) * k;
+    }
+    prog += (1 - prog) * 0.05;
+    draw();
+    if (moving || prog < 0.995 || scene === 0) raf = requestAnimationFrame(tick);
+  }
+  function kick() {
+    if (REDUCE) { snap(); draw(); return; }
+    if (!raf && active) raf = requestAnimationFrame(tick);
+  }
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight; DPR = Math.min(window.devicePixelRatio || 1, 1.6);
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    targets(0);
+    if (REDUCE) { snap(); draw(); } else { draw(); kick(); }
+  }
+
+  resize();
+  if (!REDUCE) {   // entrada: los clientes se condensan desde la niebla
+    for (let i = 0; i < N; i++) { px[i] = W * 0.64 + gauss() * W * 0.35; py[i] = H * 0.5 + gauss() * H * 0.4; pa[i] = 0; ps[i] = 1; }
+    prog = 0; kick();
+  }
+  let rt = 0;
+  window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(resize, 140); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (REDUCE || !raf) draw(); });
+
+  window.__foto = {
+    setScene(n) { if (n === scene) return; scene = n; prog = REDUCE ? 1 : 0; targets(0); document.body.dataset.scene = String(n); kick(); },
+    setUmbral(u) { if (typeof u === "number") { umbral = u; targets(0); if (REDUCE || !raf) { if (REDUCE) snap(); draw(); } } },
+    setActive(v) { if (v === active) return; active = v; if (v) kick(); },
+  };
+})();
+
+// ===== Marco: paginación, flechas, menú, compartir =====
+(function marco() {
+  const slides = Array.from(document.querySelectorAll(".slide"));
+  const pagerBtns = Array.from(document.querySelectorAll(".pager button"));
+  const stops = Array.from(document.querySelectorAll("main > section, footer"));
+  const go = (el) => el && el.scrollIntoView({ behavior: REDUCE ? "auto" : "smooth", block: "start" });
+
+  function setPager(n) { pagerBtns.forEach((b, i) => { const on = i + 1 === n; b.classList.toggle("on", on); if (on) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); }); }
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      const n = Number(e.target.dataset.scene) || 0;
+      if (window.__foto) window.__foto.setScene(n);
+      setPager(n);
+    }), { rootMargin: "-49% 0px -49% 0px", threshold: 0 });
+    slides.forEach(s => io.observe(s));
+  }
+  pagerBtns.forEach(b => b.addEventListener("click", () => go(document.getElementById(b.dataset.go))));
+
+  function actual() {
+    let k = 0;
+    stops.forEach((s, i) => { if (s.getBoundingClientRect().top <= 8) k = i; });
+    return k;
+  }
+  $("#next").addEventListener("click", () => { const k = actual(); go(stops[Math.min(stops.length - 1, k + 1)]); });
+  $("#prev").addEventListener("click", () => {
+    const k = actual(), top = stops[k].getBoundingClientRect().top;
+    go(top < -12 ? stops[k] : stops[Math.max(0, k - 1)]);
+  });
+
+  const f5 = document.getElementById("f5");
+  function onScroll() {
+    const past = f5.getBoundingClientRect().bottom < 2;
+    document.body.classList.toggle("past", past);
+    if (window.__foto) window.__foto.setActive(!past);
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  const burger = $("#burger"), menu = $("#menu");
+  const cerrar = () => { menu.hidden = true; burger.setAttribute("aria-expanded", "false"); burger.setAttribute("aria-label", "Abrir menú"); };
+  burger.addEventListener("click", () => {
+    const abrir = menu.hidden;
+    menu.hidden = !abrir; burger.setAttribute("aria-expanded", String(abrir)); burger.setAttribute("aria-label", abrir ? "Cerrar menú" : "Abrir menú");
+    if (abrir) { const a = menu.querySelector("a"); if (a) a.focus(); }
+  });
+  menu.addEventListener("click", e => { if (e.target.closest("a")) cerrar(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !menu.hidden) { cerrar(); burger.focus(); } });
+
+  $("#share").addEventListener("click", () => {
+    const t = $("#share-t");
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(location.href.split("?")[0]).then(() => { t.textContent = "Copiado"; setTimeout(() => { t.textContent = "Share"; }, 1600); }).catch(() => {});
+      }
+    } catch (e) { /* sin portapapeles */ }
+  });
+})();
+
+// ===== Arranque =====
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("a.api-docs").forEach(a => { a.href = API_BASE + "/docs"; });
+  document.querySelectorAll("a.api-health").forEach(a => { a.href = API_BASE + "/health"; });
+  verificarSalud();
+  cargarModelo();
+  setInterval(verificarSalud, 15000);
+
+  const form = $("#form-cliente");
+  form.addEventListener("submit", predecir);
+  $("#btn-demo-bajo").addEventListener("click", () => { llenarFormulario(form, CLIENTE_BAJO); form.requestSubmit(); });
+  $("#btn-demo-alto").addEventListener("click", () => { llenarFormulario(form, CLIENTE_ALTO); form.requestSubmit(); });
+
+  const demo = new URLSearchParams(location.search).get("demo");
+  if (demo === "alto" || demo === "bajo") {
+    llenarFormulario(form, demo === "alto" ? CLIENTE_ALTO : CLIENTE_BAJO);
+    DEMO_SCROLL = true;
+    document.getElementById("simulador").scrollIntoView({ behavior: "auto", block: "start" });
+    form.requestSubmit();
+  }
+});
+</script>
+</body>
+</html>

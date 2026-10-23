@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Riesgo de impago</title>
+<meta name="description" content="Análisis predictivo de riesgo de crédito: simulador en vivo y métricas reales del modelo.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg0:#212331; --bg1:#2C2C4C; --bg2:#5749AA;
+  --m1:#CB66FE; --m2:#9C5BEF; --m3:#6B44BD; --lav:#F1D6F5;
+  --v1:#482195; --v2:#6E67E2;
+  --txt:#fff; --mut:rgb(255 255 255 / .72); --dim:rgb(255 255 255 / .66);
+  --line:rgb(255 255 255 / .12); --line2:rgb(255 255 255 / .3);
+  --btn:#0B0B10;
+  --ok:#5BE3A6; --warn:#FFC266; --bad:#FF7A95;
+  --font:"Montserrat","Poppins",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4vw,56px);
+  --max:1240px;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --shape-a:radial-gradient(circle at 15% 85%,#F1D6F5 0%,transparent 55%),
+            radial-gradient(circle at 90% 10%,rgb(255 255 255 / .35) 0%,transparent 35%),
+            linear-gradient(225deg,#CB66FE 0%,#9C5BEF 50%,#6B44BD 100%);
+  --shape-b:radial-gradient(circle at 25% 20%,rgb(255 255 255 / .22) 0%,transparent 45%),
+            linear-gradient(160deg,#482195 0%,#6E67E2 100%);
+}
+*,*::before,*::after{box-sizing:border-box}
+*{margin:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font);font-size:15px;line-height:1.6;color:var(--txt);
+  background:#212331;overflow-x:clip;-webkit-font-smoothing:antialiased;
+  font-feature-settings:"tnum" 1;
+}
+body{position:relative}
+body::before{content:"";position:absolute;inset:0;z-index:-2;
+  background:radial-gradient(1100px 900px at 100% 22%,rgb(87 73 170 / .55),transparent 70%),
+             radial-gradient(900px 800px at 0% 40%,rgb(72 33 149 / .4),transparent 70%),
+             radial-gradient(1200px 900px at 100% 68%,rgb(87 73 170 / .5),transparent 70%),
+             radial-gradient(1000px 800px at 10% 96%,rgb(107 68 189 / .4),transparent 70%),
+             linear-gradient(180deg,#212331 0%,#2C2C4C 45%,#2B2950 100%)}
+body::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.08;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+a{color:inherit}
+img,svg{display:block;max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--lav);outline-offset:3px;border-radius:6px}
+.wrap{width:min(var(--max),100% - 2*var(--pad));margin-inline:auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ===== Nav ===== */
+.nav{position:sticky;top:0;z-index:50;transition:background .3s,border-color .3s,backdrop-filter .3s;border-bottom:1px solid transparent}
+.nav.scrolled{background:rgb(27 27 44 / .62);backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);border-bottom-color:var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:32px;height:72px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;font-size:16px;letter-spacing:-.01em}
+.brand i{width:22px;height:22px;border-radius:28%;background:var(--shape-a);box-shadow:0 0 18px rgb(203 102 254 / .6)}
+.brand em{font-style:normal;color:var(--mut);font-weight:500}
+.links{display:flex;gap:28px;margin-left:auto}
+.links a{font-size:13.5px;text-decoration:none;color:rgb(255 255 255 / .8);position:relative;padding:6px 0;transition:color .2s}
+.links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--lav);transform:scaleX(0);transform-origin:right;transition:transform .35s var(--ease)}
+.links a:hover{color:#fff}
+.links a:hover::after{transform:scaleX(1);transform-origin:left}
+.lang{background:none;border:1px solid transparent;border-radius:8px;padding:6px 8px;font-size:13px;color:rgb(255 255 255 / .8);cursor:pointer;letter-spacing:.04em}
+.lang:hover{border-color:var(--line)}
+
+/* ===== Botones ===== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:52px;padding:0 26px;border-radius:12px;
+  background:var(--btn);color:#fff;font-weight:600;font-size:14px;text-decoration:none;cursor:pointer;
+  border:1px solid rgb(255 255 255 / .2);box-shadow:inset 0 1px 0 rgb(255 255 255 / .08),0 14px 30px -14px rgb(0 0 0 / .8);
+  transition:transform .25s var(--ease),border-color .25s,box-shadow .25s}
+.btn:hover{transform:translateY(-2px);border-color:rgb(255 255 255 / .5);box-shadow:inset 0 1px 0 rgb(255 255 255 / .1),0 0 0 5px rgb(203 102 254 / .14),0 20px 40px -16px rgb(203 102 254 / .6)}
+.btn:active{transform:translateY(0)}
+.btn[disabled]{opacity:.7;cursor:progress}
+.btn .arr{transition:transform .25s var(--ease)}
+.btn:hover .arr{transform:translateX(3px)}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;height:52px;padding:0 20px;border-radius:12px;background:rgb(255 255 255 / .04);
+  border:1px solid var(--line);color:#fff;font-weight:600;font-size:14px;text-decoration:none;cursor:pointer;transition:background .25s,border-color .25s,transform .25s var(--ease)}
+.btn-ghost:hover{background:rgb(255 255 255 / .09);border-color:var(--line2);transform:translateY(-2px)}
+.btn-ghost .dot{width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 10px currentColor}
+
+/* ===== Píldora firma ===== */
+.pill{display:inline-flex;align-items:center;border:1px solid var(--line2);border-radius:999px;padding:.2em .78em .26em;
+  overflow:hidden;white-space:nowrap;vertical-align:baseline;transition:width .55s var(--ease);
+  background:linear-gradient(90deg,rgb(255 255 255 / .05),rgb(203 102 254 / .08))}
+.pill-word{flex:none;display:block;transition:transform .45s var(--ease),opacity .35s}
+.pill-word.out{transform:translateY(-120%);opacity:0}
+.pill-word.pre{transform:translateY(120%);opacity:0;transition:none}
+
+.api-pill{display:inline-flex;align-items:center;gap:10px;height:34px;padding:0 14px 0 12px;border-radius:999px;font-size:12.5px;font-weight:500;
+  border:1px solid var(--line);background:rgb(11 11 16 / .35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:rgb(255 255 255 / .86)}
+.api-pill i{width:8px;height:8px;border-radius:50%;background:#bbb;position:relative}
+.api-pill.ok i{background:var(--ok);box-shadow:0 0 0 0 rgb(91 227 166 / .6);animation:ping 2.2s infinite}
+.api-pill.down i{background:var(--bad)}
+.api-pill.wait i{background:var(--warn)}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgb(91 227 166 / .55)}80%,100%{box-shadow:0 0 0 9px rgb(91 227 166 / 0)}}
+
+/* ===== Hero ===== */
+.hero{position:relative;padding:clamp(28px,6vh,72px) 0 clamp(64px,10vh,120px);isolation:isolate;overflow-x:clip}
+.hero::before{content:"";position:absolute;inset:-72px 0 0;z-index:-1;pointer-events:none;
+  background:linear-gradient(135deg,#212331 0%,#2C2C4C 45%,#5749AA 100%);
+  -webkit-mask-image:linear-gradient(180deg,#000 70%,transparent);mask-image:linear-gradient(180deg,#000 70%,transparent)}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:64px;align-items:center;min-height:min(calc(100vh - 72px),820px)}
+.eyebrow{display:inline-flex;align-items:center;gap:12px;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--mut)}
+.eyebrow::before{content:"";width:28px;height:1px;background:currentColor}
+.hero h1{margin-top:28px;font-weight:600;font-size:clamp(40px,5.2vw,80px);line-height:1.1;letter-spacing:-.028em}
+.hero h1 .ln{display:block}
+.hero .pill-row{margin-top:22px;font-size:clamp(20px,2.3vw,32px);font-weight:600;letter-spacing:-.01em}
+.lead{margin-top:26px;max-width:520px;color:var(--mut);font-size:15.5px;line-height:1.7}
+.lead a{color:#D9B8FF;text-decoration-color:rgb(217 184 255 / .4);text-underline-offset:3px}
+.lead a:hover{text-decoration-color:currentColor}
+.cta{margin-top:34px;display:flex;flex-wrap:wrap;gap:12px}
+.facts{margin-top:48px;display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--line);padding-top:22px;max-width:560px}
+.facts div{padding-right:28px;margin-right:28px;border-right:1px solid var(--line)}
+.facts div:last-child{border:0;margin:0;padding:0}
+.facts b{display:block;font-size:22px;font-weight:600;letter-spacing:-.02em}
+.facts span{font-size:12px;color:var(--dim)}
+
+.art{display:grid;grid-template-columns:1fr 1fr;gap:18px;width:min(100%,520px);justify-self:end;--mx:0;--my:0}
+.cell{position:relative;aspect-ratio:1;transform:translate(calc(var(--mx) * var(--d,6) * 1px),calc(var(--my) * var(--d,6) * 1px));transition:transform .6s var(--ease)}
+.sq{border-radius:28%;overflow:hidden;isolation:isolate}
+.sq-a{background:var(--shape-a);--d:10;box-shadow:inset 0 1px 0 rgb(255 255 255 / .55),inset 0 30px 60px rgb(255 255 255 / .12),0 40px 80px -30px rgb(203 102 254 / .7)}
+.sq-b{background:var(--shape-b);--d:14;box-shadow:inset 0 1px 0 rgb(255 255 255 / .35),inset 0 -30px 60px rgb(72 33 149 / .5),0 40px 80px -30px rgb(110 103 226 / .7)}
+.sq::after{content:"";position:absolute;width:75%;height:75%;left:35%;top:-15%;border-radius:50%;z-index:-1;
+  background:radial-gradient(circle,rgb(241 214 245 / .75) 0%,transparent 62%);filter:blur(6px);opacity:.55}
+.sq-b::after{left:-20%;top:45%;background:radial-gradient(circle,rgb(203 102 254 / .7) 0%,transparent 62%)}
+.chip{position:absolute;left:12%;bottom:12%;padding:10px 14px;border-radius:14px;background:rgb(11 11 16 / .42);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgb(255 255 255 / .18);line-height:1.2}
+.chip b{display:block;font-size:clamp(16px,1.7vw,22px);font-weight:600;letter-spacing:-.02em}
+.chip span{font-size:11px;color:rgb(255 255 255 / .82)}
+.sq-a .chip{left:auto;right:12%}
+
+.orb{border-radius:50%;--d:4;
+  background:radial-gradient(circle at 50% 30%,#7A70EC 0%,#4A36A6 42%,#26214A 82%);
+  box-shadow:0 0 0 1.5px rgb(241 214 245 / .62),0 0 0 9px rgb(241 214 245 / .05),0 0 60px 6px rgb(203 102 254 / .38),inset 0 0 36px rgb(241 214 245 / .2)}
+.orb.b{--d:8;background:radial-gradient(circle at 50% 70%,#7A70EC 0%,#4A36A6 42%,#26214A 82%)}
+.orb svg{position:absolute;inset:5%;width:90%;height:90%;overflow:visible}
+.track{fill:none;stroke:rgb(255 255 255 / .12);stroke-width:5}
+.ticks{fill:none;stroke:rgb(255 255 255 / .22);stroke-width:7;stroke-dasharray:.25 .75}
+.arc{fill:none;stroke:url(#gRing);stroke-width:6;stroke-linecap:round;stroke-dasharray:100 100;stroke-dashoffset:100;
+  transition:stroke-dashoffset 1.6s var(--ease);filter:drop-shadow(0 0 5px rgb(241 214 245 / .75))}
+.orb-txt{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:4px}
+.orb-txt b{font-size:clamp(26px,3.1vw,44px);font-weight:600;letter-spacing:-.03em;line-height:1}
+.orb-txt span{font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:rgb(255 255 255 / .8)}
+
+/* ===== Secciones ===== */
+.sec{position:relative;padding:clamp(72px,11vw,140px) 0;scroll-margin-top:56px;isolation:isolate;overflow-x:clip}
+#simulador{scroll-margin-top:calc(72px - clamp(72px,11vw,140px) + 8px)}
+.sec-head{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px 64px;align-items:end;margin-bottom:48px}
+.sec-head h2{margin-top:18px;font-weight:600;font-size:clamp(30px,3.9vw,56px);line-height:1.12;letter-spacing:-.025em}
+.sec-head h2 .pill{font-size:.8em;padding:.08em .6em .14em;margin-left:.08em}
+.sec-head p{color:var(--mut);max-width:440px;font-size:15px}
+.blob{position:absolute;z-index:-1;border-radius:50%;filter:blur(70px);opacity:.55;pointer-events:none}
+
+.glass{position:relative;border-radius:28px;border:1px solid rgb(255 255 255 / .12);
+  background:linear-gradient(180deg,rgb(255 255 255 / .075),rgb(255 255 255 / .02)),rgb(22 20 46 / .4);
+  backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);
+  box-shadow:inset 0 1px 0 rgb(255 255 255 / .09),0 30px 70px -40px rgb(0 0 0 / .7)}
+.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s;
+  background:radial-gradient(420px circle at var(--x,50%) var(--y,0%),rgb(203 102 254 / .13),transparent 60%)}
+.glass:hover::after{opacity:1}
+
+/* ===== Fases ===== */
+.fases{list-style:none;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;counter-reset:f}
+.fase{padding:26px 22px 24px;display:flex;flex-direction:column;gap:12px;transition:transform .35s var(--ease),border-color .35s}
+.fase:hover{transform:translateY(-6px);border-color:rgb(255 255 255 / .26)}
+.f-ico{width:52px;height:52px;border-radius:28%;display:grid;place-items:center;font-weight:600;font-size:15px;margin-bottom:10px;
+  box-shadow:inset 0 1px 0 rgb(255 255 255 / .45),0 14px 30px -12px rgb(203 102 254 / .7)}
+.fase:nth-child(1) .f-ico{background:linear-gradient(160deg,#3A1F7E,#5C4FC8)}
+.fase:nth-child(2) .f-ico{background:linear-gradient(160deg,#482195,#6E67E2)}
+.fase:nth-child(3) .f-ico{background:linear-gradient(200deg,#9C5BEF,#6B44BD)}
+.fase:nth-child(4) .f-ico{background:linear-gradient(225deg,#CB66FE,#9C5BEF 60%,#6B44BD)}
+.fase:nth-child(5) .f-ico{background:radial-gradient(circle at 20% 85%,#F1D6F5,transparent 60%),linear-gradient(225deg,#CB66FE,#9C5BEF)}
+.fase h3{font-size:20px;font-weight:600;letter-spacing:-.015em}
+.fase p{font-size:13.5px;color:var(--mut);line-height:1.6;flex:1}
+.tag{align-self:flex-start;display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;padding:5px 10px;border-radius:999px;border:1px solid var(--line);color:rgb(255 255 255 / .85);background:rgb(11 11 16 / .25)}
+.tag i{width:6px;height:6px;border-radius:50%;background:var(--warn)}
+.tag.ok i{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.tag.down i{background:var(--bad)}
+
+/* ===== Simulador ===== */
+.sim{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px;align-items:start}
+.form{padding:clamp(20px,2.6vw,34px)}
+fieldset{border:0;padding:0;min-width:0}
+fieldset+fieldset{margin-top:30px;padding-top:28px;border-top:1px solid var(--line)}
+legend{display:flex;align-items:center;gap:12px;font-size:16px;font-weight:600;letter-spacing:-.01em;margin-bottom:18px;padding:0}
+legend span{font-size:11px;font-weight:600;letter-spacing:.1em;padding:4px 9px;border-radius:999px;border:1px solid var(--line2);color:var(--mut)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px 14px}
+.f{display:flex;flex-direction:column;gap:7px;font-size:12px;font-weight:500;color:var(--mut);letter-spacing:.01em;min-width:0}
+.f.full{grid-column:1/-1}
+.f input,.f select,.f textarea{width:100%;height:46px;padding:0 14px;border-radius:12px;border:1px solid rgb(255 255 255 / .14);
+  background:rgb(11 11 16 / .32);color:#fff;font-size:14px;font-weight:500;transition:border-color .2s,box-shadow .2s,background .2s}
+.f textarea{height:auto;min-height:92px;padding:12px 14px;resize:vertical;line-height:1.55}
+.f select{appearance:none;-webkit-appearance:none;padding-right:36px;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%23F1D6F5' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center}
+.f option{background:#2C2C4C;color:#fff}
+.f input:hover,.f select:hover,.f textarea:hover{border-color:rgb(255 255 255 / .28)}
+.f input:focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--m1);background:rgb(11 11 16 / .5);box-shadow:0 0 0 4px rgb(203 102 254 / .22)}
+.f [aria-invalid="true"]{border-color:var(--bad);box-shadow:0 0 0 4px rgb(255 122 149 / .18)}
+.f input::-webkit-inner-spin-button{opacity:.35}
+.hint{font-size:11.5px;color:var(--dim);font-weight:500}
+.field-error{font-size:12px;color:#FFB3C3;font-weight:500}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px;padding-top:26px;border-top:1px solid var(--line)}
+.actions .btn{min-width:150px}
+#btn-demo-bajo{color:var(--ok)} #btn-demo-bajo span{color:#fff}
+#btn-demo-alto{color:var(--bad)} #btn-demo-alto span{color:#fff}
+
+.result{position:sticky;top:92px;padding:clamp(22px,2.4vw,32px);min-height:560px;display:flex;flex-direction:column;overflow:hidden}
+.result.loading .r-ring{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.55}}
+.r-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.r-ring{position:relative;width:min(100%,250px);aspect-ratio:1;margin:22px auto 8px}
+.r-ring::before{content:"";position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle,var(--c,#6E67E2) 0%,transparent 70%);opacity:.22;filter:blur(18px)}
+.r-ring svg{position:relative;width:100%;height:100%;overflow:visible}
+.r-ring .track{stroke-width:12}
+.r-ring .arc{stroke:var(--c,#fff);stroke-width:12;filter:drop-shadow(0 0 8px var(--c,#fff))}
+.r-ring .ticks{stroke-width:5}
+.u-tick{stroke:#fff;stroke-width:2.5;stroke-linecap:round}
+.r-center{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.r-center span{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.r-prob{font-size:clamp(46px,5vw,64px);font-weight:600;letter-spacing:-.04em;line-height:1.05;color:var(--c,#fff)}
+.r-prob small{font-size:.42em;margin-left:4px;letter-spacing:0}
+.r-verdict{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;margin-bottom:22px}
+.banda{display:inline-flex;align-items:center;gap:8px;padding:6px 13px;border-radius:999px;font-size:13px;font-weight:600;border:1px solid currentColor;
+  background:color-mix(in srgb,currentColor 13%,transparent)}
+.banda::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor}
+.banda.Bajo{color:var(--ok)} .banda.Medio{color:var(--warn)} .banda.Alto{color:var(--bad)}
+.r-etq{font-size:13.5px;color:rgb(255 255 255 / .86)}
+.r-etq b{font-weight:600;color:#fff}
+
+.trk{position:relative;height:10px;border-radius:999px;background:rgb(255 255 255 / .06);margin:34px 0 8px}
+.trk .z{position:absolute;top:0;bottom:0}
+.trk .z-bajo{border-radius:999px 0 0 999px} .trk .z-alto{border-radius:0 999px 999px 0}
+.z-bajo{background:rgb(91 227 166 / .4)} .z-medio{background:rgb(255 194 102 / .4)} .z-alto{background:rgb(255 122 149 / .4)}
+.trk .u{position:absolute;top:-8px;bottom:-8px;width:2px;margin-left:-1px;background:#fff;border-radius:2px;box-shadow:0 0 10px rgb(255 255 255 / .7)}
+.trk .u span{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;font-size:11px;font-weight:600;color:#fff;
+  padding:3px 8px;border-radius:999px;background:var(--btn);border:1px solid var(--line2)}
+.trk .p{position:absolute;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:var(--c,#fff);border:3px solid #1B1A30;box-shadow:0 0 0 1px var(--c,#fff),0 0 16px var(--c,#fff);
+  transition:left 1.2s var(--ease)}
+.scale{position:relative;height:16px;font-size:11px;color:var(--dim)}
+.scale span{position:absolute;transform:translateX(-50%)}
+.scale span:first-child{transform:none} .scale span:last-child{transform:translateX(-100%)}
+.r-sub{margin-top:24px;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.r-factores{list-style:none;padding:0;margin-top:12px;display:grid;gap:8px}
+.r-factores li{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:rgb(11 11 16 / .25);border:1px solid var(--line);font-size:14px;font-weight:500}
+.r-factores i{font-style:normal;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font-size:11px}
+.r-factores .up i{color:var(--bad);background:rgb(255 122 149 / .14)}
+.r-factores .down i{color:var(--ok);background:rgb(91 227 166 / .14)}
+.r-factores small{font-size:11.5px;color:var(--dim)}
+.r-texto{margin-top:14px;font-size:13px;color:var(--mut);min-height:20px}
+.r-texto b{color:#fff;font-weight:600}
+.r-foot{margin-top:auto;padding-top:18px;font-size:11.5px;color:var(--dim);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.r-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
+.r-empty p{max-width:290px;color:var(--mut);font-size:14px}
+.r-error{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.r-error .ico{width:56px;height:56px;border-radius:28%;display:grid;place-items:center;font-size:24px;font-weight:700;color:#fff;background:linear-gradient(160deg,#FF7A95,#9C5BEF)}
+.r-error h3{font-size:22px;font-weight:600}
+.r-error p{color:var(--mut);font-size:14px}
+.r-error code{font-size:12.5px;padding:2px 6px;border-radius:6px;background:rgb(11 11 16 / .5)}
+
+/* ===== Métricas ===== */
+.bento{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.tile{padding:24px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.tile header{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.tile .k{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.tile .v{font-size:clamp(34px,3.4vw,46px);font-weight:600;letter-spacing:-.035em;line-height:1}
+.tile p{font-size:13px;color:var(--mut);line-height:1.55}
+.tile h3{font-size:19px;font-weight:600;letter-spacing:-.015em}
+.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.r2{grid-row:span 2}
+.t-auc{justify-content:space-between}
+.t-auc .big{position:relative;width:min(100%,290px);aspect-ratio:1;margin:8px auto}
+.t-auc .big svg{width:100%;height:100%;overflow:visible}
+.t-auc .big .arc{stroke-width:8}
+.t-auc .big .track{stroke-width:8}
+.t-auc .big .c{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.t-auc .big .c b{font-size:clamp(48px,5vw,68px);font-weight:600;letter-spacing:-.04em;line-height:1}
+.t-auc .big .c span{font-size:12px;color:var(--mut);margin-top:6px}
+.mini{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.mini .ring{width:76px;height:76px;flex:none;overflow:visible}
+.mini .ring .arc{stroke-width:9}.mini .ring .track{stroke-width:9}
+.waffle{display:grid;grid-template-columns:repeat(10,7px);gap:3px;flex:none}
+.waffle i{width:7px;height:7px;border-radius:2px;background:rgb(255 255 255 / .12)}
+.waffle i.on{background:linear-gradient(135deg,#F1D6F5,#CB66FE);box-shadow:0 0 6px rgb(203 102 254 / .6)}
+.line-scale{position:relative;height:4px;border-radius:4px;background:linear-gradient(90deg,rgb(255 255 255 / .1),rgb(203 102 254 / .5),rgb(241 214 245 / .8));margin:22px 0 6px}
+.line-scale .mk{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgb(203 102 254 / .35),0 0 14px #CB66FE}
+.line-scale .mk span{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);font-size:11px;font-weight:600;white-space:nowrap}
+.bars{display:grid;gap:14px;margin-top:4px}
+.bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;font-size:13px}
+.bar .lab{color:rgb(255 255 255 / .86);font-weight:500;display:flex;gap:8px;align-items:center;min-width:0}
+.bar .val{font-weight:600;font-size:14px}
+.bar .tr{grid-column:1/-1;height:10px;border-radius:999px;background:rgb(255 255 255 / .07);overflow:hidden}
+.bar .fl{height:100%;border-radius:999px;background:linear-gradient(90deg,#6B44BD,#CB66FE 70%,#F1D6F5);box-shadow:0 0 14px rgb(203 102 254 / .45);
+  transform-origin:left;transition:width 1.2s var(--ease)}
+.bar.alt .fl{background:linear-gradient(90deg,#482195,#6E67E2);box-shadow:none}
+.bar.base .fl{background:rgb(255 255 255 / .28);box-shadow:none}
+.win{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--btn);border:1px solid var(--line2);color:var(--lav)}
+.axis{display:flex;justify-content:space-between;font-size:11px;color:var(--dim);margin-top:2px}
+.eq{display:grid;grid-template-columns:auto auto 1fr;gap:20px;align-items:end;margin-top:6px}
+.col{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;color:var(--mut)}
+.col .cv{position:relative;width:48px;height:120px;border-radius:16px;background:rgb(255 255 255 / .06);overflow:hidden;border:1px solid var(--line)}
+.col .cv i{position:absolute;left:0;right:0;bottom:0;background:var(--shape-a);border-radius:14px;transition:height 1.2s var(--ease)}
+.col.m .cv i{background:var(--shape-b)}
+.col b{font-size:18px;color:#fff;font-weight:600;letter-spacing:-.02em}
+.di b.big{font-size:clamp(40px,4vw,54px);font-weight:600;letter-spacing:-.04em;line-height:1}
+.di-scale{position:relative;height:12px;border-radius:999px;margin:28px 0 6px;
+  background:linear-gradient(90deg,rgb(255 122 149 / .35) 0,rgb(255 122 149 / .35) var(--cut),rgb(91 227 166 / .35) var(--cut))}
+.di-scale .cut{position:absolute;top:-6px;bottom:-6px;width:2px;background:#fff;opacity:.6;left:var(--cut)}
+.di-scale .cut span{position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);font-size:10.5px;white-space:nowrap;color:var(--mut)}
+.di-scale .mk{position:absolute;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgb(91 227 166 / .35),0 0 14px var(--ok);transition:left 1.2s var(--ease)}
+.ok-badge{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--ok);padding:6px 12px;border-radius:999px;border:1px solid rgb(91 227 166 / .5);background:rgb(91 227 166 / .1)}
+.ok-badge.no{color:var(--bad);border-color:rgb(255 122 149 / .5);background:rgb(255 122 149 / .1)}
+.lim{list-style:none;padding:0;counter-reset:l;display:grid;gap:10px;margin-top:4px}
+.lim li{counter-increment:l;display:grid;grid-template-columns:26px 1fr;gap:10px;font-size:13px;color:var(--mut);line-height:1.5}
+.lim li::before{content:counter(l,decimal-leading-zero);font-size:11px;font-weight:600;color:var(--lav);padding-top:2px}
+.band-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+
+/* ===== Footer ===== */
+footer{padding:56px 0 64px;border-top:1px solid var(--line);margin-top:20px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;align-items:flex-end}
+.foot-big{font-size:clamp(32px,5vw,64px);font-weight:600;letter-spacing:-.035em;line-height:1.05;
+  background:linear-gradient(90deg,#fff 0%,#F1D6F5 40%,#CB66FE 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.foot-meta{font-size:13px;color:var(--mut);text-align:right;line-height:1.8}
+.foot-meta a{color:#D9B8FF}
+
+/* ===== Motion ===== */
+@media (prefers-reduced-motion: no-preference){
+  .hero-copy > *{animation:rise .9s var(--ease) both}
+  .hero-copy > *:nth-child(2){animation-delay:.08s}
+  .hero-copy > *:nth-child(3){animation-delay:.16s}
+  .hero-copy > *:nth-child(4){animation-delay:.24s}
+  .hero-copy > *:nth-child(5){animation-delay:.32s}
+  .hero-copy > *:nth-child(6){animation-delay:.4s}
+  .art .cell{animation:pop 1s var(--ease) both}
+  .art .cell:nth-child(2){animation-delay:.12s}.art .cell:nth-child(3){animation-delay:.24s}.art .cell:nth-child(4){animation-delay:.36s}
+  .sq::after{animation:drift 11s ease-in-out infinite alternate}
+  .sq-b::after{animation-duration:14s}
+}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}}
+@keyframes pop{from{opacity:0;scale:.86}}
+@keyframes drift{to{translate:-30% 40%;scale:1.25}}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+/* ===== Responsive ===== */
+@media (max-width:1080px){
+  .fases{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .bento{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .c4,.c5{grid-column:span 3}.c6,.c7,.c8{grid-column:span 6}.r2{grid-row:auto}
+  .t-auc{grid-column:span 6}
+}
+@media (max-width:920px){
+  .hero .wrap{grid-template-columns:1fr;gap:56px;min-height:0}
+  .art{justify-self:center;width:min(100%,440px)}
+  .sec-head{grid-template-columns:1fr}
+  .sim{grid-template-columns:1fr}
+  .result{position:relative;top:0;min-height:0}
+  .links{display:none}
+  .nav .wrap{justify-content:space-between}
+}
+@media (max-width:640px){
+  .fases{grid-template-columns:1fr 1fr}
+  .fase:last-child{grid-column:1/-1}
+  .c4,.c5{grid-column:span 6}
+  .facts div{padding-right:18px;margin-right:18px}
+  .eq{grid-template-columns:auto auto;gap:16px}
+  .eq .di{grid-column:1/-1}
+  .foot-meta{text-align:left}
+}
+@media (max-width:520px){
+  .hero h1{font-size:clamp(30px,10vw,40px)}
+  .art{gap:12px}
+  .grid{grid-template-columns:1fr 1fr;gap:12px}
+  .actions .btn,.actions .btn-ghost{flex:1 1 100%}
+  .fases{grid-template-columns:1fr}
+  .fase:last-child{grid-column:auto}
+  .tile{padding:20px}
+  .facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .facts div{padding-right:10px;margin-right:12px}
+  .facts b{font-size:19px}
+  .facts span{font-size:11px;line-height:1.35;display:block}
+  .chip{padding:8px 10px;border-radius:12px}
+  .fase{display:grid;grid-template-columns:48px minmax(0,1fr);gap:6px 16px;padding:20px}
+  .fase .f-ico{grid-row:span 3;width:48px;height:48px;margin:0}
+  .fase:hover{transform:none}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="gRing" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F1D6F5"/>
+      <stop offset=".55" stop-color="#CB66FE"/>
+      <stop offset="1" stop-color="#9C5BEF"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="impago.lab, inicio"><i></i>impago<em>.lab</em></a>
+    <nav class="links" aria-label="Secciones">
+      <a href="#fases">Proceso</a>
+      <a href="#simulador">Simulador</a>
+      <a href="#metricas">Métricas</a>
+      <a class="api-docs" href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener">API</a>
+    </nav>
+    <button class="lang" type="button" aria-label="Idioma: español" title="Disponible solo en español">ES ▾</button>
+  </div>
+</header>
+
+<main>
+<!-- ===== HERO ===== -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-copy">
+      <span id="api-status" class="api-pill wait" role="status"><i></i><span class="t">Verificando API…</span></span>
+      <h1><span class="ln">Anticipamos el</span><span class="ln">riesgo de impago</span></h1>
+      <div class="pill-row"><span class="pill" id="pill"><span class="pill-word" id="pill-word">en segundos</span></span></div>
+      <p class="lead">Un modelo de regresión logística entrenado con 12.144 clientes estima la probabilidad de que un crédito no se pague, explica qué la mueve y audita su equidad. <a href="#metricas">Vea la evidencia</a>.</p>
+      <div class="cta">
+        <a class="btn" href="#simulador">Evaluar un cliente <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn-ghost" href="#metricas">Métricas del modelo</a>
+      </div>
+      <div class="facts">
+        <div><b>12.144</b><span>clientes analizados</span></div>
+        <div><b id="fact-tasa">35,6&nbsp;%</b><span>tasa de impago</span></div>
+        <div><b id="fact-vars">17 + 3</b><span>variables de entrada</span></div>
+      </div>
+    </div>
+
+    <div class="art" id="art" aria-label="Métricas protagonistas del modelo">
+      <div class="cell sq sq-a"><div class="chip"><b id="chip-test">2.400</b><span>clientes de prueba</span></div></div>
+      <div class="cell orb" id="orb-auc">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <circle class="ticks" cx="100" cy="100" r="80" pathLength="60"/>
+          <circle class="track" cx="100" cy="100" r="94"/>
+          <circle class="arc" cx="100" cy="100" r="94" pathLength="100" transform="rotate(-90 100 100)"/>
+        </svg>
+        <div class="orb-txt"><b class="val">—</b><span>ROC-AUC</span></div>
+      </div>
+      <div class="cell orb b" id="orb-ks">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <circle class="ticks" cx="100" cy="100" r="80" pathLength="60"/>
+          <circle class="track" cx="100" cy="100" r="94"/>
+          <circle class="arc" cx="100" cy="100" r="94" pathLength="100" transform="rotate(-90 100 100)"/>
+        </svg>
+        <div class="orb-txt"><b class="val">—</b><span>KS</span></div>
+      </div>
+      <div class="cell sq sq-b"><div class="chip"><b id="chip-umbral">—</b><span>umbral de decisión</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FASES ===== -->
+<section class="sec" id="fases">
+  <div class="blob" style="width:520px;height:520px;left:-180px;top:40px;background:#6B44BD"></div>
+  <div class="wrap">
+    <header class="sec-head">
+      <div><span class="eyebrow">El proceso</span><h2>Cinco fases, <span class="pill">un modelo</span></h2></div>
+      <p>Del problema de negocio a una API que responde en milisegundos. Cada fase deja un entregable verificable.</p>
+    </header>
+    <ol class="fases">
+      <li class="glass fase"><div class="f-ico">01</div><h3>Definir</h3><p>¿Quién dejará de pagar? Objetivo binario, métricas de éxito y un umbral para decidir.</p><span class="tag" id="f1-tag"><i></i>Pregunta de negocio</span></li>
+      <li class="glass fase"><div class="f-ico">02</div><h3>Explorar</h3><p>12.144 clientes y 21 columnas: nulos, atípicos inyectados y una tasa de impago del 35,6&nbsp;%.</p><span class="tag"><i></i>EDA</span></li>
+      <li class="glass fase"><div class="f-ico">03</div><h3>Analizar</h3><p>Limpieza, variables derivadas como cuota/ingreso y lectura del texto de la solicitud.</p><span class="tag" id="f3-tag"><i></i>3 derivadas</span></li>
+      <li class="glass fase"><div class="f-ico">04</div><h3>Evaluar</h3><p>Regresión logística frente a gradient boosting, con AUC, KS, calibración y equidad por sexo.</p><span class="tag" id="f4-tag"><i></i>AUC —</span></li>
+      <li class="glass fase"><div class="f-ico">05</div><h3>Desplegar</h3><p>API FastAPI con <code>/predict</code> y este simulador conectado en vivo al modelo.</p><span class="tag" id="f5-tag"><i></i>Verificando…</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===== SIMULADOR ===== -->
+<section class="sec" id="simulador">
+  <div class="blob" style="width:620px;height:620px;right:-160px;top:120px;background:#CB66FE;opacity:.4"></div>
+  <div class="blob" style="width:420px;height:420px;left:10%;bottom:0;background:#482195"></div>
+  <div class="wrap">
+    <header class="sec-head">
+      <div><span class="eyebrow">Simulador</span><h2>Evalúe un cliente <span class="pill">en vivo</span></h2></div>
+      <p>Cada predicción viaja a la API y vuelve con la probabilidad, la banda de riesgo y los factores que más pesan en la decisión.</p>
+    </header>
+    <div class="sim">
+      <form id="form-cliente" class="glass form" novalidate>
+        <fieldset>
+          <legend><span>01</span>Perfil</legend>
+          <div class="grid">
+            <label class="f"><span>Edad (años)</span><input name="edad" type="number" min="18" max="80" step="1" value="35" required></label>
+            <label class="f"><span>Sexo</span><select name="sexo"><option value="F" selected>Femenino</option><option value="M">Masculino</option></select></label>
+            <label class="f"><span>Estado civil</span><select name="estado_civil"><option value="Soltero">Soltero</option><option value="Casado" selected>Casado</option><option value="Union_libre">Unión libre</option><option value="Divorciado">Divorciado</option><option value="Viudo">Viudo</option></select></label>
+            <label class="f"><span>Nivel educativo</span><select name="nivel_educativo"><option value="Primaria">Primaria</option><option value="Secundaria">Secundaria</option><option value="Tecnico">Técnico</option><option value="Universitario" selected>Universitario</option><option value="Posgrado">Posgrado</option></select></label>
+            <label class="f"><span>Situación laboral</span><select name="situacion_laboral"><option value="Empleado" selected>Empleado</option><option value="Independiente">Independiente</option><option value="Pensionado">Pensionado</option><option value="Desempleado">Desempleado</option></select></label>
+            <label class="f"><span>Antigüedad laboral (años)</span><input name="antiguedad_laboral_anios" type="number" min="0" max="62" step="0.1" value="4.5" required></label>
+            <label class="f"><span>Personas a cargo</span><input name="personas_a_cargo" type="number" min="0" max="6" step="1" value="1" required></label>
+            <label class="f"><span>Tipo de vivienda</span><select name="tipo_vivienda"><option value="Arriendo" selected>Arriendo</option><option value="Propia">Propia</option><option value="Familiar">Familiar</option></select></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>02</span>Finanzas</legend>
+          <div class="grid">
+            <label class="f"><span>Ingreso mensual (COP)</span><input name="ingreso_mensual" type="number" min="300000" max="65000000" step="1000" value="4500000" required><small class="hint" data-cop="ingreso_mensual"></small></label>
+            <label class="f"><span>Créditos activos</span><input name="num_creditos_activos" type="number" min="0" max="8" step="1" value="2" required></label>
+            <label class="f"><span>Moras últimos 12 meses</span><input name="moras_ultimos_12m" type="number" min="0" max="10" step="1" value="0" required></label>
+            <label class="f"><span>Relación deuda/ingreso</span><input name="relacion_deuda_ingreso" type="number" min="0" max="1.5" step="0.01" value="0.32" required><small class="hint">0 a 1,5</small></label>
+            <label class="f"><span>Puntaje de buró</span><input name="puntaje_buro" type="number" min="150" max="950" step="1" value="720" required><small class="hint">150 a 950</small></label>
+            <label class="f"><span>Uso de cupo de tarjetas</span><input name="uso_cupo_tarjetas" type="number" min="0" max="1" step="0.01" value="0.4" required><small class="hint">0 a 1</small></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>03</span>Solicitud</legend>
+          <div class="grid">
+            <label class="f"><span>Monto del crédito (COP)</span><input name="monto_credito" type="number" min="1000000" max="1050000000" step="100000" value="20000000" required><small class="hint" data-cop="monto_credito"></small></label>
+            <label class="f"><span>Plazo</span><select name="plazo_meses"><option value="6">6 meses</option><option value="12">12 meses</option><option value="18">18 meses</option><option value="24">24 meses</option><option value="36" selected>36 meses</option><option value="48">48 meses</option><option value="60">60 meses</option><option value="72">72 meses</option><option value="84">84 meses</option></select></label>
+            <label class="f"><span>Tasa de interés anual (% E.A.)</span><input name="tasa_interes_anual" type="number" min="10" max="42" step="0.1" value="24.5" required></label>
+            <label class="f"><span>Propósito</span><select name="proposito"><option value="Libre_inversion">Libre inversión</option><option value="Vehiculo" selected>Vehículo</option><option value="Consolidacion_deuda">Consolidación de deuda</option><option value="Vivienda">Vivienda</option><option value="Negocio">Negocio</option><option value="Educacion">Educación</option></select></label>
+            <label class="f full"><span>Texto de la solicitud</span><textarea name="texto_solicitud" rows="3" required>Necesito el crédito para comprar un carro para trabajar.</textarea></label>
+          </div>
+        </fieldset>
+        <div class="actions">
+          <button class="btn" id="btn-predecir" type="submit">Predecir</button>
+          <button class="btn-ghost" id="btn-demo-bajo" type="button"><i class="dot"></i><span>Cliente riesgo bajo</span></button>
+          <button class="btn-ghost" id="btn-demo-alto" type="button"><i class="dot"></i><span>Cliente riesgo alto</span></button>
+        </div>
+      </form>
+
+      <aside class="glass result" id="resultado" aria-live="polite" aria-label="Resultado de la predicción">
+        <div class="r-head"><span>Resultado</span><span>POST /predict</span></div>
+        <div class="r-empty">
+          <div class="r-ring" style="--c:#6E67E2">
+            <svg viewBox="0 0 220 220" aria-hidden="true">
+              <circle class="ticks" cx="110" cy="110" r="80" pathLength="60"/>
+              <circle class="track" cx="110" cy="110" r="96"/>
+            </svg>
+            <div class="r-center"><span>Probabilidad</span><div class="r-prob" style="color:rgb(255 255 255 / .5)">—</div></div>
+          </div>
+          <p>Ajuste el formulario y pulse <b>Predecir</b>, o cargue uno de los clientes de demostración.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MÉTRICAS ===== -->
+<section class="sec" id="metricas">
+  <div class="blob" style="width:560px;height:560px;left:30%;top:0;background:#5749AA"></div>
+  <div class="wrap">
+    <header class="sec-head">
+      <div><span class="eyebrow">Evidencia</span><h2>Métricas <span class="pill">sin maquillaje</span></h2></div>
+      <p id="m-intro">Medidas sobre clientes que el modelo no vio durante el entrenamiento, traídas en vivo desde <code>/model/info</code>.</p>
+    </header>
+    <div class="bento" id="bento"></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="foot-big">Decidir con datos.</div>
+      <p style="color:var(--mut);margin-top:10px;font-size:13px">Proyecto integrador · Análisis predictivo de riesgo de crédito</p>
+    </div>
+    <div class="foot-meta">
+      <div id="footer-modelo">Modelo — · cargando información…</div>
+      <a class="api-docs" href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener">Documentación de la API ↗</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ===== Config y cliente HTTP (adaptado de js/app.js) =====
+const API_BASE = window.API_BASE || "http://127.0.0.1:8000";
+const TIMEOUT_MS = 8000;
+const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+class ApiError extends Error {
+  constructor(kind, message, status = null, fields = {}) {
+    super(message); this.kind = kind; this.status = status; this.fields = fields;
+  }
+}
+async function api(path, { method = "GET", body } = {}) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  let res;
+  try {
+    res = await fetch(API_BASE + path, {
+      method, headers: body ? { "Content-Type": "application/json" } : undefined,
+      body: body ? JSON.stringify(body) : undefined, signal: ctrl.signal,
+    });
+  } catch (e) {
+    throw new ApiError("red", "No se pudo conectar con la API (" + API_BASE + "). Verifique que uvicorn esté corriendo en el puerto 8000.");
+  } finally { clearTimeout(t); }
+  let data = null;
+  try { data = await res.json(); } catch { /* sin JSON */ }
+  if (res.ok) return data;
+  if (res.status === 422) {
+    const fields = {};
+    (Array.isArray(data?.detail) ? data.detail : []).forEach(d => {
+      const campo = Array.isArray(d.loc) ? d.loc[d.loc.length - 1] : "general";
+      fields[campo] = d.msg || "Valor inválido";
+    });
+    throw new ApiError("validacion", "Hay campos inválidos.", 422, fields);
+  }
+  const msg = (data && (typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail))) || res.statusText;
+  throw new ApiError("servidor", "Error " + res.status + ": " + msg, res.status);
+}
+
+// ===== Utilidades =====
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const dec = (x, d = 3) => (x == null || isNaN(x)) ? "—" : Number(x).toFixed(d).replace(".", ",");
+const pct = (x, d = 1) => (x == null || isNaN(x)) ? "—" : dec(x * 100, d) + " %";
+const miles = n => Math.round(n).toLocaleString("es-CO");
+const clamp01 = v => Math.max(0, Math.min(1, v));
+function setArc(el, v) {
+  if (!el) return;
+  const val = clamp01(v || 0);
+  el.style.opacity = val > 0 ? 1 : 0;
+  const go = () => { el.style.strokeDashoffset = String(100 - val * 100); };
+  if (REDUCE) go(); else requestAnimationFrame(() => requestAnimationFrame(go));
+}
+const ETIQUETAS = {
+  edad: "Edad", sexo: "Sexo", estado_civil: "Estado civil", nivel_educativo: "Nivel educativo",
+  situacion_laboral: "Situación laboral", antiguedad_laboral_anios: "Antigüedad laboral",
+  personas_a_cargo: "Personas a cargo", tipo_vivienda: "Tipo de vivienda", ingreso_mensual: "Ingreso mensual",
+  monto_credito: "Monto del crédito", plazo_meses: "Plazo", tasa_interes_anual: "Tasa de interés",
+  proposito: "Propósito", num_creditos_activos: "Créditos activos", moras_ultimos_12m: "Moras últimos 12 meses",
+  relacion_deuda_ingreso: "Relación deuda/ingreso", puntaje_buro: "Puntaje de buró",
+  uso_cupo_tarjetas: "Uso de cupo de tarjetas", texto_solicitud: "Texto de la solicitud",
+  ratio_monto_ingreso: "Monto / ingreso", cuota_estimada: "Cuota estimada", ratio_cuota_ingreso: "Cuota / ingreso",
+};
+const etiqueta = v => ETIQUETAS[v] || ETIQUETAS[String(v).split("__").pop()] || String(v).replace(/_/g, " ");
+const ringSVG = (vb = 120, r = 52, ticks = false) => `<svg class="ring" viewBox="0 0 ${vb} ${vb}" aria-hidden="true">${ticks ? `<circle class="ticks" cx="${vb/2}" cy="${vb/2}" r="${r - 16}" pathLength="60"/>` : ""}<circle class="track" cx="${vb/2}" cy="${vb/2}" r="${r}"/><circle class="arc" cx="${vb/2}" cy="${vb/2}" r="${r}" pathLength="100" transform="rotate(-90 ${vb/2} ${vb/2})"/></svg>`;
+
+// ===== Píldora rotatoria (recurso firma) =====
+const FRASES = ["en segundos", "con AUC 0,85", "sin sesgo de género"];
+function ajustarPill() {
+  const pill = $("#pill"), w = $("#pill-word");
+  const cs = getComputedStyle(pill);
+  pill.style.width = (w.offsetWidth + parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + 2) + "px";
+}
+function iniciarPill() {
+  if (REDUCE) return;   // estática con reduced-motion
+  const w = $("#pill-word");
+  let i = 0;
+  ajustarPill();
+  setInterval(() => {
+    i = (i + 1) % FRASES.length;
+    w.classList.add("out");
+    setTimeout(() => {
+      w.textContent = FRASES[i];
+      w.classList.remove("out"); w.classList.add("pre");
+      void w.offsetWidth;
+      ajustarPill();
+      w.classList.remove("pre");
+    }, 380);
+  }, 2800);
+}
+
+// ===== GET /health =====
+let MODEL_INFO = null, cargandoModelo = false;
+async function verificarSalud() {
+  const pill = $("#api-status"), t = pill.querySelector(".t"), f5 = $("#f5-tag");
+  try {
+    const h = await api("/health");
+    const ok = h.status === "ok" && h.modelo_cargado;
+    pill.className = "api-pill " + (ok ? "ok" : "down");
+    t.textContent = ok ? `API en línea · modelo v${h.modelo_version}` : "API sin modelo cargado";
+    f5.className = "tag " + (ok ? "ok" : "down");
+    f5.innerHTML = `<i></i>${ok ? "En línea · v" + esc(h.modelo_version) : "Sin modelo"}`;
+    if (ok && !MODEL_INFO) cargarModelo();
+    return ok;
+  } catch (e) {
+    pill.className = "api-pill down"; t.textContent = "API fuera de línea";
+    f5.className = "tag down"; f5.innerHTML = "<i></i>API fuera de línea";
+    return false;
+  }
+}
+
+// ===== GET /model/info =====
+async function cargarModelo() {
+  if (cargandoModelo) return;
+  cargandoModelo = true;
+  try {
+    const m = await api("/model/info");
+    MODEL_INFO = m;
+    pintarHero(m); pintarMetricas(m); pintarFooter(m);
+  } catch (e) {
+    pintarMetricas(null, e.message);
+  } finally { cargandoModelo = false; }
+}
+
+function pintarHero(m) {
+  const mt = m.metricas_test || {};
+  $("#orb-auc .val").textContent = dec(mt.roc_auc, 3);
+  $("#orb-ks .val").textContent = dec(mt.ks, 3);
+  setArc($("#orb-auc .arc"), mt.roc_auc);
+  setArc($("#orb-ks .arc"), mt.ks);
+  $("#chip-umbral").textContent = pct(m.umbral_decision, 1);
+  if (m.n_test) $("#chip-test").textContent = miles(m.n_test);
+  if (m.tasa_default_train != null) $("#fact-tasa").textContent = pct(m.tasa_default_train, 1);
+  const nv = (m.variables_entrada || []).length, nd = (m.variables_derivadas || []).length;
+  if (nv) $("#fact-vars").textContent = `${nv} + ${nd}`;
+  $("#f4-tag").className = "tag ok"; $("#f4-tag").innerHTML = `<i></i>AUC ${dec(mt.roc_auc, 3)}`;
+  if (nd) $("#f3-tag").innerHTML = `<i></i>${nd} derivadas`;
+  $("#f1-tag").innerHTML = `<i></i>${nv} variables`;
+  // Frases de la píldora con datos reales
+  if (mt.roc_auc != null) FRASES[1] = "con AUC " + dec(mt.roc_auc, 2);
+  if (m.equidad) FRASES[2] = m.equidad.regla_80 ? "sin sesgo de género" : "auditando el género";
+}
+
+function pintarFooter(m) {
+  let fecha = m.fecha_entrenamiento || "";
+  const d = new Date(fecha + "T00:00:00");
+  if (!isNaN(d)) fecha = d.toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" });
+  $("#footer-modelo").textContent = `Modelo v${m.version || m.modelo_version || "—"} · ${m.algoritmo} · entrenado el ${fecha}`;
+}
+
+const waffle = n => `<div class="waffle" role="img" aria-label="${n} de 100">${Array.from({ length: 100 }, (_, i) => `<i class="${i < n ? "on" : ""}"></i>`).join("")}</div>`;
+
+function pintarMetricas(m, err) {
+  const mt = (m && m.metricas_test) || {};
+  const nulo = !m;
+  const aviso = nulo ? `<p>${esc(err || "Métricas no disponibles: la API no responde.")}</p>` : "";
+  const auc = mt.roc_auc, ks = mt.ks, rec = mt.recall, pre = mt.precision, f1 = mt.f1, br = mt.brier;
+  const tasa = m?.tasa_default_train;
+  const brBase = tasa != null ? tasa * (1 - tasa) : null;
+  const comp = m?.comparacion_roc_auc_test || {};
+  const nlp = m?.metricas_nlp?.roc_auc;
+  const eq = m?.equidad || {};
+  const tasas = eq.tasa_aprobacion || {};
+  const imp = Object.entries(m?.importancia_permutacion || {}).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const impMax = imp.length ? imp[0][1] : 1;
+  const u = m?.umbral_decision;
+  const bandas = m?.bandas_riesgo || { Bajo: [0, .2], Medio: [.2, .5], Alto: [.5, 1] };
+  const pos = v => ((clamp01((v - .5) / .5)) * 100).toFixed(1) + "%";
+  const NOMBRE = { LogisticRegression: "Regresión logística", HistGradientBoostingClassifier: "Gradient boosting (HGB)" };
+  const ganador = Object.entries(comp).sort((a, b) => b[1] - a[1])[0]?.[0];
+  const diCut = (0.8 / 1.25 * 100).toFixed(1) + "%";
+
+  if (m && m.n_test) $("#m-intro").innerHTML = `Medidas sobre ${miles(m.n_test)} clientes que el modelo no vio durante el entrenamiento (${miles(m.n_train)} para entrenar). Datos en vivo desde <code>/model/info</code>.`;
+
+  $("#bento").innerHTML = `
+    <article class="glass tile t-auc c4 r2">
+      <header><span class="k">ROC-AUC</span><span class="tag ok"><i></i>Test</span></header>
+      <div class="big">${ringSVG(200, 92, true)}<div class="c"><b>${dec(auc, 3)}</b><span>de 1,000 posible</span></div></div>
+      <div>
+        <div class="line-scale"><span class="mk" style="left:${auc != null ? pos(auc) : "0%"}"><span>${dec(auc, 2)}</span></span></div>
+        <div class="axis"><span>0,5 · azar</span><span>1,0 · perfecto</span></div>
+      </div>
+      <p>Probabilidad de que el modelo ponga a un cliente que no paga por encima de uno que sí paga.</p>${aviso}
+    </article>
+    <article class="glass tile c4">
+      <header><span class="k">KS</span></header>
+      <div class="mini"><div class="v">${dec(ks, 3)}</div>${ringSVG()}</div>
+      <p>Máxima separación entre las distribuciones de buenos y malos pagadores. Sobre 0,4 se considera fuerte.</p>
+    </article>
+    <article class="glass tile c4">
+      <header><span class="k">Recall</span></header>
+      <div class="mini"><div class="v">${pct(rec, 1)}</div>${waffle(rec != null ? Math.round(rec * 100) : 0)}</div>
+      <p>${rec != null ? `De cada 100 impagos reales, el modelo detecta ${Math.round(rec * 100)}.` : "Impagos reales que el modelo detecta."}</p>
+    </article>
+    <article class="glass tile c4">
+      <header><span class="k">Precisión</span></header>
+      <div class="mini"><div class="v">${pct(pre, 1)}</div>${waffle(pre != null ? Math.round(pre * 100) : 0)}</div>
+      <p>${pre != null ? `De cada 100 alertas de impago, ${Math.round(pre * 100)} lo son de verdad.` : "Alertas de impago que resultan ciertas."}</p>
+    </article>
+    <article class="glass tile c4">
+      <header><span class="k">F1</span></header>
+      <div class="mini"><div class="v">${dec(f1, 3)}</div>${ringSVG()}</div>
+      <p>Equilibrio entre precisión y recall en el umbral de decisión.</p>
+    </article>
+    <article class="glass tile c5">
+      <header><span class="k">Brier</span><span class="tag">menor es mejor</span></header>
+      <div class="v">${dec(br, 3)}</div>
+      <div class="bars">
+        <div class="bar"><span class="lab">Modelo</span><span class="val">${dec(br, 3)}</span><div class="tr"><div class="fl" style="width:${br != null ? (br / .25 * 100).toFixed(1) : 0}%"></div></div></div>
+        <div class="bar base"><span class="lab">Predecir siempre la tasa base</span><span class="val">${dec(brBase, 3)}</span><div class="tr"><div class="fl" style="width:${brBase != null ? (brBase / .25 * 100).toFixed(1) : 0}%"></div></div></div>
+      </div>
+      <p>Error cuadrático de las probabilidades: mide si un 30&nbsp;% significa de verdad 30&nbsp;%.</p>
+    </article>
+    <article class="glass tile c7">
+      <header><span class="k">Umbral y bandas</span><span class="tag">${pct(u, 1)}</span></header>
+      <h3>Por encima de ${pct(u, 1)} el modelo predice impago</h3>
+      <div class="trk" style="--c:#fff;margin-top:44px">
+        ${Object.entries(bandas).map(([n, [a, z]]) => `<span class="z z-${n.toLowerCase()}" style="left:${a * 100}%;width:${(z - a) * 100}%"></span>`).join("")}
+        ${u != null ? `<span class="u" style="left:${(u * 100).toFixed(2)}%"><span>Umbral ${pct(u, 1)}</span></span>` : ""}
+      </div>
+      <div class="scale"><span style="left:0">0&nbsp;%</span>${Object.values(bandas).slice(0, -1).map(([, z]) => `<span style="left:${z * 100}%">${Math.round(z * 100)}&nbsp;%</span>`).join("")}<span style="left:100%">100&nbsp;%</span></div>
+      <div class="band-row">${Object.entries(bandas).map(([n, [a, z]]) => `<span class="banda ${esc(n)}">${esc(n)} · ${Math.round(a * 100)}–${Math.round(z * 100)}&nbsp;%</span>`).join("")}</div>
+    </article>
+    <article class="glass tile c6">
+      <header><span class="k">Comparación de modelos</span><span class="tag">ROC-AUC en test</span></header>
+      <h3>${ganador ? esc(NOMBRE[ganador] || ganador) + " gana, y además se explica" : "Modelos candidatos"}</h3>
+      <div class="bars">
+        ${Object.entries(comp).sort((a, b) => b[1] - a[1]).map(([k, v], i) => `
+          <div class="bar ${i ? "alt" : ""}"><span class="lab">${esc(NOMBRE[k] || k)} ${i === 0 ? '<span class="win">Elegido</span>' : ""}</span><span class="val">${dec(v, 3)}</span><div class="tr"><div class="fl" style="width:${pos(v)}"></div></div></div>`).join("")}
+        ${nlp != null ? `<div class="bar base"><span class="lab">Solo el texto (NLP)</span><span class="val">${dec(nlp, 3)}</span><div class="tr"><div class="fl" style="width:${pos(nlp)}"></div></div></div>` : ""}
+        ${nulo ? "<p>Disponible cuando la API esté en línea.</p>" : ""}
+      </div>
+      <div class="axis"><span>0,5 · azar</span><span>0,75</span><span>1,0</span></div>
+    </article>
+    <article class="glass tile c6">
+      <header><span class="k">Equidad · ${esc(eq.atributo || "sexo")}</span>${eq.regla_80 != null ? `<span class="ok-badge ${eq.regla_80 ? "" : "no"}">${eq.regla_80 ? "✓ Cumple la regla del 80&nbsp;%" : "✕ No cumple la regla del 80&nbsp;%"}</span>` : ""}</header>
+      <div class="eq">
+        <div class="col"><b>${pct(tasas.F, 1)}</b><div class="cv"><i style="height:${tasas.F != null ? (tasas.F * 100).toFixed(1) : 0}%"></i></div>Mujeres</div>
+        <div class="col m"><b>${pct(tasas.M, 1)}</b><div class="cv"><i style="height:${tasas.M != null ? (tasas.M * 100).toFixed(1) : 0}%"></i></div>Hombres</div>
+        <div class="di">
+          <span class="k" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:600">Impacto dispar</span><br>
+          <b class="big">${dec(eq.disparate_impact, 3)}</b>
+          <div class="di-scale" style="--cut:${diCut}"><span class="cut"><span>0,8 mínimo</span></span>${eq.disparate_impact != null ? `<span class="mk" style="left:${(Math.min(eq.disparate_impact, 1.25) / 1.25 * 100).toFixed(1)}%"></span>` : ""}</div>
+        </div>
+      </div>
+      <p style="margin-top:18px">Tasa de aprobación por sexo. El sexo no entra al modelo: solo se usa para auditar que la decisión no discrimine.</p>
+    </article>
+    <article class="glass tile c7">
+      <header><span class="k">Importancia de variables</span><span class="tag">permutación · top 5</span></header>
+      <h3>Lo que más mueve la predicción</h3>
+      <div class="bars">
+        ${imp.length ? imp.map(([k, v]) => `<div class="bar"><span class="lab">${esc(etiqueta(k))}</span><span class="val">${dec(v, 3)}</span><div class="tr"><div class="fl" style="width:${(v / impMax * 100).toFixed(1)}%"></div></div></div>`).join("") : "<p>Disponible cuando la API esté en línea.</p>"}
+      </div>
+      <p>Cuánto cae el AUC al barajar cada variable. El buró y el endeudamiento concentran la señal.</p>
+    </article>
+    <article class="glass tile c5">
+      <header><span class="k">Limitaciones</span><span class="tag">${(m?.limitaciones || []).length || "—"}</span></header>
+      <h3>Lo que el modelo no sabe</h3>
+      <ol class="lim">${(m?.limitaciones || []).map(l => `<li>${esc(l)}</li>`).join("") || "<li>Disponible cuando la API esté en línea.</li>"}</ol>
+    </article>`;
+
+  const arcs = document.querySelectorAll("#bento .arc");
+  setArc(arcs[0], auc); setArc(arcs[1], ks); setArc(arcs[2], f1);
+}
+
+// ===== POST /predict =====
+const NUMERICOS_INT = ["edad", "personas_a_cargo", "plazo_meses", "num_creditos_activos", "moras_ultimos_12m", "puntaje_buro"];
+const NUMERICOS_FLOAT = ["antiguedad_laboral_anios", "ingreso_mensual", "monto_credito", "tasa_interes_anual", "relacion_deuda_ingreso", "uso_cupo_tarjetas"];
+function leerFormulario(form) {
+  const o = {};
+  for (const [k, v] of new FormData(form).entries()) {
+    if (NUMERICOS_INT.includes(k)) o[k] = parseInt(v, 10);
+    else if (NUMERICOS_FLOAT.includes(k)) o[k] = parseFloat(v);
+    else o[k] = String(v).trim();
+  }
+  return o;
+}
+function limpiarErrores(form) {
+  form.querySelectorAll(".field-error").forEach(e => e.remove());
+  form.querySelectorAll("[aria-invalid]").forEach(e => e.removeAttribute("aria-invalid"));
+}
+function pintarErrores(form, fields) {
+  Object.entries(fields).forEach(([campo, msg]) => {
+    const el = form.elements[campo];
+    if (!el) return;
+    el.setAttribute("aria-invalid", "true");
+    const p = document.createElement("div");
+    p.className = "field-error"; p.textContent = msg;
+    el.insertAdjacentElement("afterend", p);
+  });
+  form.querySelector("[aria-invalid='true']")?.focus();
+}
+const COLOR_BANDA = { Bajo: "var(--ok)", Medio: "var(--warn)", Alto: "var(--bad)" };
+
+function pintarResultado(r) {
+  const box = $("#resultado");
+  const p = r.probabilidad_impago, u = r.umbral, b = r.banda_riesgo;
+  const c = COLOR_BANDA[b] || "#fff";
+  const bandas = MODEL_INFO?.bandas_riesgo || { Bajo: [0, .2], Medio: [.2, .5], Alto: [.5, 1] };
+  const [ent, frac] = dec(p * 100, 1).split(",");
+  box.classList.remove("loading");
+  box.style.setProperty("--c", c);
+  box.innerHTML = `
+    <div class="r-head"><span>Resultado</span><span>POST /predict</span></div>
+    <div class="r-ring" style="--c:${c}">
+      <svg viewBox="0 0 220 220" aria-hidden="true">
+        <circle class="ticks" cx="110" cy="110" r="80" pathLength="60"/>
+        <circle class="track" cx="110" cy="110" r="96"/>
+        <circle class="arc" cx="110" cy="110" r="96" pathLength="100" transform="rotate(-90 110 110)"/>
+        <g transform="rotate(${(u * 360).toFixed(2)} 110 110)"><line class="u-tick" x1="110" y1="2" x2="110" y2="26"/></g>
+      </svg>
+      <div class="r-center"><span>Prob. de impago</span><div class="r-prob">${ent}<small>,${frac}&nbsp;%</small></div></div>
+    </div>
+    <div class="r-verdict"><span class="banda ${esc(b)}">Riesgo ${esc(String(b).toLowerCase())}</span><span class="r-etq">Predicción: <b>${esc(r.etiqueta)}</b></span></div>
+    <div class="trk">
+      ${Object.entries(bandas).map(([n, [a, z]]) => `<span class="z z-${n.toLowerCase()}" style="left:${a * 100}%;width:${(z - a) * 100}%"></span>`).join("")}
+      <span class="u" style="left:${(u * 100).toFixed(2)}%"><span>Umbral ${pct(u, 1)}</span></span>
+      <span class="p" style="left:${(clamp01(p) * 100).toFixed(2)}%" title="${pct(p, 1)}"></span>
+    </div>
+    <div class="scale"><span style="left:0">0&nbsp;%</span>${Object.values(bandas).slice(0, -1).map(([, z]) => `<span style="left:${z * 100}%">${Math.round(z * 100)}&nbsp;%</span>`).join("")}<span style="left:100%">100&nbsp;%</span></div>
+    <div class="r-sub">Factores principales</div>
+    <ul class="r-factores">
+      ${(r.factores_principales || []).map(f => {
+        const up = f.efecto === "aumenta_riesgo";
+        return `<li class="${up ? "up" : "down"}"><i aria-hidden="true">${up ? "▲" : "▼"}</i><span>${esc(etiqueta(f.variable))}</span><small>${up ? "aumenta el riesgo" : "reduce el riesgo"}</small></li>`;
+      }).join("") || "<li><span></span><span>Sin factores reportados</span></li>"}
+    </ul>
+    <div id="resultado-texto" class="r-texto"></div>
+    <div class="r-foot"><span>${p >= u ? "Supera" : "No supera"} el umbral de ${pct(u, 1)}</span><span>Modelo v${esc(r.modelo_version)}</span></div>`;
+  setArc(box.querySelector(".arc"), p);
+}
+function pintarErrorResultado(titulo, msg) {
+  const box = $("#resultado");
+  box.classList.remove("loading");
+  box.innerHTML = `<div class="r-head"><span>Resultado</span><span>POST /predict</span></div>
+    <div class="r-error"><div class="ico">!</div><h3>${esc(titulo)}</h3><p>${esc(msg)}</p></div>`;
+}
+
+async function enviar(form) {
+  const btn = $("#btn-predecir");
+  limpiarErrores(form);
+  btn.disabled = true; btn.textContent = "Calculando…";
+  $("#resultado").classList.add("loading");
+  try {
+    const cliente = leerFormulario(form);
+    const r = await api("/predict", { method: "POST", body: cliente });
+    pintarResultado(r);
+    if (cliente.texto_solicitud) {
+      api("/predict/text", { method: "POST", body: { texto: cliente.texto_solicitud } })
+        .then(t => { const el = $("#resultado-texto"); if (el) el.innerHTML = `Lectura del texto: sentimiento <b>${esc(t.sentimiento)}</b> · ${pct(t.probabilidad_impago_texto, 1)} <span class="banda ${esc(t.banda_riesgo)}" style="padding:2px 9px;font-size:11.5px">${esc(t.banda_riesgo)}</span>`; })
+        .catch(() => {});
+    }
+  } catch (e) {
+    if (e.kind === "validacion") { pintarErrores(form, e.fields); pintarErrorResultado("Revise los campos marcados", "La API rechazó algunos valores. Corrija los campos resaltados en rojo y vuelva a predecir."); }
+    else if (e.kind === "red") pintarErrorResultado("La API no responde", e.message);
+    else pintarErrorResultado("No se pudo predecir", e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = "Predecir";
+  }
+}
+
+// ===== Clientes de demo =====
+const CLIENTE_BAJO = { edad: 42, sexo: "F", estado_civil: "Casado", nivel_educativo: "Posgrado", situacion_laboral: "Empleado",
+  antiguedad_laboral_anios: 12.0, personas_a_cargo: 1, tipo_vivienda: "Propia", ingreso_mensual: 9500000, monto_credito: 15000000,
+  plazo_meses: 24, tasa_interes_anual: 14.5, proposito: "Educacion", num_creditos_activos: 1, moras_ultimos_12m: 0,
+  relacion_deuda_ingreso: 0.18, puntaje_buro: 870, uso_cupo_tarjetas: 0.12,
+  texto_solicitud: "Solicito el credito para financiar una maestria. Tengo un empleo estable desde hace varios anios y he cumplido puntualmente con todas mis obligaciones anteriores." };
+const CLIENTE_ALTO = { edad: 24, sexo: "M", estado_civil: "Soltero", nivel_educativo: "Primaria", situacion_laboral: "Desempleado",
+  antiguedad_laboral_anios: 0.0, personas_a_cargo: 3, tipo_vivienda: "Arriendo", ingreso_mensual: 1100000, monto_credito: 35000000,
+  plazo_meses: 72, tasa_interes_anual: 38.5, proposito: "Consolidacion_deuda", num_creditos_activos: 5, moras_ultimos_12m: 4,
+  relacion_deuda_ingreso: 1.25, puntaje_buro: 380, uso_cupo_tarjetas: 0.95,
+  texto_solicitud: "Necesito consolidar varias tarjetas de credito porque me atrase en los pagos tras perder el empleo. Tengo deudas acumuladas y dificultades para cubrir la cuota." };
+
+function actualizarHints(form) {
+  form.querySelectorAll("[data-cop]").forEach(h => {
+    const v = parseFloat(form.elements[h.dataset.cop].value);
+    h.textContent = isNaN(v) ? "" : "$ " + miles(v);
+  });
+}
+function llenarFormulario(form, datos) {
+  Object.entries(datos).forEach(([k, v]) => { if (form.elements[k]) form.elements[k].value = v; });
+  actualizarHints(form);
+}
+
+// ===== Microinteracciones =====
+function microinteracciones() {
+  document.addEventListener("pointermove", e => {
+    const g = e.target.closest?.(".glass");
+    if (!g) return;
+    const r = g.getBoundingClientRect();
+    g.style.setProperty("--x", (e.clientX - r.left) + "px");
+    g.style.setProperty("--y", (e.clientY - r.top) + "px");
+  }, { passive: true });
+  const nav = $("#nav");
+  const onScroll = () => nav.classList.toggle("scrolled", scrollY > 12);
+  addEventListener("scroll", onScroll, { passive: true }); onScroll();
+  if (!REDUCE) {
+    const art = $("#art"), hero = $(".hero");
+    hero.addEventListener("pointermove", e => {
+      const r = art.getBoundingClientRect();
+      art.style.setProperty("--mx", ((e.clientX - (r.left + r.width / 2)) / innerWidth).toFixed(3));
+      art.style.setProperty("--my", ((e.clientY - (r.top + r.height / 2)) / innerHeight).toFixed(3));
+    });
+    hero.addEventListener("pointerleave", () => { art.style.setProperty("--mx", 0); art.style.setProperty("--my", 0); });
+  }
+}
+
+// ===== Arranque =====
+document.addEventListener("DOMContentLoaded", async () => {
+  document.querySelectorAll("a.api-docs").forEach(a => { a.href = API_BASE + "/docs"; });
+  microinteracciones();
+  pintarMetricas(null, "Cargando métricas desde la API…");
+  (document.fonts?.ready || Promise.resolve()).then(iniciarPill);
+
+  const form = $("#form-cliente");
+  actualizarHints(form);
+  form.addEventListener("input", () => actualizarHints(form));
+  form.addEventListener("submit", ev => { ev.preventDefault(); enviar(form); });
+  $("#btn-demo-bajo").addEventListener("click", () => { llenarFormulario(form, CLIENTE_BAJO); enviar(form); });
+  $("#btn-demo-alto").addEventListener("click", () => { llenarFormulario(form, CLIENTE_ALTO); enviar(form); });
+
+  verificarSalud();
+  setInterval(verificarSalud, 15000);
+  const carga = cargarModelo();
+
+  const demo = new URLSearchParams(location.search).get("demo");
+  if (demo === "alto" || demo === "bajo") {
+    llenarFormulario(form, demo === "alto" ? CLIENTE_ALTO : CLIENTE_BAJO);
+    await carga;
+    await enviar(form);
+    $("#simulador").scrollIntoView({ block: "start" });
+  }
+});
+</script>
+</body>
+</html>

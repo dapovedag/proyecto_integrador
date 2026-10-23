@@ -1,0 +1,988 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Riesgo·X · Crédito</title>
+<meta name="description" content="Análisis predictivo de riesgo de crédito: simulador en vivo y métricas del modelo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#D6316B;          /* rosa frambuesa (ajustado desde #DB3972 para AA con texto blanco) */
+  --floor:#C21D57;       /* banda "piso" */
+  --ink:#2A0A1C;
+  --cta1:#FAC251; --cta2:#F88F2F; --cta-ink:#451400;
+  --teal:#43B4C7; --teal-ink:#06323A;
+  --blue:#3352C7; --navy:#22379A;
+  --coral:#ED6F46;
+  --ok:#3EE08F; --mid:#FFC23D; --bad:#FF5C6C;
+  --gut:clamp(16px,5vw,80px);
+  --font:"Outfit","Nunito","Segoe UI",system-ui,sans-serif;
+  --clay:inset -8px -10px 18px rgb(0 0 0/.16), inset 8px 10px 18px rgb(255 255 255/.35);
+}
+*{box-sizing:border-box;margin:0}
+html{color-scheme:light;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{font-family:var(--font);background:var(--floor);color:#fff;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.page{overflow-x:clip}
+a{color:inherit}
+:focus-visible{outline:3px solid #FFE36E;outline-offset:3px;border-radius:8px}
+.wrap{max-width:1320px;margin:0 auto}
+
+/* ---------- NAV ---------- */
+.nav{position:absolute;inset:0 0 auto 0;z-index:30;display:flex;align-items:center;gap:28px;padding:26px var(--gut)}
+.logo{font-weight:800;font-size:25px;letter-spacing:-.03em;text-decoration:none;display:inline-flex;align-items:baseline}
+.logo .dot{color:var(--cta1);margin:0 1px}
+.logo .x{color:var(--teal);text-shadow:0 2px 0 rgb(0 0 0/.12)}
+.nav nav{display:flex;gap:34px;margin-left:auto;margin-right:auto}
+.nav nav a{position:relative;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;padding:8px 2px}
+.nav nav a::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:2px;background:#fff;border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.nav nav a:hover::after{transform:scaleX(1)}
+.nav nav a.active::before{content:"";position:absolute;left:-14px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:var(--coral);box-shadow:0 0 0 3px rgb(237 111 70/.25)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.api-pill{display:inline-flex;align-items:center;gap:9px;padding:10px 14px;border-radius:10px;background:rgb(255 255 255/.12);border:1.5px solid rgb(255 255 255/.32);font-size:12px;font-weight:700;letter-spacing:.04em;white-space:nowrap}
+.api-pill i{width:9px;height:9px;border-radius:50%;background:var(--mid);flex:none}
+.api-pill.ok i{background:var(--ok);box-shadow:0 0 0 0 rgb(62 224 143/.7);animation:pulse 2s infinite}
+.api-pill.down i{background:var(--bad)}
+@keyframes pulse{70%{box-shadow:0 0 0 9px rgb(62 224 143/0)}100%{box-shadow:0 0 0 0 rgb(62 224 143/0)}}
+.btn-cta{display:inline-flex;align-items:center;background:linear-gradient(180deg,var(--cta1),var(--cta2));color:var(--cta-ink);font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;padding:14px 22px;border-radius:10px;box-shadow:0 10px 24px rgb(248 143 47/.45),inset 0 -3px 0 rgb(180 70 0/.22),inset 0 2px 0 rgb(255 255 255/.5);transition:transform .2s,box-shadow .2s}
+.btn-cta:hover{transform:translateY(-2px);box-shadow:0 16px 30px rgb(248 143 47/.55),inset 0 -3px 0 rgb(180 70 0/.22),inset 0 2px 0 rgb(255 255 255/.5)}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;z-index:2;background:var(--bg);padding:120px var(--gut) 0;isolation:isolate}
+.hero::before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(circle at 76% 42%,rgb(255 255 255/.16),transparent 36%),radial-gradient(circle at 8% 0%,rgb(255 255 255/.08),transparent 30%)}
+.hero-floor{position:absolute;left:0;right:0;bottom:0;height:31%;background:var(--floor);z-index:-1}
+.hero-floor::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:rgb(255 255 255/.08)}
+.hero-grid{position:relative;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);min-height:640px}
+.hero-copy{position:relative;z-index:5;padding:18px 0 46px;align-self:end}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(180deg,var(--cta1),var(--cta2));color:var(--cta-ink);padding:7px 13px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;box-shadow:0 8px 18px rgb(248 143 47/.35),inset 0 2px 0 rgb(255 255 255/.45)}
+.eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--cta-ink)}
+h1{font-size:clamp(48px,8vw,120px);line-height:1.02;letter-spacing:-.045em;font-weight:800;margin:22px 0 22px}
+h1 .stroke{display:inline-block;position:relative}
+h1 .stroke::after{content:"";position:absolute;left:2%;right:0;bottom:.06em;height:.13em;border-radius:99px;background:linear-gradient(90deg,var(--cta1),var(--cta2));z-index:-1;box-shadow:0 6px 14px rgb(248 143 47/.35)}
+h1 .pt{color:var(--cta1)}
+.lede{font-size:clamp(17px,1.35vw,20px);max-width:30em;font-weight:500}
+.lede b{font-weight:800}
+.hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+.cta-split{display:inline-flex;align-items:stretch;border:0;padding:0;border-radius:12px;overflow:hidden;cursor:pointer;text-decoration:none;font-family:var(--font);box-shadow:0 12px 26px rgb(248 143 47/.45);transition:transform .2s,box-shadow .2s}
+.cta-split .cta-body{background:linear-gradient(180deg,var(--cta1),var(--cta2));color:var(--cta-ink);padding:18px 26px;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;box-shadow:inset 0 2px 0 rgb(255 255 255/.5),inset 0 -3px 0 rgb(180 70 0/.2)}
+.cta-split .cta-arrow{background:var(--teal);color:#0E2B4D;width:56px;display:grid;place-items:center;font-size:18px;box-shadow:inset 0 2px 0 rgb(255 255 255/.4),inset 0 -3px 0 rgb(0 60 80/.25);transition:width .25s}
+.cta-split:hover{transform:translateY(-2px);box-shadow:0 18px 34px rgb(248 143 47/.55)}
+.cta-split:hover .cta-arrow{width:66px}
+.cta-split:disabled{opacity:.75;cursor:progress}
+.btn-ghost{display:inline-flex;align-items:center;padding:0 22px;min-height:56px;border-radius:12px;background:rgb(255 255 255/.12);border:1.5px solid rgb(255 255 255/.42);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:background .2s}
+.btn-ghost:hover{background:rgb(255 255 255/.22)}
+.hero-kpis{display:flex;flex-wrap:wrap;gap:12px 34px;margin-top:46px}
+.hero-kpis div{position:relative}
+.hero-kpis div+div::before{content:"";position:absolute;left:-18px;top:6px;bottom:6px;width:2px;border-radius:2px;background:rgb(255 255 255/.25)}
+.hero-kpis dt{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.hero-kpis dd{font-size:clamp(34px,3.4vw,50px);font-weight:800;letter-spacing:-.035em;line-height:1.05}
+
+.stage{position:relative;z-index:4}
+.pig-wrap{position:absolute;right:-1%;bottom:-112px;width:min(108%,560px)}
+.pig{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 30px 30px rgb(110 0 40/.25))}
+.lid{transform-box:fill-box;transform-origin:50% 0;transform:scaleY(0);animation:blink 5.5s infinite}
+@keyframes blink{0%,93%,100%{transform:scaleY(0)}95.5%{transform:scaleY(1)}}
+.coin-bob{animation:bob 3.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(-10px)}50%{transform:translateY(6px)}}
+.led{animation:led 2.4s ease-in-out infinite}
+.led:nth-of-type(2n){animation-delay:.6s}.led:nth-of-type(3n){animation-delay:1.2s}
+@keyframes led{0%,100%{opacity:1}50%{opacity:.45}}
+
+.float{position:absolute;--r:0deg;transform:rotate(var(--r));animation:floaty 6s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(var(--r))}50%{transform:translateY(-16px) rotate(calc(var(--r) + 5deg))}}
+.coin{width:84px;height:84px;border-radius:50%;background:radial-gradient(circle at 34% 28%,#FFF6CF 0 10%,#FFD45C 34%,#F5A623 72%,#C9781A 100%);box-shadow:inset -6px -8px 14px rgb(140 60 0/.45),inset 6px 6px 12px rgb(255 255 255/.6),0 18px 28px rgb(110 0 40/.35);display:grid;place-items:center}
+.coin::after{content:"$";width:62%;height:62%;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:30px;color:#B5640E;border:3px solid rgb(181 100 14/.35);box-shadow:inset 2px 3px 6px rgb(140 60 0/.25),0 1px 0 rgb(255 255 255/.6)}
+.coin.sm{width:50px;height:50px}.coin.sm::after{font-size:18px}
+.ccard{width:138px;height:90px;border-radius:16px;background:radial-gradient(circle at 108% -14%,#FF7AA6 0 40%,transparent 41%),linear-gradient(140deg,#6F8BFF 0%,#3352C7 55%,#2238A0 100%);box-shadow:inset -6px -8px 14px rgb(0 0 40/.35),inset 6px 6px 12px rgb(255 255 255/.35),0 20px 30px rgb(70 0 30/.35)}
+.ccard::before{content:"";position:absolute;left:16px;top:26px;width:24px;height:18px;border-radius:5px;background:linear-gradient(160deg,#FFE9A8,#F5A623);box-shadow:inset 0 0 0 2px rgb(150 80 0/.2)}
+.ccard::after{content:"";position:absolute;left:16px;bottom:16px;width:62%;height:8px;border-radius:4px;background:rgb(255 255 255/.6)}
+.badge-auc{position:absolute;display:inline-flex;align-items:center;gap:8px;background:#fff;color:#B0124A;padding:10px 16px 10px 12px;border-radius:16px;font-weight:800;font-size:15px;letter-spacing:.01em;box-shadow:0 16px 28px rgb(90 0 30/.3),inset 0 -3px 0 rgb(176 18 74/.12)}
+.badge-auc .h{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(180deg,#FF7AA6,#D6316B);color:#fff;font-size:14px}
+.badge-auc::after{content:"";position:absolute;right:28px;bottom:-9px;border:10px solid transparent;border-bottom:0;border-top-color:#fff}
+.mini-stage{position:absolute;left:41%;bottom:22px;width:140px;z-index:3}
+.mini-stage svg{display:block;width:100%;height:auto;overflow:visible}
+.bob2{animation:bob 4.2s ease-in-out infinite;transform-box:fill-box}
+
+/* ---------- SECCIONES ---------- */
+section{position:relative}
+.sec{padding:110px var(--gut) 140px}
+.slab{border-radius:56px 56px 0 0;margin-top:-56px;z-index:1}
+h2{font-size:clamp(36px,5.2vw,76px);line-height:1.02;letter-spacing:-.04em;font-weight:800;margin-top:18px}
+.sec-sub{font-size:17px;font-weight:500;max-width:36em;margin-top:14px}
+
+/* Fases */
+.fases{background:var(--floor);z-index:1;padding-top:96px}
+.fases-head{max-width:640px}
+.phases{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;margin-top:54px;align-items:start}
+.phase{position:relative;border:6px solid #fff;border-radius:28px;padding:20px 20px 24px;min-height:370px;overflow:hidden;display:flex;flex-direction:column;background:var(--c);color:var(--t,#fff);box-shadow:0 24px 40px rgb(90 0 30/.35);transition:transform .4s cubic-bezier(.2,.8,.2,1.25),box-shadow .3s}
+.phase:nth-child(even){margin-top:40px}
+.phase:hover{transform:translateY(-10px) rotate(-1.5deg);box-shadow:0 34px 50px rgb(90 0 30/.45)}
+.phase::before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;top:-96px;right:-96px;background:var(--cut)}
+.phase>*{position:relative}
+.phase .ico{width:58px;height:58px;border-radius:50%;background:#fff;display:grid;place-items:center;color:var(--ic);box-shadow:inset -4px -6px 10px rgb(0 0 0/.12),inset 3px 4px 6px rgb(255 255 255/.9),0 10px 18px rgb(0 0 0/.2)}
+.phase .num{font-size:64px;font-weight:800;line-height:1;letter-spacing:-.05em;margin-top:auto;padding-top:34px}
+.phase h3{font-size:28px;font-weight:800;letter-spacing:-.02em;margin:6px 0 8px;line-height:1.05}
+.phase p{font-size:14.5px;line-height:1.45;font-weight:500}
+.phase .tag{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;margin-top:14px;padding:6px 12px;border-radius:999px;background:#fff;color:#B0124A;font-size:12px;font-weight:800;box-shadow:0 6px 12px rgb(0 0 0/.15)}
+.phase .tag i{width:8px;height:8px;border-radius:50%;background:var(--mid)}
+.phase .tag.ok i{background:#16A765}.phase .tag.down i{background:#D3173A}
+
+/* Simulador */
+.sim{background:var(--bg)}
+.sim-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px 40px;margin-bottom:44px}
+.sim-head .sec-sub code{font-family:ui-monospace,Consolas,monospace;font-size:.88em;background:rgb(0 0 0/.18);padding:2px 7px;border-radius:6px}
+.sim-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:28px;align-items:start}
+.form-card{background:#fff;color:var(--ink);border-radius:32px;padding:30px;box-shadow:0 30px 60px rgb(90 0 30/.35),inset 0 -6px 0 #F6D3E0}
+fieldset{border:0;padding:0;margin:0 0 28px;min-width:0}
+legend{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;padding:0}
+legend .n{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-size:13px;letter-spacing:0;box-shadow:inset 0 -3px 0 rgb(0 0 0/.15),inset 0 2px 0 rgb(255 255 255/.35)}
+legend .n.b{background:var(--blue);color:#fff}.legend-t{}
+legend .n.t{background:var(--teal);color:var(--teal-ink)}
+legend .n.o{background:linear-gradient(180deg,var(--cta1),var(--cta2));color:var(--cta-ink)}
+legend small{font-size:12px;font-weight:600;letter-spacing:0;text-transform:none;color:#8A4766}
+.grid-f{display:grid;grid-template-columns:repeat(auto-fill,minmax(186px,1fr));gap:16px 14px}
+.fld{display:flex;flex-direction:column;gap:7px;min-width:0}
+.fld.wide{grid-column:1/-1}
+.lbl{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6B2A47;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.lbl em{font-style:normal;color:#8A4766;font-weight:600;text-transform:none;letter-spacing:0}
+.lbl output{font-size:13px;font-weight:800;letter-spacing:0;text-transform:none;color:var(--cta-ink);background:#FFE3A3;padding:2px 10px;border-radius:999px}
+input,select,textarea{font:600 16px/1.2 var(--font);color:var(--ink);background:#FFF3F7;border:2px solid #F2C6D6;border-radius:16px;height:54px;padding:0 16px;width:100%;transition:border-color .2s,box-shadow .2s,background-color .2s}
+select{appearance:none;-webkit-appearance:none;padding-right:42px;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1.5 1.5 7 7l5.5-5.5' fill='none' stroke='%23B0124A' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center}
+textarea{height:auto;min-height:96px;padding:14px 16px;resize:vertical;line-height:1.45}
+input:hover,select:hover,textarea:hover{border-color:#E79AB6}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none;border-color:var(--blue);background-color:#fff;box-shadow:0 0 0 4px rgb(67 180 199/.45)}
+[aria-invalid="true"]{border-color:#D3173A!important;background-color:#FFF0F2!important;box-shadow:0 0 0 4px rgb(211 23 58/.15)}
+.field-error{font-size:12.5px;font-weight:700;color:#B3122E;line-height:1.3}
+input[type=range]{-webkit-appearance:none;appearance:none;height:54px;padding:0;border:0;background:transparent;box-shadow:none;cursor:pointer;--p:50%}
+input[type=range]:focus-visible{box-shadow:none;outline:3px solid var(--teal);outline-offset:2px;border-radius:12px}
+input[type=range]::-webkit-slider-runnable-track{height:16px;border-radius:999px;background:linear-gradient(90deg,var(--cta1),var(--cta2) var(--p),#F6D3E0 var(--p));box-shadow:inset 0 2px 4px rgb(0 0 0/.1)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:32px;height:32px;margin-top:-8px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#FFE9F1 60%,#F7C0D3);border:3px solid #F88F2F;box-shadow:0 6px 12px rgb(176 18 74/.3),inset -2px -3px 5px rgb(0 0 0/.08);transition:transform .15s}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.12)}
+input[type=range]::-moz-range-track{height:16px;border-radius:999px;background:#F6D3E0}
+input[type=range]::-moz-range-progress{height:16px;border-radius:999px;background:linear-gradient(90deg,var(--cta1),var(--cta2))}
+input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid #F88F2F}
+.actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding-top:22px;border-top:2px dashed #F2C6D6}
+.btn-demo{min-height:56px;padding:0 18px;border-radius:14px;border:2px solid;font:800 13px var(--font);letter-spacing:.04em;cursor:pointer;display:inline-flex;align-items:center;gap:10px;transition:transform .2s,box-shadow .2s}
+.btn-demo:hover{transform:translateY(-2px);box-shadow:0 10px 18px rgb(0 0 0/.1)}
+.btn-demo i{width:12px;height:12px;border-radius:50%}
+.btn-demo.bajo{background:#E3FBEF;border-color:#9FE8C3;color:#0B5A35}.btn-demo.bajo i{background:#16A765}
+.btn-demo.alto{background:#FFE8EB;border-color:#FFB3BD;color:#9E0F25}.btn-demo.alto i{background:#D3173A}
+
+.res-card{position:sticky;top:24px;background:var(--blue);border:6px solid #fff;border-radius:32px;padding:28px;overflow:hidden;min-height:540px;box-shadow:0 30px 60px rgb(20 20 90/.4)}
+.res-card::before{content:"";position:absolute;width:270px;height:270px;border-radius:50%;top:-130px;right:-120px;background:var(--bg)}
+.res-card>*{position:relative}
+.r-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.r-kicker{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.r-prob{font-size:clamp(64px,7vw,104px);font-weight:800;line-height:.95;letter-spacing:-.05em;margin-top:6px}
+.r-prob small{font-size:.42em;letter-spacing:-.02em;margin-left:4px}
+.r-face{width:96px;flex:none;margin:-8px -6px 0 0}
+.r-face svg{display:block;width:100%;height:auto}
+.gauge{max-width:380px;margin:10px auto 0}
+.gauge svg{display:block;width:100%;height:auto;overflow:visible}
+.needle{transform-origin:150px 150px;transition:transform 1.1s cubic-bezier(.2,.9,.25,1.2)}
+.r-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;font-weight:800;font-size:13px;letter-spacing:.04em}
+.chip.Bajo{background:var(--ok);color:#053B26}.chip.Medio{background:var(--mid);color:#4A2E00}.chip.Alto{background:var(--bad);color:#4A0010}
+.chip.etq{background:rgb(255 255 255/.14);border:1.5px solid rgb(255 255 255/.4);color:#fff}
+.r-umbral{font-size:14.5px;margin:14px 0 18px;font-weight:500}
+.r-factores{list-style:none;padding:0;margin-top:10px;display:grid;gap:8px}
+.r-factores li{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:rgb(255 255 255/.1);font-weight:700;font-size:15px}
+.r-factores .arr{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font-size:12px;flex:none;box-shadow:inset 0 -3px 0 rgb(0 0 0/.15)}
+.r-factores .up .arr{background:var(--bad);color:#4A0010}.r-factores .dn .arr{background:var(--ok);color:#053B26}
+.r-factores small{margin-left:auto;font-size:12.5px;font-weight:600;text-align:right}
+.r-texto{margin-top:14px;font-size:13.5px;line-height:1.45}
+.r-texto:not(:empty){padding:12px 14px;border-radius:14px;background:rgb(0 0 0/.16)}
+.r-version{font-size:12px;margin-top:16px;font-weight:600;letter-spacing:.04em}
+.r-empty h3,.r-err h3{font-size:30px;line-height:1.05;letter-spacing:-.02em;margin:18px 0 10px}
+.r-err .msg{background:rgb(0 0 0/.18);border-radius:14px;padding:12px 14px;font-size:14.5px;margin-top:10px}
+.r-err code{font-family:ui-monospace,Consolas,monospace;font-size:.9em}
+.skel{display:grid;gap:10px;margin-top:22px}.skel span{height:14px;border-radius:99px;background:rgb(255 255 255/.16)}
+
+/* Métricas */
+.met{background:var(--blue)}
+.m-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px 40px;margin-bottom:46px}
+.m-src{display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:14px;background:rgb(255 255 255/.12);border:1.5px solid rgb(255 255 255/.3);font-size:13.5px;font-weight:600}
+.m-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.mcard{position:relative;overflow:hidden;border:6px solid #fff;border-radius:28px;padding:22px;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;min-height:190px;background:var(--c);color:var(--t,#fff);box-shadow:0 22px 40px rgb(10 20 80/.35);transition:transform .35s cubic-bezier(.2,.8,.2,1.25)}
+.mcard:hover{transform:translateY(-6px) rotate(.8deg)}
+.mcard::before{content:"";position:absolute;width:200px;height:200px;border-radius:50%;right:-80px;bottom:-110px;background:var(--cut)}
+.mcard>*{position:relative}
+.ring{width:118px;height:118px;display:block}
+.ring .trk{fill:none;stroke:currentColor;opacity:.2;stroke-width:14}
+.ring .val{fill:none;stroke:var(--ring,currentColor);stroke-width:14;stroke-linecap:round}
+.ring text{fill:currentColor;font:800 17px var(--font);letter-spacing:.04em}
+.mval{font-size:46px;font-weight:800;letter-spacing:-.04em;line-height:1}
+.mtit{font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-top:6px}
+.mdesc{font-size:13.5px;line-height:1.4;margin-top:4px;font-weight:500}
+.m-row{display:grid;gap:22px;margin-top:22px}
+.m-row.r2{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}
+.m-row.r3{grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr)}
+.panel{position:relative;overflow:hidden;border:6px solid #fff;border-radius:28px;padding:28px;box-shadow:0 22px 40px rgb(10 20 80/.35)}
+.panel>*{position:relative}
+.panel h3{font-size:clamp(26px,2.5vw,36px);font-weight:800;letter-spacing:-.03em;line-height:1.05}
+.panel .sub{font-size:14px;margin-top:6px;font-weight:500}
+.p-white{background:#fff;color:var(--ink)}
+.p-navy{background:var(--navy)}
+.p-pink{background:var(--bg)}
+.p-orange{background:linear-gradient(160deg,var(--cta1),var(--cta2));color:var(--cta-ink)}
+.p-white::before,.p-navy::before,.p-pink::before{content:"";position:absolute;border-radius:50%;width:240px;height:240px;right:-110px;top:-120px}
+.p-white::before{background:#FFE3EC}.p-navy::before{background:var(--teal);opacity:.9}.p-pink::before{background:#FF7AA6}
+.bar-row{margin-top:20px}
+.bar-top{display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:700;font-size:15px}
+.bar-top b{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.bar{height:26px;border-radius:999px;background:var(--track,#F6E3EB);margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;width:var(--w);border-radius:999px;background:var(--fill);box-shadow:inset 0 -5px 0 rgb(0 0 0/.12),inset 0 4px 0 rgb(255 255 255/.35);transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.win{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;background:linear-gradient(180deg,var(--cta1),var(--cta2));color:var(--cta-ink);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-left:8px}
+.axis{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#6B2A47;margin-top:12px;padding-top:8px;border-top:2px dashed #F2C6D6}
+.di-big{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:16px}
+.di-big b{font-size:clamp(56px,6vw,84px);font-weight:800;letter-spacing:-.05em;line-height:1}
+.di-scale{position:relative;height:22px;border-radius:999px;margin:26px 0 34px;background:linear-gradient(90deg,#FF5C6C 0 64%,#3EE08F 64% 100%);box-shadow:inset 0 -4px 0 rgb(0 0 0/.15),inset 0 3px 0 rgb(255 255 255/.3)}
+.di-knob{position:absolute;top:50%;width:38px;height:38px;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle at 35% 30%,#fff,#E9EEFF);box-shadow:0 8px 16px rgb(0 0 40/.4),inset -2px -3px 6px rgb(0 0 60/.15)}
+.di-tick{position:absolute;left:64%;top:-8px;bottom:-8px;width:3px;background:#fff;border-radius:3px}
+.di-lab{position:absolute;top:32px;font-size:12px;font-weight:700;white-space:nowrap;transform:translateX(-50%)}
+.ok-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;font-weight:800;font-size:13px}
+.ok-badge.si{background:var(--ok);color:#053B26}.ok-badge.no{background:var(--bad);color:#4A0010}
+.p-navy .bar{--track:rgb(255 255 255/.16)}
+.p-pink .bar{--track:rgb(255 255 255/.2);height:22px}
+.p-pink .bar-top b{font-size:17px}
+.band-strip{display:flex;height:34px;border-radius:12px;overflow:hidden;margin:22px 0 8px;position:relative;box-shadow:inset 0 -4px 0 rgb(0 0 0/.12)}
+.band-strip span{display:grid;place-items:center;font-size:12px;font-weight:800;letter-spacing:.04em}
+.band-strip .u{position:absolute;top:-6px;bottom:-6px;width:4px;border-radius:3px;background:var(--ink);transform:translateX(-50%)}
+.u-lab{position:relative;height:20px;font-size:12px;font-weight:800}
+.u-lab span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.facts div{background:rgb(255 255 255/.35);border-radius:14px;padding:10px 12px}
+.facts b{display:block;font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.facts span{font-size:12px;font-weight:700}
+.big-u{font-size:clamp(52px,5vw,76px);font-weight:800;letter-spacing:-.05em;line-height:1;margin-top:12px}
+.note{font-size:14px;font-weight:600;margin-top:10px}
+
+/* Footer */
+.foot{background:var(--floor);padding:90px var(--gut) 44px}
+.foot-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:34px;align-items:start}
+.foot .logo{font-size:clamp(48px,7vw,96px);letter-spacing:-.05em;line-height:1}
+.foot h4{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.foot p,.foot li{font-size:15px;font-weight:500}
+.foot ul{list-style:none;padding:0;display:grid;gap:6px}
+.foot a{text-decoration-thickness:2px;text-underline-offset:3px}
+.foot-bottom{margin-top:56px;padding-top:20px;border-top:2px solid rgb(255 255 255/.18);display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;font-size:13px;font-weight:600}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:1200px){.mini-stage{display:none}.phases{grid-template-columns:repeat(3,minmax(0,1fr))}.phase:nth-child(even){margin-top:0}}
+@media (max-width:1000px){
+  .nav nav{display:none}.nav-right{margin-left:auto}
+  .hero-grid{grid-template-columns:1fr;min-height:0}
+  .hero-copy{padding-bottom:10px}
+  .stage{height:auto}
+  .pig-wrap{position:relative;right:auto;bottom:auto;width:min(92vw,430px);margin:0 auto -86px}
+  .hero-floor{height:300px}
+  .sim-grid{grid-template-columns:1fr}
+  .res-card{position:relative;top:0;min-height:0}
+  .m-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .m-row.r2,.m-row.r3{grid-template-columns:1fr}
+  .foot-grid{grid-template-columns:1fr 1fr}.foot-grid>:first-child{grid-column:1/-1}
+}
+@media (max-width:720px){
+  .phases{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .phase{min-height:300px}
+  .phases .phase:last-child{grid-column:1/-1;min-height:0}
+  .api-pill .v{display:none}
+  .nav{gap:12px}
+  .btn-cta.top{display:none}
+  .sec{padding:90px var(--gut) 120px}
+  .slab{border-radius:36px 36px 0 0;margin-top:-36px}
+  .form-card{padding:20px;border-radius:26px}
+  .res-card{padding:22px;border-radius:28px}
+  .m-cards{grid-template-columns:1fr}
+  .mcard{min-height:0}
+  .facts{grid-template-columns:1fr 1fr 1fr}
+}
+@media (max-width:520px){
+  .phases{grid-template-columns:1fr}
+  .phase{min-height:0}
+  .phase .num{font-size:52px;padding-top:20px}
+  .grid-f{grid-template-columns:1fr 1fr}
+  .grid-f .fld.wide,.grid-f .fld.rng{grid-column:1/-1}
+  .hero-kpis{gap:12px 30px}
+  .actions>*{flex:1 1 100%;justify-content:center}
+  .cta-split .cta-body{flex:1;text-align:center}
+  .ring{width:96px;height:96px}
+  .mval{font-size:38px}
+  .panel{padding:22px}
+  .facts b{font-size:18px}
+  .foot-grid{grid-template-columns:1fr}
+  .float.ccard{transform:scale(.8)}
+  .badge-auc{font-size:13px}
+}
+@media (max-width:400px){.grid-f{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="nav">
+  <a class="logo" href="#top" aria-label="Riesgo X, inicio">RIESGO<span class="dot">·</span><span class="x">X</span></a>
+  <nav aria-label="Principal">
+    <a class="active" href="#top">Inicio</a>
+    <a href="#fases">Fases</a>
+    <a href="#simulador">Simulador</a>
+    <a href="#metricas">Métricas</a>
+  </nav>
+  <div class="nav-right">
+    <span id="api-status" class="api-pill wait" role="status"><i></i><span class="t">Verificando API…</span></span>
+    <a class="btn-cta top" href="#simulador">Probar</a>
+  </div>
+</header>
+
+<main>
+<!-- ================= HERO ================= -->
+<section class="hero" id="top">
+  <div class="hero-floor" aria-hidden="true"></div>
+  <div class="hero-grid wrap">
+    <div class="hero-copy">
+      <span class="eyebrow">Proyecto integrador · Riesgo de crédito</span>
+      <h1>Anticipa<br>el <span class="stroke">impago</span><span class="pt">.</span></h1>
+      <p class="lede">Presta con los ojos abiertos. Un modelo de <b>regresión logística</b> estima, en milisegundos, la probabilidad de que un cliente no pague su crédito.</p>
+      <div class="hero-actions">
+        <a class="cta-split" href="#simulador"><span class="cta-body">Evaluar un cliente</span><span class="cta-arrow" aria-hidden="true">▸</span></a>
+        <a class="btn-ghost" href="#metricas">Ver métricas</a>
+      </div>
+      <dl class="hero-kpis">
+        <div><dt>ROC-AUC</dt><dd id="k-auc">—</dd></div>
+        <div><dt>KS</dt><dd id="k-ks">—</dd></div>
+        <div><dt>Clientes</dt><dd>12.144</dd></div>
+      </dl>
+    </div>
+
+    <div class="stage" aria-hidden="true">
+      <div class="float coin" style="top:2%;left:4%;--r:-12deg"></div>
+      <div class="float ccard" style="top:10%;right:0;--r:14deg;animation-delay:-2s"></div>
+      <div class="float coin sm" style="top:52%;right:-3%;--r:8deg;animation-delay:-3.5s"></div>
+      <div class="float badge-auc" style="top:31%;left:-2%;--r:-4deg;animation-delay:-1s"><span class="h">♥</span><span id="pig-auc">AUC —</span></div>
+
+      <div class="pig-wrap">
+        <svg class="pig" viewBox="0 60 420 440" role="img" aria-label="Alcancía de cerdito 3D sobre un pedestal">
+          <defs>
+            <radialGradient id="gBody" cx="36%" cy="28%" r="80%"><stop offset="0" stop-color="#FFF1C2"/><stop offset=".26" stop-color="#FFC857"/><stop offset=".7" stop-color="#F7922F"/><stop offset="1" stop-color="#C9561C"/></radialGradient>
+            <radialGradient id="gLeg" cx="40%" cy="20%" r="90%"><stop offset="0" stop-color="#FFD27A"/><stop offset=".6" stop-color="#F08A2C"/><stop offset="1" stop-color="#B84E18"/></radialGradient>
+            <radialGradient id="gLegB" cx="40%" cy="20%" r="90%"><stop offset="0" stop-color="#F3A04A"/><stop offset="1" stop-color="#A9461A"/></radialGradient>
+            <radialGradient id="gSnout" cx="38%" cy="28%" r="80%"><stop offset="0" stop-color="#FFD0B4"/><stop offset=".55" stop-color="#F98A5E"/><stop offset="1" stop-color="#D2532F"/></radialGradient>
+            <radialGradient id="gEye" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F1E4EA"/></radialGradient>
+            <linearGradient id="gPedTop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF9BBE"/><stop offset="1" stop-color="#E5477F"/></linearGradient>
+            <linearGradient id="gPedSide" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B8174F"/><stop offset="1" stop-color="#7E0B34"/></linearGradient>
+            <radialGradient id="gCoin" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#FFF6CF"/><stop offset=".42" stop-color="#FFD45C"/><stop offset="1" stop-color="#D98A16"/></radialGradient>
+            <linearGradient id="gShield" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7FDCEA"/><stop offset="1" stop-color="#2E97AA"/></linearGradient>
+            <filter id="blur5" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+            <filter id="blur12" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
+            <clipPath id="slotClip"><rect x="150" y="40" width="140" height="117"/></clipPath>
+          </defs>
+          <!-- pedestal -->
+          <ellipse cx="210" cy="470" rx="190" ry="24" fill="#5A0624" opacity=".5" filter="url(#blur12)"/>
+          <path d="M30 400 V440 A180 36 0 0 0 390 440 V400 Z" fill="url(#gPedSide)"/>
+          <path d="M30 420 A180 36 0 0 0 390 420" fill="none" stroke="#43B4C7" stroke-width="7" opacity=".9"/>
+          <g fill="#A8F6FF">
+            <circle class="led" cx="70" cy="446" r="5"/><circle class="led" cx="105" cy="452" r="5"/><circle class="led" cx="140" cy="456" r="5"/><circle class="led" cx="175" cy="458" r="5"/><circle class="led" cx="210" cy="459" r="5"/><circle class="led" cx="245" cy="458" r="5"/><circle class="led" cx="280" cy="456" r="5"/><circle class="led" cx="315" cy="452" r="5"/><circle class="led" cx="350" cy="446" r="5"/>
+          </g>
+          <ellipse cx="210" cy="400" rx="180" ry="36" fill="url(#gPedTop)"/>
+          <ellipse cx="210" cy="400" rx="150" ry="27" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width="3"/>
+          <ellipse cx="150" cy="388" rx="60" ry="8" fill="#fff" opacity=".35" filter="url(#blur5)"/>
+          <ellipse cx="212" cy="398" rx="132" ry="15" fill="#7E0B34" opacity=".5" filter="url(#blur5)"/>
+          <!-- patas traseras -->
+          <rect x="94" y="320" width="48" height="78" rx="22" fill="url(#gLegB)"/>
+          <rect x="288" y="316" width="48" height="80" rx="22" fill="url(#gLegB)"/>
+          <!-- cola -->
+          <path d="M66 236 c-30 -6 -36 -36 -14 -44 c18 -6 26 16 8 22 c-10 4 -20 -2 -18 -10" fill="none" stroke="#E07A26" stroke-width="9" stroke-linecap="round"/>
+          <!-- orejas -->
+          <path d="M120 170 C100 116 124 88 162 100 C172 126 156 158 120 170 Z" fill="url(#gBody)"/>
+          <path d="M130 156 C120 122 134 106 154 112 C158 128 150 146 130 156 Z" fill="#FF8E6B" opacity=".75"/>
+          <path d="M262 110 C290 82 330 92 326 150 C300 150 272 136 262 110 Z" fill="url(#gBody)"/>
+          <path d="M276 112 C296 98 316 106 314 138 C298 136 282 128 276 112 Z" fill="#FF8E6B" opacity=".75"/>
+          <!-- moneda entrando -->
+          <g clip-path="url(#slotClip)"><g class="coin-bob">
+            <circle cx="222" cy="128" r="28" fill="url(#gCoin)"/>
+            <circle cx="222" cy="128" r="18" fill="none" stroke="#B5640E" stroke-opacity=".45" stroke-width="3"/>
+            <text x="222" y="137" text-anchor="middle" font-family="Outfit,sans-serif" font-weight="900" font-size="24" fill="#B5640E">$</text>
+            <ellipse cx="212" cy="116" rx="8" ry="5" fill="#fff" opacity=".7"/>
+          </g></g>
+          <!-- cuerpo -->
+          <ellipse cx="210" cy="250" rx="150" ry="120" fill="url(#gBody)"/>
+          <rect x="182" y="148" width="80" height="14" rx="7" fill="#8A3410"/>
+          <rect x="188" y="150" width="68" height="4" rx="2" fill="#5E1F05" opacity=".6"/>
+          <ellipse cx="138" cy="176" rx="48" ry="24" transform="rotate(-28 138 176)" fill="#fff" opacity=".5" filter="url(#blur5)"/>
+          <ellipse cx="124" cy="170" rx="13" ry="7" transform="rotate(-28 124 170)" fill="#fff" opacity=".85"/>
+          <!-- escudo con medidor -->
+          <g transform="translate(96 244)">
+            <path d="M0 8 L30 -2 L60 8 V34 C60 56 46 68 30 74 C14 68 0 56 0 34 Z" fill="url(#gShield)" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M13 44 A17 17 0 0 1 47 44" fill="none" stroke="#3EE08F" stroke-width="6" stroke-linecap="round"/>
+            <path d="M40 30 A17 17 0 0 1 47 44" fill="none" stroke="#FF5C6C" stroke-width="6" stroke-linecap="round"/>
+            <line x1="30" y1="44" x2="20" y2="33" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="30" cy="44" r="4.5" fill="#fff"/>
+          </g>
+          <!-- mejillas -->
+          <ellipse cx="196" cy="266" rx="20" ry="11" fill="#FF5E8A" opacity=".45"/>
+          <ellipse cx="334" cy="254" rx="16" ry="10" fill="#FF5E8A" opacity=".45"/>
+          <!-- ojos -->
+          <ellipse cx="214" cy="204" rx="18" ry="22" fill="url(#gEye)"/>
+          <ellipse cx="304" cy="200" rx="17" ry="21" fill="url(#gEye)"/>
+          <g class="pupil">
+            <circle cx="218" cy="208" r="9.5" fill="#2A0B12"/><circle cx="308" cy="204" r="9" fill="#2A0B12"/>
+            <circle cx="221.5" cy="203.5" r="3.4" fill="#fff"/><circle cx="311.5" cy="199.5" r="3.2" fill="#fff"/>
+          </g>
+          <ellipse class="lid" cx="214" cy="204" rx="19" ry="23" fill="#F9A440"/>
+          <ellipse class="lid" cx="304" cy="200" rx="18" ry="22" fill="#F9A440"/>
+          <path d="M196 174 q16 -10 32 -2" fill="none" stroke="#9C3E10" stroke-width="5" stroke-linecap="round"/>
+          <path d="M290 170 q15 -9 30 0" fill="none" stroke="#9C3E10" stroke-width="5" stroke-linecap="round"/>
+          <!-- hocico -->
+          <ellipse cx="262" cy="262" rx="52" ry="38" fill="url(#gSnout)"/>
+          <ellipse cx="248" cy="246" rx="16" ry="7" fill="#fff" opacity=".45"/>
+          <ellipse cx="246" cy="266" rx="8" ry="12" fill="#7A2A12"/>
+          <ellipse cx="280" cy="266" rx="8" ry="12" fill="#7A2A12"/>
+          <path d="M246 312 Q264 326 284 310" fill="none" stroke="#7A2A12" stroke-width="5" stroke-linecap="round"/>
+          <!-- patas delanteras -->
+          <rect x="150" y="322" width="54" height="76" rx="24" fill="url(#gLeg)"/>
+          <rect x="240" y="320" width="54" height="78" rx="24" fill="url(#gLeg)"/>
+          <ellipse cx="177" cy="390" rx="25" ry="8" fill="#B84E18" opacity=".6"/>
+          <ellipse cx="267" cy="390" rx="25" ry="8" fill="#B84E18" opacity=".6"/>
+          <ellipse cx="166" cy="336" rx="8" ry="5" fill="#fff" opacity=".5"/>
+          <ellipse cx="256" cy="334" rx="8" ry="5" fill="#fff" opacity=".5"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="mini-stage" aria-hidden="true">
+      <svg viewBox="0 0 160 200">
+        <defs>
+          <linearGradient id="gLockB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#86E2F0"/><stop offset="1" stop-color="#2E97AA"/></linearGradient>
+          <linearGradient id="gLockS" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FAC251"/><stop offset="1" stop-color="#F88F2F"/></linearGradient>
+        </defs>
+        <ellipse cx="80" cy="190" rx="70" ry="10" fill="#5A0624" opacity=".45" filter="url(#blur5)"/>
+        <path d="M14 160 V176 A66 15 0 0 0 146 176 V160 Z" fill="url(#gPedSide)"/>
+        <ellipse cx="80" cy="160" rx="66" ry="15" fill="url(#gPedTop)"/>
+        <ellipse cx="80" cy="160" rx="48" ry="9" fill="#7E0B34" opacity=".35" filter="url(#blur5)"/>
+        <g class="bob2">
+          <path d="M54 92 V68 a26 26 0 0 1 52 0 V92" fill="none" stroke="url(#gLockS)" stroke-width="14" stroke-linecap="round"/>
+          <rect x="34" y="84" width="92" height="64" rx="20" fill="url(#gLockB)"/>
+          <ellipse cx="58" cy="96" rx="14" ry="6" fill="#fff" opacity=".55"/>
+          <circle cx="80" cy="110" r="9" fill="#0B3A44"/>
+          <rect x="76" y="112" width="8" height="20" rx="4" fill="#0B3A44"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FASES ================= -->
+<section class="sec fases" id="fases">
+  <div class="wrap">
+    <div class="fases-head">
+      <span class="eyebrow">El proyecto</span>
+      <h2>De la pregunta a la API, en cinco fases.</h2>
+    </div>
+    <div class="phases">
+      <article class="phase" style="--c:#3352C7;--cut:#D6316B;--ic:#3352C7">
+        <div class="ico"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div>
+        <div class="num">01</div><h3>Definir</h3>
+        <p>¿Quién no pagará su crédito? Se fija la pregunta de negocio y la métrica guía: ROC-AUC.</p>
+      </article>
+      <article class="phase" style="--c:#43B4C7;--cut:#3352C7;--ic:#1D7F91;--t:#06323A">
+        <div class="ico"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg></div>
+        <div class="num">02</div><h3>Explorar</h3>
+        <p>12.144 clientes y 21 columnas. El 35,6 % no pagó. Nulos y atípicos, a la vista.</p>
+      </article>
+      <article class="phase" style="--c:linear-gradient(170deg,#FAC251,#F88F2F);--cut:#FFE3A3;--ic:#C2621A;--t:#451400">
+        <div class="ico"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></div>
+        <div class="num">03</div><h3>Analizar</h3>
+        <p>Limpieza, 3 variables derivadas y lectura del texto de la solicitud con NLP.</p>
+      </article>
+      <article class="phase" style="--c:#22379A;--cut:#43B4C7;--ic:#22379A">
+        <div class="ico"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></div>
+        <div class="num">04</div><h3>Evaluar</h3>
+        <p>Regresión logística frente a gradient boosting, con calibración y auditoría de equidad.</p>
+        <span class="tag">♥ <span id="f4-auc">AUC —</span></span>
+      </article>
+      <article class="phase" style="--c:#D6316B;--cut:#F88F2F;--ic:#D6316B">
+        <div class="ico"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 21 3l-8 18-2-8-8-2Z"/></svg></div>
+        <div class="num">05</div><h3>Desplegar</h3>
+        <p>API FastAPI en vivo y este front. Cada predicción viaja por <b>POST /predict</b>.</p>
+        <span class="tag" id="f5-tag"><i></i><span>Verificando…</span></span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SIMULADOR ================= -->
+<section class="sec slab sim" id="simulador">
+  <div class="wrap">
+    <div class="sim-head">
+      <div>
+        <span class="eyebrow">Simulador en vivo</span>
+        <h2>¿Pagará o no pagará?</h2>
+      </div>
+      <p class="sec-sub">19 datos del cliente, una probabilidad. El cálculo lo hace la API real con <code>POST /predict</code>.</p>
+    </div>
+    <div class="sim-grid">
+      <form id="form-cliente" class="form-card" novalidate>
+        <fieldset><legend><span class="n b">01</span>Perfil <small>· quién pide</small></legend><div class="grid-f" data-grupo="perfil"></div></fieldset>
+        <fieldset><legend><span class="n t">02</span>Finanzas <small>· cómo paga hoy</small></legend><div class="grid-f" data-grupo="finanzas"></div></fieldset>
+        <fieldset><legend><span class="n o">03</span>Solicitud <small>· qué pide</small></legend><div class="grid-f" data-grupo="solicitud"></div></fieldset>
+        <div class="actions">
+          <button type="submit" id="btn-predecir" class="cta-split"><span class="cta-body">Predecir</span><span class="cta-arrow" aria-hidden="true">▸</span></button>
+          <button type="button" id="btn-demo-bajo" class="btn-demo bajo"><i></i>Cliente riesgo bajo</button>
+          <button type="button" id="btn-demo-alto" class="btn-demo alto"><i></i>Cliente riesgo alto</button>
+        </div>
+      </form>
+      <aside class="res-card" id="resultado" aria-live="polite"></aside>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MÉTRICAS ================= -->
+<section class="sec slab met" id="metricas">
+  <div class="wrap">
+    <div class="m-head">
+      <div>
+        <span class="eyebrow">Métricas en test</span>
+        <h2>Los números,<br>sin maquillaje.</h2>
+        <p class="sec-sub" id="m-sub">Evaluado sobre clientes que el modelo nunca vio.</p>
+      </div>
+      <div class="m-src" id="m-src">Cargando desde <b>GET /model/info</b>…</div>
+    </div>
+    <div class="m-cards" id="m-cards"></div>
+    <div class="m-row r2">
+      <div class="panel p-white" id="m-comp"></div>
+      <div class="panel p-navy" id="m-eq"></div>
+    </div>
+    <div class="m-row r3">
+      <div class="panel p-pink" id="m-imp"></div>
+      <div class="panel p-orange" id="m-umbral"></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="sec slab foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo">RIESGO<span class="dot">·</span><span class="x">X</span></div>
+        <p style="margin-top:14px;max-width:28em">Proyecto integrador · Análisis predictivo de riesgo de crédito. Datos sintéticos de 12.144 clientes.</p>
+      </div>
+      <div>
+        <h4>Modelo</h4>
+        <ul id="footer-modelo"><li>Cargando información del modelo…</li></ul>
+      </div>
+      <div>
+        <h4>Explorar</h4>
+        <ul>
+          <li><a href="#simulador">Simulador</a></li>
+          <li><a href="#metricas">Métricas</a></li>
+          <li><a class="api-docs" href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener">Documentación de la API (Swagger)</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom"><span id="footer-linea">Modelo v— · entrenado —</span><span>Hecho con FastAPI, scikit-learn y mucha plastilina digital.</span></div>
+  </div>
+</footer>
+</div>
+
+<script>
+// ===== Config y cliente HTTP (adaptado de Front/js/app.js) =====
+const API_BASE = window.API_BASE || "http://127.0.0.1:8000";
+const TIMEOUT_MS = 8000;
+const REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+class ApiError extends Error {
+  constructor(kind, message, status = null, fields = {}) {
+    super(message); this.kind = kind; this.status = status; this.fields = fields;
+  }
+}
+async function api(path, { method = "GET", body } = {}) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  let res;
+  try {
+    res = await fetch(API_BASE + path, { method, headers: body ? { "Content-Type": "application/json" } : undefined,
+      body: body ? JSON.stringify(body) : undefined, signal: ctrl.signal });
+  } catch (e) {
+    throw new ApiError("red", "No se pudo conectar con la API (" + API_BASE + ").");
+  } finally { clearTimeout(t); }
+  let data = null;
+  try { data = await res.json(); } catch (e) { /* sin JSON */ }
+  if (res.ok) return data;
+  if (res.status === 422) {
+    const fields = {};
+    (Array.isArray(data && data.detail) ? data.detail : []).forEach(d => {
+      const campo = Array.isArray(d.loc) ? d.loc[d.loc.length - 1] : "general";
+      fields[campo] = d.msg || "Valor inválido";
+    });
+    throw new ApiError("validacion", "Hay campos inválidos.", 422, fields);
+  }
+  const msg = (data && (typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail))) || res.statusText;
+  throw new ApiError("servidor", "Error " + res.status + ": " + msg, res.status);
+}
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const nf = (v, d = 0) => Number(v).toLocaleString("es-CO", { minimumFractionDigits: d, maximumFractionDigits: d });
+const pct = (x, d = 1) => nf(x * 100, d) + " %";
+const fechaLarga = s => { const d = new Date(String(s) + "T00:00:00"); return isNaN(d) ? String(s) : d.toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" }); };
+
+const ETIQUETAS = {
+  edad: "Edad", sexo: "Sexo", estado_civil: "Estado civil", nivel_educativo: "Nivel educativo",
+  situacion_laboral: "Situación laboral", antiguedad_laboral_anios: "Antigüedad laboral",
+  personas_a_cargo: "Personas a cargo", tipo_vivienda: "Tipo de vivienda", ingreso_mensual: "Ingreso mensual",
+  monto_credito: "Monto del crédito", plazo_meses: "Plazo", tasa_interes_anual: "Tasa de interés",
+  proposito: "Propósito", num_creditos_activos: "Créditos activos", moras_ultimos_12m: "Moras últimos 12 meses",
+  relacion_deuda_ingreso: "Relación deuda/ingreso", puntaje_buro: "Puntaje de buró",
+  uso_cupo_tarjetas: "Uso de cupo de tarjetas", texto_solicitud: "Texto de la solicitud",
+  ratio_monto_ingreso: "Monto / ingreso", cuota_estimada: "Cuota estimada", ratio_cuota_ingreso: "Cuota / ingreso",
+};
+const etiqueta = v => ETIQUETAS[v] || ETIQUETAS[String(v).split("__").pop()] || String(v).replace(/_/g, " ");
+const ALGORITMOS = { LogisticRegression: "Regresión logística", HistGradientBoostingClassifier: "HistGradientBoosting" };
+
+let MODEL_INFO = null, HEALTH = null;
+const BANDAS_DEF = { Bajo: [0, .2], Medio: [.2, .5], Alto: [.5, 1] };
+const COLOR_BANDA = { Bajo: "#3EE08F", Medio: "#FFC23D", Alto: "#FF5C6C" };
+
+// ===== Formulario: 19 campos (libreto §4) =====
+const opts = a => a.map(x => Array.isArray(x) ? x : [x, x]);
+const CAMPOS = {
+  perfil: [
+    { n: "edad", l: "Edad", t: "number", min: 18, max: 80, step: 1, suf: "años" },
+    { n: "sexo", l: "Sexo", t: "select", o: [["F", "Femenino"], ["M", "Masculino"]], suf: "solo auditoría" },
+    { n: "estado_civil", l: "Estado civil", t: "select", o: opts(["Soltero", "Casado", ["Union_libre", "Unión libre"], "Divorciado", "Viudo"]) },
+    { n: "nivel_educativo", l: "Nivel educativo", t: "select", o: opts(["Primaria", "Secundaria", ["Tecnico", "Técnico"], "Universitario", "Posgrado"]) },
+    { n: "situacion_laboral", l: "Situación laboral", t: "select", o: opts(["Empleado", "Independiente", "Pensionado", "Desempleado"]) },
+    { n: "antiguedad_laboral_anios", l: "Antigüedad laboral", t: "number", min: 0, max: 62, step: 0.1, suf: "años" },
+    { n: "personas_a_cargo", l: "Personas a cargo", t: "number", min: 0, max: 6, step: 1 },
+    { n: "tipo_vivienda", l: "Tipo de vivienda", t: "select", o: opts(["Arriendo", "Propia", "Familiar"]) },
+  ],
+  finanzas: [
+    { n: "ingreso_mensual", l: "Ingreso mensual", t: "number", min: 300000, max: 65000000, step: 1000, suf: "COP" },
+    { n: "num_creditos_activos", l: "Créditos activos", t: "number", min: 0, max: 8, step: 1 },
+    { n: "moras_ultimos_12m", l: "Moras 12 meses", t: "number", min: 0, max: 10, step: 1 },
+    { n: "puntaje_buro", l: "Puntaje de buró", t: "range", min: 150, max: 950, step: 1, fmt: v => nf(v, 0) },
+    { n: "relacion_deuda_ingreso", l: "Deuda / ingreso", t: "range", min: 0, max: 1.5, step: 0.01, fmt: v => nf(v, 2) },
+    { n: "uso_cupo_tarjetas", l: "Uso de cupo", t: "range", min: 0, max: 1, step: 0.01, fmt: v => nf(v * 100, 0) + " %" },
+  ],
+  solicitud: [
+    { n: "monto_credito", l: "Monto del crédito", t: "number", min: 1000000, max: 1050000000, step: 100000, suf: "COP" },
+    { n: "plazo_meses", l: "Plazo", t: "select", o: [6, 12, 18, 24, 36, 48, 60, 72, 84].map(x => [String(x), x + " meses"]) },
+    { n: "tasa_interes_anual", l: "Tasa de interés", t: "number", min: 10, max: 42, step: 0.1, suf: "% E.A." },
+    { n: "proposito", l: "Propósito", t: "select", o: opts([["Libre_inversion", "Libre inversión"], ["Vehiculo", "Vehículo"], ["Consolidacion_deuda", "Consolidación de deuda"], "Vivienda", "Negocio", ["Educacion", "Educación"]]) },
+    { n: "texto_solicitud", l: "Texto de la solicitud", t: "textarea", suf: "2–3 frases" },
+  ],
+};
+const RANGOS = {};
+const NUMERICOS_INT = ["edad", "personas_a_cargo", "plazo_meses", "num_creditos_activos", "moras_ultimos_12m", "puntaje_buro"];
+const NUMERICOS_FLOAT = ["antiguedad_laboral_anios", "ingreso_mensual", "monto_credito", "tasa_interes_anual", "relacion_deuda_ingreso", "uso_cupo_tarjetas"];
+
+function campoHTML(c) {
+  const id = "f-" + c.n, suf = c.suf ? `<em>${c.suf}</em>` : "";
+  if (c.t === "select") return `<label class="fld" for="${id}"><span class="lbl">${c.l}${suf}</span><select id="${id}" name="${c.n}">${c.o.map(([v, t]) => `<option value="${v}">${t}</option>`).join("")}</select></label>`;
+  if (c.t === "textarea") return `<label class="fld wide" for="${id}"><span class="lbl">${c.l}${suf}</span><textarea id="${id}" name="${c.n}" rows="3"></textarea></label>`;
+  if (c.t === "range") { RANGOS[c.n] = c; return `<label class="fld rng" for="${id}"><span class="lbl">${c.l}<output id="o-${c.n}" for="${id}"></output></span><input id="${id}" type="range" name="${c.n}" min="${c.min}" max="${c.max}" step="${c.step}"></label>`; }
+  return `<label class="fld" for="${id}"><span class="lbl">${c.l}${suf}</span><input id="${id}" type="number" name="${c.n}" min="${c.min}" max="${c.max}" step="${c.step}" inputmode="decimal"></label>`;
+}
+function syncRango(el) {
+  const c = RANGOS[el.name]; if (!c) return;
+  const v = parseFloat(el.value);
+  el.style.setProperty("--p", ((v - c.min) / (c.max - c.min) * 100).toFixed(1) + "%");
+  const o = document.getElementById("o-" + el.name); if (o) o.textContent = c.fmt(v);
+}
+const EJEMPLO = { edad: 35, sexo: "F", estado_civil: "Casado", nivel_educativo: "Universitario", situacion_laboral: "Empleado",
+  antiguedad_laboral_anios: 4.5, personas_a_cargo: 1, tipo_vivienda: "Arriendo", ingreso_mensual: 4500000, monto_credito: 20000000,
+  plazo_meses: 36, tasa_interes_anual: 24.5, proposito: "Vehiculo", num_creditos_activos: 2, moras_ultimos_12m: 0,
+  relacion_deuda_ingreso: 0.32, puntaje_buro: 720, uso_cupo_tarjetas: 0.4,
+  texto_solicitud: "Necesito el crédito para comprar un carro para trabajar." };
+const CLIENTE_BAJO = { edad: 42, sexo: "F", estado_civil: "Casado", nivel_educativo: "Posgrado", situacion_laboral: "Empleado",
+  antiguedad_laboral_anios: 12.0, personas_a_cargo: 1, tipo_vivienda: "Propia", ingreso_mensual: 9500000, monto_credito: 15000000,
+  plazo_meses: 24, tasa_interes_anual: 14.5, proposito: "Educacion", num_creditos_activos: 1, moras_ultimos_12m: 0,
+  relacion_deuda_ingreso: 0.18, puntaje_buro: 870, uso_cupo_tarjetas: 0.12,
+  texto_solicitud: "Solicito el credito para financiar una maestria. Tengo un empleo estable desde hace varios anios y he cumplido puntualmente con todas mis obligaciones anteriores." };
+const CLIENTE_ALTO = { edad: 24, sexo: "M", estado_civil: "Soltero", nivel_educativo: "Primaria", situacion_laboral: "Desempleado",
+  antiguedad_laboral_anios: 0.0, personas_a_cargo: 3, tipo_vivienda: "Arriendo", ingreso_mensual: 1100000, monto_credito: 35000000,
+  plazo_meses: 72, tasa_interes_anual: 38.5, proposito: "Consolidacion_deuda", num_creditos_activos: 5, moras_ultimos_12m: 4,
+  relacion_deuda_ingreso: 1.25, puntaje_buro: 380, uso_cupo_tarjetas: 0.95,
+  texto_solicitud: "Necesito consolidar varias tarjetas de credito porque me atrase en los pagos tras perder el empleo. Tengo deudas acumuladas y dificultades para cubrir la cuota." };
+
+function construirFormulario(form) {
+  form.querySelectorAll("[data-grupo]").forEach(g => { g.innerHTML = CAMPOS[g.dataset.grupo].map(campoHTML).join(""); });
+  form.querySelectorAll("input[type=range]").forEach(r => r.addEventListener("input", () => syncRango(r)));
+  llenarFormulario(form, EJEMPLO);
+}
+function llenarFormulario(form, datos) {
+  limpiarErrores(form);
+  Object.entries(datos).forEach(([k, v]) => { const el = form.elements[k]; if (el) { el.value = v; syncRango(el); } });
+}
+function leerFormulario(form) {
+  const o = {};
+  for (const [k, v] of new FormData(form).entries()) {
+    if (NUMERICOS_INT.includes(k)) o[k] = parseInt(v, 10);
+    else if (NUMERICOS_FLOAT.includes(k)) o[k] = parseFloat(v);
+    else o[k] = String(v).trim();
+    if (typeof o[k] === "number" && isNaN(o[k])) o[k] = null;
+  }
+  return o;
+}
+function limpiarErrores(form) {
+  form.querySelectorAll(".field-error").forEach(e => e.remove());
+  form.querySelectorAll("[aria-invalid]").forEach(e => e.removeAttribute("aria-invalid"));
+}
+function pintarErrores(form, fields) {
+  Object.entries(fields).forEach(([campo, msg]) => {
+    const el = form.elements[campo]; if (!el) return;
+    el.setAttribute("aria-invalid", "true");
+    const p = document.createElement("div"); p.className = "field-error"; p.textContent = msg;
+    el.insertAdjacentElement("afterend", p);
+  });
+  const primero = form.querySelector("[aria-invalid='true']"); if (primero) primero.focus();
+}
+
+// ===== Piezas visuales =====
+function caraSVG(banda) {
+  const boca = { Bajo: "M36 70 Q50 82 64 70", Medio: "M38 73 L62 73", Alto: "M37 77 Q50 66 63 77" }[banda] || "M40 72 Q50 77 60 72";
+  const gota = banda === "Alto" ? `<path d="M84 30 q6 10 0 14 q-6 -4 0 -14Z" fill="#9EE7FF"/>` : "";
+  const ceja = banda === "Alto" ? `<path d="M30 38 l12 4M70 38 l-12 4" stroke="#7A2A12" stroke-width="3.5" stroke-linecap="round"/>` : "";
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <defs><radialGradient id="gf${banda || "x"}" cx="36%" cy="30%" r="80%"><stop offset="0" stop-color="#FFF1C2"/><stop offset=".35" stop-color="#FFC857"/><stop offset="1" stop-color="#E0701F"/></radialGradient></defs>
+    <path d="M18 30 C12 10 24 4 36 12Z M82 30 C88 10 76 4 64 12Z" fill="#F7922F"/>
+    <circle cx="50" cy="54" r="40" fill="url(#gf${banda || "x"})"/>
+    <ellipse cx="34" cy="36" rx="12" ry="6" transform="rotate(-25 34 36)" fill="#fff" opacity=".55"/>
+    <circle cx="36" cy="48" r="6" fill="#fff"/><circle cx="64" cy="48" r="6" fill="#fff"/>
+    <circle cx="37" cy="49" r="3.4" fill="#2A0B12"/><circle cx="65" cy="49" r="3.4" fill="#2A0B12"/>${ceja}
+    <ellipse cx="50" cy="62" rx="14" ry="9" fill="#F98A5E"/><ellipse cx="45" cy="62" rx="2.6" ry="3.6" fill="#7A2A12"/><ellipse cx="55" cy="62" rx="2.6" ry="3.6" fill="#7A2A12"/>
+    <path d="${boca}" fill="none" stroke="#7A2A12" stroke-width="3.5" stroke-linecap="round"/>${gota}
+  </svg>`;
+}
+function gaugeSVG(p, umbral, bandas) {
+  const C = 150, R = 116;
+  const pt = f => { const a = Math.PI * (1 - f); return (C + R * Math.cos(a)).toFixed(1) + " " + (C - R * Math.sin(a)).toFixed(1); };
+  const arcos = Object.entries(bandas).map(([b, [a, z]]) =>
+    `<path d="M${pt(Math.max(a, 0.002))} A${R} ${R} 0 0 1 ${pt(Math.min(z, 0.998))}" stroke="${COLOR_BANDA[b] || "#fff"}" stroke-width="28" fill="none"/>`).join("");
+  const ua = Math.PI * (1 - umbral);
+  const ux1 = C + (R - 24) * Math.cos(ua), uy1 = C - (R - 24) * Math.sin(ua), ux2 = C + (R + 24) * Math.cos(ua), uy2 = C - (R + 24) * Math.sin(ua);
+  const lx = C + (R + 40) * Math.cos(ua), ly = C - (R + 40) * Math.sin(ua);
+  return `<svg viewBox="0 -30 300 200" role="img" aria-label="Medidor: probabilidad ${pct(p)} frente al umbral ${pct(umbral)}">
+    <path d="M${pt(0)} A${R} ${R} 0 0 1 ${pt(1)}" stroke="rgb(0 0 0 / .18)" stroke-width="40" fill="none" stroke-linecap="round"/>
+    ${arcos}
+    <line x1="${ux1.toFixed(1)}" y1="${uy1.toFixed(1)}" x2="${ux2.toFixed(1)}" y2="${uy2.toFixed(1)}" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+    <text x="${lx.toFixed(1)}" y="${(ly + 4).toFixed(1)}" text-anchor="middle" fill="#fff" font-family="Outfit,sans-serif" font-weight="800" font-size="13">umbral ${pct(umbral)}</text>
+    <text x="22" y="174" fill="#fff" font-family="Outfit,sans-serif" font-weight="700" font-size="13" text-anchor="middle">0 %</text>
+    <text x="278" y="174" fill="#fff" font-family="Outfit,sans-serif" font-weight="700" font-size="13" text-anchor="middle">100 %</text>
+    <g class="needle" data-deg="${(180 * p).toFixed(1)}" style="transform:rotate(${REDUCE ? (180 * p).toFixed(1) : 0}deg)">
+      <line x1="150" y1="150" x2="52" y2="150" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="150" cy="150" r="17" fill="#fff"/><circle cx="150" cy="150" r="7" fill="#3352C7"/>
+    </g>
+  </svg>`;
+}
+
+// ===== Resultado =====
+function pintarVacio() {
+  $("#resultado").innerHTML = `<div class="r-empty">
+    <div class="r-top"><div class="r-kicker">Resultado</div><div class="r-face">${caraSVG("")}</div></div>
+    <h3>Listo para evaluar.</h3>
+    <p>Elige un cliente de demo o ajusta los datos y pulsa <b>Predecir</b>. La probabilidad, la banda y los factores llegan desde la API.</p>
+    <div class="skel" aria-hidden="true"><span style="width:80%"></span><span style="width:62%"></span><span style="width:70%"></span></div>
+  </div>`;
+}
+function pintarResultado(r) {
+  const p = r.probabilidad_impago, b = r.banda_riesgo, u = r.umbral;
+  const bandas = (MODEL_INFO && MODEL_INFO.bandas_riesgo) || BANDAS_DEF;
+  const box = $("#resultado");
+  box.innerHTML = `
+    <div class="r-top">
+      <div><div class="r-kicker">Probabilidad de impago</div><div class="r-prob">${nf(p * 100, 1)}<small>%</small></div></div>
+      <div class="r-face">${caraSVG(b)}</div>
+    </div>
+    <div class="gauge">${gaugeSVG(p, u, bandas)}</div>
+    <div class="r-chips"><span class="chip ${esc(b)}">Riesgo ${esc(b).toLowerCase()}</span><span class="chip etq">${esc(r.etiqueta)} · predicción ${esc(r.prediccion)}</span></div>
+    <p class="r-umbral">Umbral de decisión: <b>${pct(u, 2)}</b>. ${r.prediccion === 1 ? "La probabilidad lo supera: el modelo predice <b>impago</b>." : "La probabilidad queda por debajo: el modelo predice que <b>pagará</b>."}</p>
+    <div class="r-kicker">Factores principales</div>
+    <ul class="r-factores">${(r.factores_principales || []).map(f => f.efecto === "aumenta_riesgo"
+      ? `<li class="up"><span class="arr" aria-hidden="true">▲</span>${esc(etiqueta(f.variable))}<small>aumenta el riesgo</small></li>`
+      : `<li class="dn"><span class="arr" aria-hidden="true">▼</span>${esc(etiqueta(f.variable))}<small>reduce el riesgo</small></li>`).join("")}</ul>
+    <div id="resultado-texto" class="r-texto"></div>
+    <div class="r-version">Modelo v${esc(r.modelo_version)} · respuesta en vivo de POST /predict</div>`;
+  const n = box.querySelector(".needle");
+  if (n && !REDUCE) requestAnimationFrame(() => requestAnimationFrame(() => { n.style.transform = `rotate(${n.dataset.deg}deg)`; }));
+}
+function pintarErrorResultado(titulo, msg) {
+  $("#resultado").innerHTML = `<div class="r-err">
+    <div class="r-top"><div class="r-kicker">No se pudo predecir</div><div class="r-face">${caraSVG("Alto")}</div></div>
+    <h3>${esc(titulo)}</h3><div class="msg">${msg}</div></div>`;
+}
+
+let enCurso = false;
+async function predecir(opts = {}) {
+  const form = $("#form-cliente"), btn = $("#btn-predecir"), lab = btn.querySelector(".cta-body");
+  if (enCurso) return; enCurso = true;
+  limpiarErrores(form);
+  btn.disabled = true; lab.textContent = "Calculando…";
+  try {
+    const cliente = leerFormulario(form);
+    const r = await api("/predict", { method: "POST", body: cliente });
+    pintarResultado(r);
+    if (opts.mostrar && window.innerWidth < 1000) $("#resultado").scrollIntoView({ behavior: REDUCE ? "auto" : "smooth", block: "start" });
+    if (cliente.texto_solicitud) {
+      api("/predict/text", { method: "POST", body: { texto: cliente.texto_solicitud } })
+        .then(t => { const el = $("#resultado-texto"); if (el) el.innerHTML = `<b>Lectura del texto (NLP):</b> sentimiento ${esc(t.sentimiento)} · ${pct(t.probabilidad_impago_texto)} de impago · banda ${esc(t.banda_riesgo).toLowerCase()}.`; })
+        .catch(() => {});
+    }
+  } catch (e) {
+    if (e.kind === "validacion") { pintarErrores(form, e.fields); pintarErrorResultado("Revisa los campos marcados.", "La API rechazó algunos valores (error 422). Corrígelos en el formulario y vuelve a intentar."); }
+    else if (e.kind === "red") pintarErrorResultado("La API está fuera de línea.", `No hay respuesta de <code>${esc(API_BASE)}</code>. Arranca el back con <code>uvicorn</code> en el puerto 8000 y abre este front en 127.0.0.1.`);
+    else pintarErrorResultado("La API respondió con un error.", esc(e.message));
+  } finally {
+    btn.disabled = false; lab.textContent = "Predecir"; enCurso = false;
+  }
+}
+
+// ===== /health =====
+async function verificarSalud() {
+  const pill = $("#api-status"), tag = $("#f5-tag");
+  try {
+    const h = await api("/health"); HEALTH = h;
+    const ok = h.status === "ok" && h.modelo_cargado;
+    pill.className = "api-pill " + (ok ? "ok" : "down");
+    pill.innerHTML = `<i></i><span class="t">${ok ? "API en línea" : "API sin modelo"}</span><span class="v">&nbsp;· modelo v${esc(h.modelo_version)}</span>`;
+    tag.className = "tag " + (ok ? "ok" : "down"); tag.innerHTML = `<i></i><span>${ok ? "API en línea · v" + esc(h.modelo_version) : "API sin modelo"}</span>`;
+    if (ok && !MODEL_INFO) cargarModelo();
+    return ok;
+  } catch (e) {
+    pill.className = "api-pill down"; pill.innerHTML = `<i></i><span class="t">API fuera de línea</span>`;
+    tag.className = "tag down"; tag.innerHTML = `<i></i><span>API fuera de línea</span>`;
+    return false;
+  }
+}
+
+// ===== /model/info =====
+function ringSVG(v, label) {
+  const C = 301.6, off = (C * (1 - Math.max(0, Math.min(1, v)))).toFixed(1);
+  return `<svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="trk" cx="60" cy="60" r="48"/><circle class="val" cx="60" cy="60" r="48" transform="rotate(-90 60 60)" style="stroke-dasharray:${C};stroke-dashoffset:${off}"/><text x="60" y="66" text-anchor="middle">${label}</text></svg>`;
+}
+const TARJETAS = [
+  { k: "roc_auc", t: "ROC-AUC", s: "AUC", f: v => nf(v, 3), d: () => "Ordena pagadores e impagos. 0,5 sería azar.", c: "#D6316B", cut: "#E5568A", ring: "#FAC251" },
+  { k: "ks", t: "KS", s: "KS", f: v => nf(v, 3), d: () => "Máxima separación entre pagadores e impagos.", c: "linear-gradient(160deg,#FAC251,#F88F2F)", cut: "#FFE3A3", t2: "#451400" },
+  { k: "recall", t: "Recall", s: "REC", f: v => pct(v, 1), d: v => `De cada 100 impagos reales, detecta ${Math.round(v * 100)}.`, c: "#43B4C7", cut: "#7FD3E0", t2: "#06323A" },
+  { k: "f1", t: "F1", s: "F1", f: v => nf(v, 3), d: () => "Equilibrio entre precisión y recall.", c: "#22379A", cut: "#2E46B4", ring: "#43B4C7" },
+  { k: "precision", t: "Precisión", s: "PRE", f: v => pct(v, 1), d: v => `De cada 100 alertas de impago, ${Math.round(v * 100)} aciertan.`, c: "#FAC251", cut: "#FFE3A3", t2: "#451400" },
+  { k: "brier", t: "Brier", s: "↓", f: v => nf(v, 3), d: () => "Error de calibración: menor es mejor.", c: "#C21D57", cut: "#D6316B", ring: "#3EE08F" },
+];
+function pintarMetricas(m) {
+  const mt = m.metricas_test || {};
+  $("#k-auc").textContent = mt.roc_auc != null ? nf(mt.roc_auc, 3) : "—";
+  $("#k-ks").textContent = mt.ks != null ? nf(mt.ks, 3) : "—";
+  if (mt.roc_auc != null) { $("#pig-auc").textContent = "AUC " + nf(mt.roc_auc, 2); $("#f4-auc").textContent = "AUC " + nf(mt.roc_auc, 2); }
+
+  const version = m.version || m.modelo_version || (HEALTH && HEALTH.modelo_version) || "—";
+  $("#m-src").innerHTML = `Fuente: <b>GET /model/info</b> · ${esc(ALGORITMOS[m.algoritmo] || m.algoritmo)} v${esc(version)}`;
+  if (m.n_test) $("#m-sub").textContent = `Evaluado sobre ${nf(m.n_test)} clientes que el modelo nunca vio (entrenó con ${nf(m.n_train)}).`;
+
+  $("#m-cards").innerHTML = TARJETAS.filter(c => mt[c.k] != null).map(c => `
+    <article class="mcard" style="--c:${c.c};--cut:${c.cut};${c.t2 ? "--t:" + c.t2 + ";" : ""}${c.ring ? "--ring:" + c.ring : ""}">
+      ${ringSVG(mt[c.k], c.s)}
+      <div><div class="mval">${c.f(mt[c.k])}</div><div class="mtit">${c.t}</div><div class="mdesc">${c.d(mt[c.k])}</div></div>
+    </article>`).join("");
+
+  // Comparación de modelos (eje 0,5–1: 0,5 = azar)
+  const comp = Object.entries(m.comparacion_roc_auc_test || {});
+  if (m.metricas_nlp && m.metricas_nlp.roc_auc != null) comp.push(["__nlp", m.metricas_nlp.roc_auc]);
+  const fills = ["linear-gradient(90deg,#FAC251,#F88F2F)", "linear-gradient(90deg,#5B7BFF,#3352C7)", "linear-gradient(90deg,#7FD3E0,#43B4C7)"];
+  const w = v => Math.max(2, (v - 0.5) / 0.5 * 100).toFixed(1) + "%";
+  $("#m-comp").innerHTML = `<h3>Duelo de modelos</h3><p class="sub">ROC-AUC en test. La barra arranca en 0,5, que equivale a adivinar.</p>
+    ${comp.map(([k, v], i) => `<div class="bar-row"><div class="bar-top"><span>${k === "__nlp" ? "Solo texto (NLP)" : esc(ALGORITMOS[k] || k)}${k === m.algoritmo ? '<span class="win">★ Elegido</span>' : ""}</span><b>${nf(v, 3)}</b></div>
+      <div class="bar"><i style="--w:${w(v)};--fill:${k === m.algoritmo ? fills[0] : (k === "__nlp" ? fills[2] : fills[1])}"></i></div></div>`).join("")}
+    <div class="axis"><span>0,5 · azar</span><span>0,75</span><span>1,0 · perfecto</span></div>`;
+
+  // Equidad
+  const eq = m.equidad || {};
+  if (eq.disparate_impact != null) {
+    const di = eq.disparate_impact, pos = Math.min(100, di / 1.25 * 100);
+    const ta = eq.tasa_aprobacion || {}, nom = { F: "Mujeres (F)", M: "Hombres (M)" };
+    $("#m-eq").innerHTML = `<h3>¿Trata igual a todos?</h3><p class="sub">Auditoría de equidad por ${esc(eq.atributo || "sexo")}. El sexo no entra al modelo.</p>
+      <div class="di-big"><b>${nf(di, 3)}</b><span class="ok-badge ${eq.regla_80 ? "si" : "no"}">${eq.regla_80 ? "✓ Cumple la regla del 80 %" : "✗ No cumple la regla del 80 %"}</span></div>
+      <div class="r-kicker" style="margin-top:6px">Impacto dispar</div>
+      <div class="di-scale"><span class="di-tick"></span><span class="di-knob" style="left:${pos.toFixed(1)}%"></span>
+        <span class="di-lab" style="left:64%">0,8 · regla del 80 %</span></div>
+      ${Object.entries(ta).map(([g, v], i) => `<div class="bar-row" style="margin-top:12px"><div class="bar-top"><span>Aprobación ${esc(nom[g] || g)}</span><b>${pct(v, 1)}</b></div><div class="bar" style="height:18px"><i style="--w:${(v * 100).toFixed(1)}%;--fill:${i ? "linear-gradient(90deg,#7FD3E0,#43B4C7)" : "linear-gradient(90deg,#FF9BBE,#E5477F)"}"></i></div></div>`).join("")}`;
+  }
+
+  // Importancia (top 5)
+  const imp = Object.entries(m.importancia_permutacion || {}).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const max = imp.length ? imp[0][1] : 1;
+  $("#m-imp").innerHTML = `<h3>Lo que más pesa</h3><p class="sub">Importancia por permutación: cuánto cae el ROC-AUC si se desordena cada variable.</p>
+    ${imp.map(([k, v], i) => `<div class="bar-row" style="margin-top:16px"><div class="bar-top"><span>${String(i + 1).padStart(2, "0")} · ${esc(etiqueta(k))}</span><b>${nf(v, 3)}</b></div><div class="bar"><i style="--w:${Math.max(3, v / max * 100).toFixed(1)}%;--fill:linear-gradient(90deg,#FAC251,#F88F2F)"></i></div></div>`).join("")}`;
+
+  // Umbral y bandas
+  const u = m.umbral_decision, bandas = m.bandas_riesgo || BANDAS_DEF;
+  $("#m-umbral").innerHTML = `<h3>Dónde se corta</h3>
+    <div class="big-u">${u != null ? pct(u, 2) : "—"}</div>
+    <p class="note">Umbral de decisión: por encima, el modelo predice impago.</p>
+    <div class="band-strip">${Object.entries(bandas).map(([b, [a, z]]) => `<span style="width:${((z - a) * 100).toFixed(1)}%;background:${COLOR_BANDA[b] || "#fff"};color:${{ Bajo: "#053B26", Medio: "#4A2E00", Alto: "#4A0010" }[b] || "#2A0A1C"}">${esc(b)}</span>`).join("")}${u != null ? `<span class="u" style="left:${(u * 100).toFixed(1)}%"></span>` : ""}</div>
+    <div class="u-lab">${u != null ? `<span style="left:${(u * 100).toFixed(1)}%">▲ umbral</span>` : ""}</div>
+    <div class="facts"><div><b>${nf(m.n_train || 0)}</b><span>entrenamiento</span></div><div><b>${nf(m.n_test || 0)}</b><span>prueba</span></div><div><b>${m.tasa_default_train != null ? pct(m.tasa_default_train, 1) : "—"}</b><span>impago (train)</span></div></div>`;
+
+  // Footer
+  $("#footer-modelo").innerHTML = `<li>Versión <b>${esc(version)}</b></li><li>${esc(ALGORITMOS[m.algoritmo] || m.algoritmo)}</li><li>Entrenado el ${esc(fechaLarga(m.fecha_entrenamiento))}</li>`;
+  $("#footer-linea").textContent = `Modelo v${version} · entrenado el ${fechaLarga(m.fecha_entrenamiento)}`;
+}
+function metricasNoDisponibles() {
+  const msg = `<h3>Sin datos</h3><p class="sub">Métricas no disponibles: la API no responde en ${esc(API_BASE)}.</p>`;
+  ["#m-comp", "#m-eq", "#m-imp", "#m-umbral"].forEach(s => { $(s).innerHTML = msg; });
+  $("#m-cards").innerHTML = "";
+  $("#m-src").innerHTML = "API fuera de línea: se reintentará automáticamente.";
+  $("#footer-modelo").innerHTML = "<li>Información no disponible: la API no responde.</li>";
+}
+async function cargarModelo() {
+  try { const m = await api("/model/info"); MODEL_INFO = m; pintarMetricas(m); }
+  catch (e) { metricasNoDisponibles(); }
+}
+
+// ===== Ojos que siguen el cursor =====
+function ojos() {
+  const pupil = document.querySelector(".pupil"), svg = document.querySelector(".pig");
+  if (!pupil || !svg || REDUCE) return;
+  let raf = 0;
+  window.addEventListener("pointermove", e => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      const r = svg.getBoundingClientRect(); const cx = r.left + r.width * .62, cy = r.top + r.height * .33;
+      const dx = e.clientX - cx, dy = e.clientY - cy, d = Math.hypot(dx, dy) || 1, k = Math.min(1, d / 260);
+      pupil.setAttribute("transform", `translate(${(dx / d * 6 * k).toFixed(2)} ${(dy / d * 6 * k).toFixed(2)})`);
+    });
+  }, { passive: true });
+}
+
+// ===== Arranque =====
+document.addEventListener("DOMContentLoaded", async () => {
+  document.querySelectorAll("a.api-docs").forEach(a => { a.href = API_BASE + "/docs"; });
+  const form = $("#form-cliente");
+  construirFormulario(form);
+  pintarVacio();
+  ojos();
+  form.addEventListener("submit", ev => { ev.preventDefault(); predecir({ mostrar: true }); });
+  $("#btn-demo-bajo").addEventListener("click", () => { llenarFormulario(form, CLIENTE_BAJO); predecir({ mostrar: true }); });
+  $("#btn-demo-alto").addEventListener("click", () => { llenarFormulario(form, CLIENTE_ALTO); predecir({ mostrar: true }); });
+
+  verificarSalud();
+  cargarModelo();
+  setInterval(verificarSalud, 15000);
+
+  const demo = new URLSearchParams(location.search).get("demo");
+  if (demo === "alto" || demo === "bajo") {
+    llenarFormulario(form, demo === "alto" ? CLIENTE_ALTO : CLIENTE_BAJO);
+    await predecir();
+    $("#simulador").scrollIntoView({ behavior: "auto", block: "start" });
+  }
+});
+</script>
+</body>
+</html>

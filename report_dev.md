@@ -47,6 +47,7 @@ Para publicar la v1.1.0: `cd Back; $env:LOKY_MAX_CPU_COUNT=4; python train.py` (
 
 ## Despliegue
 
+- **URL pública:** https://proyecto-integrador-five-eosin.vercel.app (API: `/api/health`, Swagger: `/api/docs`). El dominio `proyecto-integrador.vercel.app` **ya pertenece a otro sitio** y no está disponible.
 - Repositorio: `github.com/dapovedag/proyecto_integrador` (privado).
 - Vercel, desplegado automáticamente con cada push a `main`: el Front es estático (`outputDirectory: Front`) y la API es una función Python en `api/index.py`, que monta `Back/api` bajo `/api`.
 - El Front detecta el entorno: en local usa `http://127.0.0.1:8000` y desplegado usa `/api`.
