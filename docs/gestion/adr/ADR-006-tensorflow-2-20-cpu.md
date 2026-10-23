@@ -48,3 +48,5 @@ En el MVP no se entrenó ninguna red porque TensorFlow no estaba instalado; `req
 - `credit_risk.notebook.setup(torch_primero=True)` importa torch antes que cualquier otra cosa en los procesos que lo usan (nb07).
 - TensorFlow (nb06) y torch (nb07) corren en kernels separados.
 - No hizo falta instalar ni actualizar el VC++ Redistributable.
+
+**Hallazgo posterior (nb06):** TensorFlow muestra el mismo patrón. Si scikit-learn se carga primero, falla la DLL `_pywrap_tensorflow_internal`. `credit_risk.dl` ya no importa sklearn al cargarse, y `setup(tf_primero=True)` importa TensorFlow antes que nada. Con esto, TensorFlow (nb06) y torch (nb07) siguen en kernels separados.

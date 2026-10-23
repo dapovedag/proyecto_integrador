@@ -51,15 +51,20 @@ def versiones(paquetes: list[str] | None = None) -> dict[str, str]:
     return out
 
 
-def setup(estilo: bool = True, paquetes: list[str] | None = None, torch_primero: bool = False) -> dict[str, Any]:
+def setup(estilo: bool = True, paquetes: list[str] | None = None, torch_primero: bool = False,
+          tf_primero: bool = False) -> dict[str, Any]:
     """Fija semilla, silencia logs ruidosos, aplica el estilo visual y devuelve el entorno.
 
-    ``torch_primero=True`` importa PyTorch antes que scikit-learn: en Windows, cargar sklearn primero hace
-    fallar la DLL ``c10.dll`` de torch (WinError 1114; diagnóstico en ADR-006).
+    En Windows, cargar scikit-learn antes que PyTorch o TensorFlow hace fallar sus DLL (``c10.dll`` y
+    ``_pywrap_tensorflow_internal``; diagnóstico en ADR-006). ``torch_primero`` / ``tf_primero`` las importan
+    primero. Nunca se usan los dos en el mismo proceso.
     """
     _silenciar()
     if torch_primero:
         import torch  # noqa: F401
+    if tf_primero:
+        os.environ.setdefault("KERAS_BACKEND", "tensorflow")
+        import tensorflow  # noqa: F401
     random.seed(config.RANDOM_STATE)
     try:
         import numpy as np
