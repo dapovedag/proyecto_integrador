@@ -1,0 +1,46 @@
+{
+  "name": "riesgo-credito-front",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Front estático y autónomo del Proyecto Integrador: simula con fidelidad la corrida real del back (ADR-004).",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5180 --strictPort",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 5181 --strictPort",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "e2e": "playwright test",
+    "lint": "tsc -b --noEmit"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "5.1.0",
+    "@fontsource-variable/jetbrains-mono": "5.1.0",
+    "@fontsource-variable/space-grotesk": "5.1.0",
+    "@tanstack/react-virtual": "3.10.8",
+    "echarts": "5.5.1",
+    "framer-motion": "11.11.9",
+    "papaparse": "5.4.1",
+    "prism-react-renderer": "2.4.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-markdown": "9.0.1",
+    "react-router-dom": "6.27.0",
+    "remark-gfm": "4.0.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.0",
+    "@playwright/test": "1.48.1",
+    "@testing-library/jest-dom": "6.6.2",
+    "@testing-library/react": "16.0.1",
+    "@types/node": "22.7.7",
+    "@types/papaparse": "5.3.15",
+    "@types/react": "18.3.11",
+    "@types/react-dom": "18.3.1",
+    "@vitejs/plugin-react": "4.3.3",
+    "jsdom": "25.0.1",
+    "typescript": "5.6.3",
+    "vite": "5.4.10",
+    "vitest": "2.1.3"
+  }
+}

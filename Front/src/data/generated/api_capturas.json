@@ -1,0 +1,1883 @@
+{
+  "capturado": "2026-10-23T16:10:24",
+  "servidor": "FastAPI (TestClient, mismo proceso)",
+  "llamadas": [
+    {
+      "nombre": "health",
+      "metodo": "GET",
+      "ruta": "/health",
+      "peticion": null,
+      "estado": 200,
+      "latencia_ms": 11.4,
+      "respuesta": {
+        "status": "ok",
+        "modelo_version": "2.0.0",
+        "modelo_cargado": true,
+        "api_version": "2.0.0"
+      },
+      "request_id": "30f2cf0ef830"
+    },
+    {
+      "nombre": "model_info",
+      "metodo": "GET",
+      "ruta": "/model/info",
+      "peticion": null,
+      "estado": 200,
+      "latencia_ms": 15.3,
+      "respuesta": {
+        "nombre": "riesgo_credito",
+        "version": "2.0.0",
+        "fecha_entrenamiento": "2026-10-23",
+        "algoritmo": "LogisticRegression calibrado (sigmoide, ensemble=False)",
+        "variante_equidad": "reweighing",
+        "umbrales": {
+          "aprobar": 0.1778,
+          "rechazar": 0.4667,
+          "bayes": 0.25
+        },
+        "bandas_riesgo": {
+          "Bajo": [
+            0.0,
+            0.1778
+          ],
+          "Medio": [
+            0.1778,
+            0.4667
+          ],
+          "Alto": [
+            0.4667,
+            1.0
+          ]
+        },
+        "decisiones": {
+          "Bajo": "aprobar",
+          "Medio": "revisar",
+          "Alto": "rechazar"
+        },
+        "metricas_test": {
+          "roc_auc": 0.8456,
+          "pr_auc": 0.7675,
+          "ks": 0.5384,
+          "brier": 0.1491,
+          "accuracy": 0.7829,
+          "precision": 0.7205,
+          "recall": 0.637,
+          "f1": 0.6762
+        },
+        "equidad_test": {
+          "sexo": {
+            "grupos": [
+              {
+                "grupo": "F",
+                "n": 1182,
+                "tasa_aprobacion": 0.3909,
+                "aprobacion_buenos_pagadores": 0.5456,
+                "rechazo_buenos_pagadores": 0.1334,
+                "prob_media": 0.3517,
+                "tasa_impago_real": 0.3596,
+                "error_calibracion": -0.0079,
+                "cuenta_para_di": true
+              },
+              {
+                "grupo": "M",
+                "n": 1218,
+                "tasa_aprobacion": 0.4031,
+                "aprobacion_buenos_pagadores": 0.5665,
+                "rechazo_buenos_pagadores": 0.1394,
+                "prob_media": 0.3471,
+                "tasa_impago_real": 0.3522,
+                "error_calibracion": -0.0051,
+                "cuenta_para_di": true
+              }
+            ],
+            "disparate_impact": 0.9696,
+            "di_ic95": [
+              0.8682,
+              0.9974
+            ],
+            "di_igualdad_oportunidades": 0.963,
+            "cumple_regla_80": true
+          },
+          "edad": {
+            "grupos": [
+              {
+                "grupo": "18-29",
+                "n": 474,
+                "tasa_aprobacion": 0.3734,
+                "aprobacion_buenos_pagadores": 0.5311,
+                "rechazo_buenos_pagadores": 0.1443,
+                "prob_media": 0.3495,
+                "tasa_impago_real": 0.3565,
+                "error_calibracion": -0.007,
+                "cuenta_para_di": true
+              },
+              {
+                "grupo": "30-59",
+                "n": 1161,
+                "tasa_aprobacion": 0.3936,
+                "aprobacion_buenos_pagadores": 0.5595,
+                "rechazo_buenos_pagadores": 0.1368,
+                "prob_media": 0.3533,
+                "tasa_impago_real": 0.3704,
+                "error_calibracion": -0.017,
+                "cuenta_para_di": true
+              },
+              {
+                "grupo": "60+",
+                "n": 765,
+                "tasa_aprobacion": 0.417,
+                "aprobacion_buenos_pagadores": 0.5667,
+                "rechazo_buenos_pagadores": 0.1314,
+                "prob_media": 0.3432,
+                "tasa_impago_real": 0.3333,
+                "error_calibracion": 0.0099,
+                "cuenta_para_di": true
+              }
+            ],
+            "disparate_impact": 0.8955,
+            "di_ic95": [
+              0.7803,
+              0.9771
+            ],
+            "di_igualdad_oportunidades": 0.9373,
+            "cumple_regla_80": true
+          },
+          "cumple_todo": true
+        },
+        "limitaciones": [
+          "Dataset sintético realista (db/generacion/generar_dataset.py): los resultados ilustran la metodología, no el desempeño en una cartera real.",
+          "El texto de la solicitud se generó a partir de plantillas condicionadas al riesgo: su señal está sobreestimada y por eso el modelo de texto no forma parte de la decisión principal.",
+          "Los costos (LGD, margen, revisión) son supuestos documentados en ADR-002; la sensibilidad está en la card.",
+          "La regla de 4/5 es una alerta de equidad, no una norma colombiana de crédito; ver ADR-003.",
+          "Las contribuciones son asociaciones del modelo, no efectos causales.",
+          "Monitorear PSI del puntaje y de las variables; recalibrar si PSI ≥ 0,25 (docs/05_despliegue.md).",
+          "Uso académico: no debe ser la única base de una decisión de crédito."
+        ],
+        "familia": "Regresión logística",
+        "excepcion_equidad": false,
+        "fuente_de_verdad": "Back/train.py → credit_risk.entrenamiento.entrenar()",
+        "modo_rapido": false,
+        "protocolo": [
+          "Partición estratificada 80/20 con semilla 42; imputación con estadísticos de train.",
+          "Selección de familia por ROC-AUC CV(5) en train (RandomizedSearchCV, 8 iteraciones) con regla de parsimonia ΔAUC < 0.005 → regresión logística.",
+          "Calibración sigmoide con ensemble=False (un estimador base y un calibrador OOF).",
+          "Umbrales por regla de Chow con costos por unidad de exposición (ADR-002).",
+          "Variante de equidad elegida por menor costo OOF con DI ≥ 0,8 en sexo y edad (ADR-003).",
+          "Test usado una única vez para la evaluación final."
+        ],
+        "datos": {
+          "hash_train_sha256": "1ce71f5f0123edb39b1d0120fd142e73c2a2c066bca40bcbd0ead523b4e92e28",
+          "hash_test_sha256": "8c1cb6a3dd0c05526e80c822c8b8211a08e0c2acd28a0221a53ec02b69b2e4ee",
+          "n_train": 9600,
+          "n_test": 2400,
+          "tasa_default_train": 0.3556,
+          "tasa_default_test": 0.3558,
+          "validacion_contrato": {
+            "columnas_minimas": true,
+            "target_binario": true,
+            "prevalencia_5_40": true,
+            "filas_min_1000": true,
+            "texto_no_vacio_95": true,
+            "texto_distintos_200": true,
+            "nulos_en_3_columnas": true,
+            "hay_duplicados": true,
+            "hay_atipicos_ingreso": true,
+            "diccionario_existe": true,
+            "ok": true
+          }
+        },
+        "seleccion_cv_train": {
+          "Regresión logística": {
+            "roc_auc_cv": 0.8582,
+            "roc_auc_cv_std": 0.0052,
+            "hiperparametros": {
+              "C": 0.031489
+            }
+          },
+          "Gradient Boosting (HGB)": {
+            "roc_auc_cv": 0.8525,
+            "roc_auc_cv_std": 0.0051,
+            "hiperparametros": {
+              "l2_regularization": 0.133112,
+              "learning_rate": 0.023088,
+              "max_iter": 151,
+              "max_leaf_nodes": 31
+            }
+          }
+        },
+        "variantes_equidad": [
+          {
+            "variante": "base",
+            "descripcion": "Todas las variables de entrada (sexo nunca entra).",
+            "roc_auc_oof": 0.8579,
+            "costo_medio": 0.05004,
+            "tasa_aprobacion": 0.3816,
+            "tasa_revision": 0.295,
+            "tasa_rechazo": 0.3234,
+            "impago_en_aprobados": 0.0753,
+            "supera_capacidad_revision": false,
+            "di_sexo": 0.9788,
+            "di_edad": 0.7207,
+            "cumple_equidad": false,
+            "precio_equidad_costo": 0.0
+          },
+          {
+            "variante": "sin_edad",
+            "descripcion": "Sin edad ni rango de edad como predictores.",
+            "roc_auc_oof": 0.8582,
+            "costo_medio": 0.04979,
+            "tasa_aprobacion": 0.3817,
+            "tasa_revision": 0.2945,
+            "tasa_rechazo": 0.3239,
+            "impago_en_aprobados": 0.0742,
+            "supera_capacidad_revision": false,
+            "di_sexo": 0.9837,
+            "di_edad": 0.7099,
+            "cumple_equidad": false,
+            "precio_equidad_costo": -0.00025
+          },
+          {
+            "variante": "reweighing",
+            "descripcion": "Pesos de Kamiran-Calders por grupo de edad en el entrenamiento.",
+            "roc_auc_oof": 0.857,
+            "costo_medio": 0.05033,
+            "tasa_aprobacion": 0.3807,
+            "tasa_revision": 0.2959,
+            "tasa_rechazo": 0.3233,
+            "impago_en_aprobados": 0.0766,
+            "supera_capacidad_revision": false,
+            "di_sexo": 0.9811,
+            "di_edad": 0.8924,
+            "cumple_equidad": true,
+            "precio_equidad_costo": 0.00029
+          }
+        ],
+        "costos": {
+          "lgd_fn": 0.45,
+          "margen_fp": 0.15,
+          "revision": 0.08,
+          "capacidad_revision": 0.35
+        },
+        "sensibilidad_umbrales": [
+          {
+            "lgd": 0.45,
+            "margen": 0.1,
+            "aprobar_si_p_menor": 0.1778,
+            "rechazar_si_p_mayor": 0.2,
+            "banda_revision": true
+          },
+          {
+            "lgd": 0.45,
+            "margen": 0.15,
+            "aprobar_si_p_menor": 0.1778,
+            "rechazar_si_p_mayor": 0.4667,
+            "banda_revision": true
+          },
+          {
+            "lgd": 0.45,
+            "margen": 0.2,
+            "aprobar_si_p_menor": 0.1778,
+            "rechazar_si_p_mayor": 0.6,
+            "banda_revision": true
+          },
+          {
+            "lgd": 0.55,
+            "margen": 0.1,
+            "aprobar_si_p_menor": 0.1455,
+            "rechazar_si_p_mayor": 0.2,
+            "banda_revision": true
+          },
+          {
+            "lgd": 0.55,
+            "margen": 0.15,
+            "aprobar_si_p_menor": 0.1455,
+            "rechazar_si_p_mayor": 0.4667,
+            "banda_revision": true
+          },
+          {
+            "lgd": 0.55,
+            "margen": 0.2,
+            "aprobar_si_p_menor": 0.1455,
+            "rechazar_si_p_mayor": 0.6,
+            "banda_revision": true
+          },
+          {
+            "lgd": 0.65,
+            "margen": 0.1,
+            "aprobar_si_p_menor": 0.1231,
+            "rechazar_si_p_mayor": 0.2,
+            "banda_revision": true
+          },
+          {
+            "lgd": 0.65,
+            "margen": 0.15,
+            "aprobar_si_p_menor": 0.1231,
+            "rechazar_si_p_mayor": 0.4667,
+            "banda_revision": true
+          },
+          {
+            "lgd": 0.65,
+            "margen": 0.2,
+            "aprobar_si_p_menor": 0.1231,
+            "rechazar_si_p_mayor": 0.6,
+            "banda_revision": true
+          },
+          {
+            "lgd": 0.75,
+            "margen": 0.1,
+            "aprobar_si_p_menor": 0.1067,
+            "rechazar_si_p_mayor": 0.2,
+            "banda_revision": true
+          },
+          {
+            "lgd": 0.75,
+            "margen": 0.15,
+            "aprobar_si_p_menor": 0.1067,
+            "rechazar_si_p_mayor": 0.4667,
+            "banda_revision": true
+          },
+          {
+            "lgd": 0.75,
+            "margen": 0.2,
+            "aprobar_si_p_menor": 0.1067,
+            "rechazar_si_p_mayor": 0.6,
+            "banda_revision": true
+          }
+        ],
+        "metricas_test_umbral_bayes": {
+          "roc_auc": 0.8456,
+          "pr_auc": 0.7675,
+          "ks": 0.5384,
+          "brier": 0.1491,
+          "accuracy": 0.7329,
+          "precision": 0.5872,
+          "recall": 0.8396,
+          "f1": 0.6911
+        },
+        "decision_test": {
+          "costo_medio": 0.05369,
+          "tasa_aprobacion": 0.3971,
+          "tasa_revision": 0.2883,
+          "tasa_rechazo": 0.3146,
+          "impago_en_aprobados": 0.0976,
+          "supera_capacidad_revision": false
+        },
+        "importancia_permutacion": [
+          {
+            "variable": "puntaje_buro",
+            "importancia": 0.08632,
+            "desviacion": 0.00145
+          },
+          {
+            "variable": "relacion_deuda_ingreso",
+            "importancia": 0.04711,
+            "desviacion": 0.00172
+          },
+          {
+            "variable": "uso_cupo_tarjetas",
+            "importancia": 0.04292,
+            "desviacion": 0.00467
+          },
+          {
+            "variable": "moras_ultimos_12m",
+            "importancia": 0.01288,
+            "desviacion": 0.00259
+          },
+          {
+            "variable": "proposito",
+            "importancia": 0.0035,
+            "desviacion": 0.00031
+          },
+          {
+            "variable": "monto_credito",
+            "importancia": 0.00237,
+            "desviacion": 0.00047
+          },
+          {
+            "variable": "num_creditos_activos",
+            "importancia": 0.00111,
+            "desviacion": 0.0005
+          },
+          {
+            "variable": "antiguedad_laboral_anios",
+            "importancia": 0.00099,
+            "desviacion": 0.00027
+          },
+          {
+            "variable": "ingreso_mensual",
+            "importancia": 0.00094,
+            "desviacion": 0.00062
+          },
+          {
+            "variable": "situacion_laboral",
+            "importancia": 0.00065,
+            "desviacion": 0.00013
+          },
+          {
+            "variable": "tipo_vivienda",
+            "importancia": 9e-05,
+            "desviacion": 0.00011
+          },
+          {
+            "variable": "personas_a_cargo",
+            "importancia": 5e-05,
+            "desviacion": 2e-05
+          },
+          {
+            "variable": "tasa_interes_anual",
+            "importancia": 5e-05,
+            "desviacion": 0.0001
+          },
+          {
+            "variable": "estado_civil",
+            "importancia": -1e-05,
+            "desviacion": 0.00029
+          },
+          {
+            "variable": "plazo_meses",
+            "importancia": -0.0001,
+            "desviacion": 0.00013
+          },
+          {
+            "variable": "nivel_educativo",
+            "importancia": -0.00017,
+            "desviacion": 0.0001
+          },
+          {
+            "variable": "edad",
+            "importancia": -0.00075,
+            "desviacion": 0.00048
+          }
+        ],
+        "monitoreo": {
+          "psi_puntaje_train_test": 0.003,
+          "estado": "estable",
+          "psi_variables": [
+            {
+              "variable": "num_creditos_activos",
+              "psi": 0.0084,
+              "estado": "estable"
+            },
+            {
+              "variable": "antiguedad_laboral_anios",
+              "psi": 0.0072,
+              "estado": "estable"
+            },
+            {
+              "variable": "edad",
+              "psi": 0.0065,
+              "estado": "estable"
+            },
+            {
+              "variable": "uso_cupo_tarjetas",
+              "psi": 0.0048,
+              "estado": "estable"
+            },
+            {
+              "variable": "relacion_deuda_ingreso",
+              "psi": 0.0042,
+              "estado": "estable"
+            },
+            {
+              "variable": "monto_credito",
+              "psi": 0.0041,
+              "estado": "estable"
+            },
+            {
+              "variable": "tipo_vivienda",
+              "psi": 0.0041,
+              "estado": "estable"
+            },
+            {
+              "variable": "plazo_meses",
+              "psi": 0.0039,
+              "estado": "estable"
+            },
+            {
+              "variable": "puntaje_buro",
+              "psi": 0.0033,
+              "estado": "estable"
+            },
+            {
+              "variable": "tasa_interes_anual",
+              "psi": 0.0032,
+              "estado": "estable"
+            },
+            {
+              "variable": "proposito",
+              "psi": 0.002,
+              "estado": "estable"
+            },
+            {
+              "variable": "ingreso_mensual",
+              "psi": 0.0015,
+              "estado": "estable"
+            },
+            {
+              "variable": "personas_a_cargo",
+              "psi": 0.0013,
+              "estado": "estable"
+            },
+            {
+              "variable": "situacion_laboral",
+              "psi": 0.001,
+              "estado": "estable"
+            },
+            {
+              "variable": "estado_civil",
+              "psi": 0.0009,
+              "estado": "estable"
+            },
+            {
+              "variable": "nivel_educativo",
+              "psi": 0.0006,
+              "estado": "estable"
+            },
+            {
+              "variable": "moras_ultimos_12m",
+              "psi": 0.0002,
+              "estado": "estable"
+            }
+          ]
+        },
+        "modelo_texto": {
+          "algoritmo": "TF-IDF (1-2 gramas) + LogisticRegression calibrado",
+          "metricas": {
+            "oof_train": {
+              "roc_auc": 0.6404,
+              "pr_auc": 0.4809,
+              "ks": 0.2529,
+              "brier": 0.2148,
+              "accuracy": 0.6704,
+              "precision": 0.5534,
+              "recall": 0.3796,
+              "f1": 0.4503
+            },
+            "test": {
+              "roc_auc": 0.641,
+              "pr_auc": 0.4899,
+              "ks": 0.2677,
+              "brier": 0.2142,
+              "accuracy": 0.6675,
+              "precision": 0.5444,
+              "recall": 0.4016,
+              "f1": 0.4623
+            }
+          }
+        },
+        "variables_entrada": [
+          "edad",
+          "antiguedad_laboral_anios",
+          "personas_a_cargo",
+          "ingreso_mensual",
+          "monto_credito",
+          "plazo_meses",
+          "tasa_interes_anual",
+          "num_creditos_activos",
+          "moras_ultimos_12m",
+          "relacion_deuda_ingreso",
+          "puntaje_buro",
+          "uso_cupo_tarjetas",
+          "estado_civil",
+          "situacion_laboral",
+          "tipo_vivienda",
+          "proposito",
+          "nivel_educativo"
+        ],
+        "variables_modelo": {
+          "numericas": [
+            "edad",
+            "antiguedad_laboral_anios",
+            "personas_a_cargo",
+            "ingreso_mensual",
+            "monto_credito",
+            "plazo_meses",
+            "tasa_interes_anual",
+            "num_creditos_activos",
+            "moras_ultimos_12m",
+            "relacion_deuda_ingreso",
+            "puntaje_buro",
+            "uso_cupo_tarjetas",
+            "cuota_estimada",
+            "ratio_cuota_ingreso",
+            "ratio_monto_ingreso",
+            "tiene_moras_previas"
+          ],
+          "nominales": [
+            "estado_civil",
+            "situacion_laboral",
+            "tipo_vivienda",
+            "proposito"
+          ],
+          "ordinales": [
+            "nivel_educativo",
+            "rango_edad"
+          ]
+        },
+        "variable_excluida_auditoria": "sexo",
+        "duracion_entrenamiento_s": 490.1
+      },
+      "request_id": "2897b7b6fe23"
+    },
+    {
+      "nombre": "predict_bajo",
+      "metodo": "POST",
+      "ruta": "/predict",
+      "peticion": {
+        "edad": 42,
+        "sexo": "F",
+        "estado_civil": "Casado",
+        "nivel_educativo": "Posgrado",
+        "situacion_laboral": "Empleado",
+        "antiguedad_laboral_anios": 12.0,
+        "personas_a_cargo": 1,
+        "tipo_vivienda": "Propia",
+        "ingreso_mensual": 9500000,
+        "monto_credito": 15000000,
+        "plazo_meses": 24,
+        "tasa_interes_anual": 14.5,
+        "proposito": "Educacion",
+        "num_creditos_activos": 1,
+        "moras_ultimos_12m": 0,
+        "relacion_deuda_ingreso": 0.18,
+        "puntaje_buro": 870,
+        "uso_cupo_tarjetas": 0.12,
+        "texto_solicitud": "Solicito el credito para financiar una maestria. Tengo un empleo estable desde hace varios anios y he cumplido puntualmente con todas mis obligaciones anteriores."
+      },
+      "estado": 200,
+      "latencia_ms": 299.7,
+      "respuesta": {
+        "probabilidad_impago": 0.0106,
+        "decision": "aprobar",
+        "banda_riesgo": "Bajo",
+        "prediccion": 0,
+        "etiqueta": "No impago",
+        "umbrales": {
+          "aprobar": 0.1778,
+          "rechazar": 0.4667,
+          "bayes": 0.25
+        },
+        "factores_principales": [
+          {
+            "variable": "puntaje_buro",
+            "contribucion": -1.191,
+            "efecto": "reduce_riesgo"
+          },
+          {
+            "variable": "uso_cupo_tarjetas",
+            "contribucion": -0.8153,
+            "efecto": "reduce_riesgo"
+          },
+          {
+            "variable": "relacion_deuda_ingreso",
+            "contribucion": -0.8024,
+            "efecto": "reduce_riesgo"
+          },
+          {
+            "variable": "ingreso_mensual",
+            "contribucion": -0.4768,
+            "efecto": "reduce_riesgo"
+          },
+          {
+            "variable": "moras_ultimos_12m",
+            "contribucion": -0.1925,
+            "efecto": "reduce_riesgo"
+          }
+        ],
+        "modelo_version": "2.0.0"
+      },
+      "request_id": "b4630864c942"
+    },
+    {
+      "nombre": "predict_medio",
+      "metodo": "POST",
+      "ruta": "/predict",
+      "peticion": {
+        "edad": 33,
+        "sexo": "M",
+        "estado_civil": "Soltero",
+        "nivel_educativo": "Tecnico",
+        "situacion_laboral": "Independiente",
+        "antiguedad_laboral_anios": 3.0,
+        "personas_a_cargo": 2,
+        "tipo_vivienda": "Arriendo",
+        "ingreso_mensual": 3200000,
+        "monto_credito": 18000000,
+        "plazo_meses": 48,
+        "tasa_interes_anual": 28.0,
+        "proposito": "Libre_inversion",
+        "num_creditos_activos": 3,
+        "moras_ultimos_12m": 0,
+        "relacion_deuda_ingreso": 0.5,
+        "puntaje_buro": 650,
+        "uso_cupo_tarjetas": 0.55,
+        "texto_solicitud": "Quiero el credito para organizar mis gastos y hacer unas mejoras en mi negocio."
+      },
+      "estado": 200,
+      "latencia_ms": 262.5,
+      "respuesta": {
+        "probabilidad_impago": 0.3315,
+        "decision": "revisar",
+        "banda_riesgo": "Medio",
+        "prediccion": 0,
+        "etiqueta": "Revisión manual",
+        "umbrales": {
+          "aprobar": 0.1778,
+          "rechazar": 0.4667,
+          "bayes": 0.25
+        },
+        "factores_principales": [
+          {
+            "variable": "puntaje_buro",
+            "contribucion": 0.434,
+            "efecto": "aumenta_riesgo"
+          },
+          {
+            "variable": "uso_cupo_tarjetas",
+            "contribucion": 0.2321,
+            "efecto": "aumenta_riesgo"
+          },
+          {
+            "variable": "relacion_deuda_ingreso",
+            "contribucion": -0.2184,
+            "efecto": "reduce_riesgo"
+          },
+          {
+            "variable": "moras_ultimos_12m",
+            "contribucion": -0.1925,
+            "efecto": "reduce_riesgo"
+          },
+          {
+            "variable": "num_creditos_activos",
+            "contribucion": 0.1517,
+            "efecto": "aumenta_riesgo"
+          }
+        ],
+        "modelo_version": "2.0.0"
+      },
+      "request_id": "f23d564e5c8d"
+    },
+    {
+      "nombre": "predict_alto",
+      "metodo": "POST",
+      "ruta": "/predict",
+      "peticion": {
+        "edad": 24,
+        "sexo": "M",
+        "estado_civil": "Soltero",
+        "nivel_educativo": "Primaria",
+        "situacion_laboral": "Desempleado",
+        "antiguedad_laboral_anios": 0.0,
+        "personas_a_cargo": 3,
+        "tipo_vivienda": "Arriendo",
+        "ingreso_mensual": 1100000,
+        "monto_credito": 35000000,
+        "plazo_meses": 72,
+        "tasa_interes_anual": 38.5,
+        "proposito": "Consolidacion_deuda",
+        "num_creditos_activos": 5,
+        "moras_ultimos_12m": 4,
+        "relacion_deuda_ingreso": 1.25,
+        "puntaje_buro": 380,
+        "uso_cupo_tarjetas": 0.95,
+        "texto_solicitud": "Necesito consolidar varias tarjetas de credito porque me atrase en los pagos tras perder el empleo. Tengo deudas acumuladas y dificultades para cubrir la cuota."
+      },
+      "estado": 200,
+      "latencia_ms": 242.8,
+      "respuesta": {
+        "probabilidad_impago": 0.9969,
+        "decision": "rechazar",
+        "banda_riesgo": "Alto",
+        "prediccion": 1,
+        "etiqueta": "Impago",
+        "umbrales": {
+          "aprobar": 0.1778,
+          "rechazar": 0.4667,
+          "bayes": 0.25
+        },
+        "factores_principales": [
+          {
+            "variable": "puntaje_buro",
+            "contribucion": 2.4284,
+            "efecto": "aumenta_riesgo"
+          },
+          {
+            "variable": "moras_ultimos_12m",
+            "contribucion": 1.3096,
+            "efecto": "aumenta_riesgo"
+          },
+          {
+            "variable": "uso_cupo_tarjetas",
+            "contribucion": 1.2065,
+            "efecto": "aumenta_riesgo"
+          },
+          {
+            "variable": "relacion_deuda_ingreso",
+            "contribucion": 1.1504,
+            "efecto": "aumenta_riesgo"
+          },
+          {
+            "variable": "ratio_monto_ingreso",
+            "contribucion": -0.3903,
+            "efecto": "reduce_riesgo"
+          }
+        ],
+        "modelo_version": "2.0.0"
+      },
+      "request_id": "55e06cd94721"
+    },
+    {
+      "nombre": "predict_422",
+      "metodo": "POST",
+      "ruta": "/predict",
+      "peticion": {
+        "edad": 999,
+        "sexo": "M",
+        "estado_civil": "Soltero",
+        "nivel_educativo": "Tecnico",
+        "situacion_laboral": "Independiente",
+        "antiguedad_laboral_anios": 3.0,
+        "personas_a_cargo": 2,
+        "tipo_vivienda": "Arriendo",
+        "ingreso_mensual": 3200000,
+        "monto_credito": 18000000,
+        "plazo_meses": 48,
+        "tasa_interes_anual": 28.0,
+        "proposito": "Viajes",
+        "num_creditos_activos": 3,
+        "moras_ultimos_12m": 0,
+        "relacion_deuda_ingreso": 0.5,
+        "puntaje_buro": 650,
+        "uso_cupo_tarjetas": 0.55,
+        "texto_solicitud": "Quiero el credito para organizar mis gastos y hacer unas mejoras en mi negocio."
+      },
+      "estado": 422,
+      "latencia_ms": 13.7,
+      "respuesta": {
+        "detail": [
+          {
+            "type": "less_than_equal",
+            "loc": [
+              "body",
+              "edad"
+            ],
+            "msg": "Input should be less than or equal to 100",
+            "input": 999,
+            "ctx": {
+              "le": 100
+            }
+          },
+          {
+            "type": "literal_error",
+            "loc": [
+              "body",
+              "proposito"
+            ],
+            "msg": "Input should be 'Libre_inversion', 'Vehiculo', 'Consolidacion_deuda', 'Vivienda', 'Negocio' or 'Educacion'",
+            "input": "Viajes",
+            "ctx": {
+              "expected": "'Libre_inversion', 'Vehiculo', 'Consolidacion_deuda', 'Vivienda', 'Negocio' or 'Educacion'"
+            }
+          }
+        ]
+      },
+      "request_id": "7f5c313600fb"
+    },
+    {
+      "nombre": "predict_text",
+      "metodo": "POST",
+      "ruta": "/predict/text",
+      "peticion": {
+        "texto": "Necesito consolidar varias tarjetas de credito porque me atrase en los pagos tras perder el empleo. Tengo deudas acumuladas y dificultades para cubrir la cuota."
+      },
+      "estado": 200,
+      "latencia_ms": 20.8,
+      "respuesta": {
+        "probabilidad_impago_texto": 0.4816,
+        "banda_riesgo": "Alto",
+        "sentimiento": "negativo",
+        "modelo": "tfidf_logreg_calibrado"
+      },
+      "request_id": "be4a441f6ded"
+    },
+    {
+      "nombre": "predict_batch",
+      "metodo": "POST",
+      "ruta": "/predict/batch",
+      "peticion": {
+        "clientes": [
+          {
+            "edad": 42,
+            "sexo": "F",
+            "estado_civil": "Casado",
+            "nivel_educativo": "Posgrado",
+            "situacion_laboral": "Empleado",
+            "antiguedad_laboral_anios": 12.0,
+            "personas_a_cargo": 1,
+            "tipo_vivienda": "Propia",
+            "ingreso_mensual": 9500000,
+            "monto_credito": 15000000,
+            "plazo_meses": 24,
+            "tasa_interes_anual": 14.5,
+            "proposito": "Educacion",
+            "num_creditos_activos": 1,
+            "moras_ultimos_12m": 0,
+            "relacion_deuda_ingreso": 0.18,
+            "puntaje_buro": 870,
+            "uso_cupo_tarjetas": 0.12,
+            "texto_solicitud": "Solicito el credito para financiar una maestria. Tengo un empleo estable desde hace varios anios y he cumplido puntualmente con todas mis obligaciones anteriores."
+          },
+          {
+            "edad": 33,
+            "sexo": "M",
+            "estado_civil": "Soltero",
+            "nivel_educativo": "Tecnico",
+            "situacion_laboral": "Independiente",
+            "antiguedad_laboral_anios": 3.0,
+            "personas_a_cargo": 2,
+            "tipo_vivienda": "Arriendo",
+            "ingreso_mensual": 3200000,
+            "monto_credito": 18000000,
+            "plazo_meses": 48,
+            "tasa_interes_anual": 28.0,
+            "proposito": "Libre_inversion",
+            "num_creditos_activos": 3,
+            "moras_ultimos_12m": 0,
+            "relacion_deuda_ingreso": 0.5,
+            "puntaje_buro": 650,
+            "uso_cupo_tarjetas": 0.55,
+            "texto_solicitud": "Quiero el credito para organizar mis gastos y hacer unas mejoras en mi negocio."
+          },
+          {
+            "edad": 24,
+            "sexo": "M",
+            "estado_civil": "Soltero",
+            "nivel_educativo": "Primaria",
+            "situacion_laboral": "Desempleado",
+            "antiguedad_laboral_anios": 0.0,
+            "personas_a_cargo": 3,
+            "tipo_vivienda": "Arriendo",
+            "ingreso_mensual": 1100000,
+            "monto_credito": 35000000,
+            "plazo_meses": 72,
+            "tasa_interes_anual": 38.5,
+            "proposito": "Consolidacion_deuda",
+            "num_creditos_activos": 5,
+            "moras_ultimos_12m": 4,
+            "relacion_deuda_ingreso": 1.25,
+            "puntaje_buro": 380,
+            "uso_cupo_tarjetas": 0.95,
+            "texto_solicitud": "Necesito consolidar varias tarjetas de credito porque me atrase en los pagos tras perder el empleo. Tengo deudas acumuladas y dificultades para cubrir la cuota."
+          }
+        ]
+      },
+      "estado": 200,
+      "latencia_ms": 292.5,
+      "respuesta": {
+        "resultados": [
+          {
+            "probabilidad_impago": 0.0106,
+            "decision": "aprobar",
+            "banda_riesgo": "Bajo",
+            "prediccion": 0,
+            "etiqueta": "No impago",
+            "umbrales": {
+              "aprobar": 0.1778,
+              "rechazar": 0.4667,
+              "bayes": 0.25
+            },
+            "factores_principales": [
+              {
+                "variable": "puntaje_buro",
+                "contribucion": -1.191,
+                "efecto": "reduce_riesgo"
+              },
+              {
+                "variable": "uso_cupo_tarjetas",
+                "contribucion": -0.8153,
+                "efecto": "reduce_riesgo"
+              },
+              {
+                "variable": "relacion_deuda_ingreso",
+                "contribucion": -0.8024,
+                "efecto": "reduce_riesgo"
+              },
+              {
+                "variable": "ingreso_mensual",
+                "contribucion": -0.4768,
+                "efecto": "reduce_riesgo"
+              },
+              {
+                "variable": "moras_ultimos_12m",
+                "contribucion": -0.1925,
+                "efecto": "reduce_riesgo"
+              }
+            ],
+            "modelo_version": "2.0.0"
+          },
+          {
+            "probabilidad_impago": 0.3315,
+            "decision": "revisar",
+            "banda_riesgo": "Medio",
+            "prediccion": 0,
+            "etiqueta": "Revisión manual",
+            "umbrales": {
+              "aprobar": 0.1778,
+              "rechazar": 0.4667,
+              "bayes": 0.25
+            },
+            "factores_principales": [
+              {
+                "variable": "puntaje_buro",
+                "contribucion": 0.434,
+                "efecto": "aumenta_riesgo"
+              },
+              {
+                "variable": "uso_cupo_tarjetas",
+                "contribucion": 0.2321,
+                "efecto": "aumenta_riesgo"
+              },
+              {
+                "variable": "relacion_deuda_ingreso",
+                "contribucion": -0.2184,
+                "efecto": "reduce_riesgo"
+              },
+              {
+                "variable": "moras_ultimos_12m",
+                "contribucion": -0.1925,
+                "efecto": "reduce_riesgo"
+              },
+              {
+                "variable": "num_creditos_activos",
+                "contribucion": 0.1517,
+                "efecto": "aumenta_riesgo"
+              }
+            ],
+            "modelo_version": "2.0.0"
+          },
+          {
+            "probabilidad_impago": 0.9969,
+            "decision": "rechazar",
+            "banda_riesgo": "Alto",
+            "prediccion": 1,
+            "etiqueta": "Impago",
+            "umbrales": {
+              "aprobar": 0.1778,
+              "rechazar": 0.4667,
+              "bayes": 0.25
+            },
+            "factores_principales": [
+              {
+                "variable": "puntaje_buro",
+                "contribucion": 2.4284,
+                "efecto": "aumenta_riesgo"
+              },
+              {
+                "variable": "moras_ultimos_12m",
+                "contribucion": 1.3096,
+                "efecto": "aumenta_riesgo"
+              },
+              {
+                "variable": "uso_cupo_tarjetas",
+                "contribucion": 1.2065,
+                "efecto": "aumenta_riesgo"
+              },
+              {
+                "variable": "relacion_deuda_ingreso",
+                "contribucion": 1.1504,
+                "efecto": "aumenta_riesgo"
+              },
+              {
+                "variable": "ratio_monto_ingreso",
+                "contribucion": -0.3903,
+                "efecto": "reduce_riesgo"
+              }
+            ],
+            "modelo_version": "2.0.0"
+          }
+        ],
+        "total": 3
+      },
+      "request_id": "1eaa45fb9e1c"
+    }
+  ],
+  "openapi": {
+    "openapi": "3.1.0",
+    "info": {
+      "title": "API Riesgo de Crédito",
+      "description": "Probabilidad de impago calibrada, decisión (aprobar / revisar / rechazar) y explicación.",
+      "version": "2.0.0"
+    },
+    "paths": {
+      "/health": {
+        "get": {
+          "summary": "Health",
+          "description": "Estado del servicio: 'degradado' si falta algún artefacto (los demás endpoints responden 503).",
+          "operationId": "health_health_get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HealthResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/model/info": {
+        "get": {
+          "summary": "Model Info",
+          "description": "Model card completa: protocolo, métricas de test, umbrales, equidad, monitoreo y limitaciones.",
+          "operationId": "model_info_model_info_get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ModelCard"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/predict": {
+        "post": {
+          "summary": "Predict",
+          "description": "Un cliente → probabilidad calibrada, decisión, banda y factores.",
+          "operationId": "predict_predict_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClienteRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PrediccionResponse"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/predict/batch": {
+        "post": {
+          "summary": "Predict Batch",
+          "description": "Hasta 1.000 clientes en una sola llamada.",
+          "operationId": "predict_batch_predict_batch_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BatchResponse"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/predict/text": {
+        "post": {
+          "summary": "Predict Text",
+          "description": "Solo el texto de la solicitud → probabilidad por texto, banda y sentimiento (léxico).",
+          "operationId": "predict_text_predict_text_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TextoRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/TextoResponse"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "BatchRequest": {
+          "properties": {
+            "clientes": {
+              "items": {
+                "$ref": "#/components/schemas/ClienteRequest"
+              },
+              "type": "array",
+              "maxItems": 1000,
+              "minItems": 1,
+              "title": "Clientes"
+            }
+          },
+          "additionalProperties": false,
+          "type": "object",
+          "required": [
+            "clientes"
+          ],
+          "title": "BatchRequest"
+        },
+        "BatchResponse": {
+          "properties": {
+            "resultados": {
+              "items": {
+                "$ref": "#/components/schemas/PrediccionResponse"
+              },
+              "type": "array",
+              "title": "Resultados"
+            },
+            "total": {
+              "type": "integer",
+              "title": "Total"
+            }
+          },
+          "type": "object",
+          "required": [
+            "resultados",
+            "total"
+          ],
+          "title": "BatchResponse"
+        },
+        "ClienteRequest": {
+          "properties": {
+            "edad": {
+              "type": "integer",
+              "maximum": 100.0,
+              "minimum": 18.0,
+              "title": "Edad"
+            },
+            "sexo": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "M",
+                    "F"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sexo",
+              "description": "Solo auditoría; no entra al modelo"
+            },
+            "estado_civil": {
+              "type": "string",
+              "enum": [
+                "Soltero",
+                "Casado",
+                "Union_libre",
+                "Divorciado",
+                "Viudo"
+              ],
+              "title": "Estado Civil"
+            },
+            "nivel_educativo": {
+              "type": "string",
+              "enum": [
+                "Primaria",
+                "Secundaria",
+                "Tecnico",
+                "Universitario",
+                "Posgrado"
+              ],
+              "title": "Nivel Educativo"
+            },
+            "situacion_laboral": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "Empleado",
+                    "Independiente",
+                    "Pensionado",
+                    "Desempleado"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Situacion Laboral"
+            },
+            "antiguedad_laboral_anios": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "maximum": 70.0,
+                  "minimum": 0.0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Antiguedad Laboral Anios"
+            },
+            "personas_a_cargo": {
+              "type": "integer",
+              "maximum": 20.0,
+              "minimum": 0.0,
+              "title": "Personas A Cargo"
+            },
+            "tipo_vivienda": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "Arriendo",
+                    "Propia",
+                    "Familiar"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tipo Vivienda"
+            },
+            "ingreso_mensual": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "exclusiveMinimum": 0.0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ingreso Mensual"
+            },
+            "monto_credito": {
+              "type": "number",
+              "exclusiveMinimum": 0.0,
+              "title": "Monto Credito"
+            },
+            "plazo_meses": {
+              "type": "integer",
+              "maximum": 120.0,
+              "minimum": 1.0,
+              "title": "Plazo Meses"
+            },
+            "tasa_interes_anual": {
+              "type": "number",
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "title": "Tasa Interes Anual"
+            },
+            "proposito": {
+              "type": "string",
+              "enum": [
+                "Libre_inversion",
+                "Vehiculo",
+                "Consolidacion_deuda",
+                "Vivienda",
+                "Negocio",
+                "Educacion"
+              ],
+              "title": "Proposito"
+            },
+            "num_creditos_activos": {
+              "type": "integer",
+              "maximum": 50.0,
+              "minimum": 0.0,
+              "title": "Num Creditos Activos"
+            },
+            "moras_ultimos_12m": {
+              "type": "integer",
+              "maximum": 12.0,
+              "minimum": 0.0,
+              "title": "Moras Ultimos 12M"
+            },
+            "relacion_deuda_ingreso": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "maximum": 5.0,
+                  "minimum": 0.0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Relacion Deuda Ingreso"
+            },
+            "puntaje_buro": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "maximum": 950.0,
+                  "minimum": 150.0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Puntaje Buro"
+            },
+            "uso_cupo_tarjetas": {
+              "type": "number",
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "title": "Uso Cupo Tarjetas"
+            },
+            "texto_solicitud": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 5000
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Texto Solicitud"
+            }
+          },
+          "additionalProperties": false,
+          "type": "object",
+          "required": [
+            "edad",
+            "estado_civil",
+            "nivel_educativo",
+            "personas_a_cargo",
+            "monto_credito",
+            "plazo_meses",
+            "tasa_interes_anual",
+            "proposito",
+            "num_creditos_activos",
+            "moras_ultimos_12m",
+            "uso_cupo_tarjetas"
+          ],
+          "title": "ClienteRequest",
+          "description": "Datos de una solicitud. ``sexo`` se recibe solo para auditoría: no entra al modelo.",
+          "examples": [
+            {
+              "antiguedad_laboral_anios": 4.5,
+              "edad": 35,
+              "estado_civil": "Casado",
+              "ingreso_mensual": 4500000,
+              "monto_credito": 20000000,
+              "moras_ultimos_12m": 0,
+              "nivel_educativo": "Universitario",
+              "num_creditos_activos": 2,
+              "personas_a_cargo": 1,
+              "plazo_meses": 36,
+              "proposito": "Vehiculo",
+              "puntaje_buro": 720,
+              "relacion_deuda_ingreso": 0.32,
+              "sexo": "F",
+              "situacion_laboral": "Empleado",
+              "tasa_interes_anual": 24.5,
+              "texto_solicitud": "Necesito el crédito para comprar un carro para trabajar.",
+              "tipo_vivienda": "Arriendo",
+              "uso_cupo_tarjetas": 0.4
+            }
+          ]
+        },
+        "Factor": {
+          "properties": {
+            "variable": {
+              "type": "string",
+              "title": "Variable"
+            },
+            "contribucion": {
+              "type": "number",
+              "title": "Contribucion"
+            },
+            "efecto": {
+              "type": "string",
+              "enum": [
+                "aumenta_riesgo",
+                "reduce_riesgo"
+              ],
+              "title": "Efecto"
+            }
+          },
+          "type": "object",
+          "required": [
+            "variable",
+            "contribucion",
+            "efecto"
+          ],
+          "title": "Factor",
+          "description": "Contribución de una variable al log-odds de la probabilidad calibrada (frente al cliente promedio)."
+        },
+        "HTTPValidationError": {
+          "properties": {
+            "detail": {
+              "items": {
+                "$ref": "#/components/schemas/ValidationError"
+              },
+              "type": "array",
+              "title": "Detail"
+            }
+          },
+          "type": "object",
+          "title": "HTTPValidationError"
+        },
+        "HealthResponse": {
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "degradado"
+              ],
+              "title": "Status"
+            },
+            "modelo_version": {
+              "type": "string",
+              "title": "Modelo Version"
+            },
+            "modelo_cargado": {
+              "type": "boolean",
+              "title": "Modelo Cargado"
+            },
+            "api_version": {
+              "type": "string",
+              "title": "Api Version"
+            }
+          },
+          "type": "object",
+          "required": [
+            "status",
+            "modelo_version",
+            "modelo_cargado",
+            "api_version"
+          ],
+          "title": "HealthResponse"
+        },
+        "ModelCard": {
+          "properties": {
+            "nombre": {
+              "type": "string",
+              "title": "Nombre"
+            },
+            "version": {
+              "type": "string",
+              "title": "Version"
+            },
+            "fecha_entrenamiento": {
+              "type": "string",
+              "title": "Fecha Entrenamiento"
+            },
+            "algoritmo": {
+              "type": "string",
+              "title": "Algoritmo"
+            },
+            "variante_equidad": {
+              "type": "string",
+              "title": "Variante Equidad"
+            },
+            "umbrales": {
+              "$ref": "#/components/schemas/Umbrales"
+            },
+            "bandas_riesgo": {
+              "additionalProperties": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "type": "object",
+              "title": "Bandas Riesgo"
+            },
+            "decisiones": {
+              "additionalProperties": {
+                "type": "string",
+                "enum": [
+                  "aprobar",
+                  "revisar",
+                  "rechazar"
+                ]
+              },
+              "type": "object",
+              "title": "Decisiones"
+            },
+            "metricas_test": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object",
+              "title": "Metricas Test"
+            },
+            "equidad_test": {
+              "additionalProperties": true,
+              "type": "object",
+              "title": "Equidad Test"
+            },
+            "limitaciones": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array",
+              "title": "Limitaciones"
+            }
+          },
+          "additionalProperties": true,
+          "type": "object",
+          "required": [
+            "nombre",
+            "version",
+            "fecha_entrenamiento",
+            "algoritmo",
+            "variante_equidad",
+            "umbrales",
+            "bandas_riesgo",
+            "decisiones",
+            "metricas_test",
+            "equidad_test",
+            "limitaciones"
+          ],
+          "title": "ModelCard",
+          "description": "Campos garantizados de la model card; el resto de la card se devuelve tal cual."
+        },
+        "PrediccionResponse": {
+          "properties": {
+            "probabilidad_impago": {
+              "type": "number",
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "title": "Probabilidad Impago"
+            },
+            "decision": {
+              "type": "string",
+              "enum": [
+                "aprobar",
+                "revisar",
+                "rechazar"
+              ],
+              "title": "Decision"
+            },
+            "banda_riesgo": {
+              "type": "string",
+              "enum": [
+                "Bajo",
+                "Medio",
+                "Alto"
+              ],
+              "title": "Banda Riesgo"
+            },
+            "prediccion": {
+              "type": "integer",
+              "title": "Prediccion",
+              "description": "1 si la decisión es rechazar"
+            },
+            "etiqueta": {
+              "type": "string",
+              "title": "Etiqueta"
+            },
+            "umbrales": {
+              "$ref": "#/components/schemas/Umbrales"
+            },
+            "factores_principales": {
+              "items": {
+                "$ref": "#/components/schemas/Factor"
+              },
+              "type": "array",
+              "title": "Factores Principales"
+            },
+            "modelo_version": {
+              "type": "string",
+              "title": "Modelo Version"
+            }
+          },
+          "type": "object",
+          "required": [
+            "probabilidad_impago",
+            "decision",
+            "banda_riesgo",
+            "prediccion",
+            "etiqueta",
+            "umbrales",
+            "factores_principales",
+            "modelo_version"
+          ],
+          "title": "PrediccionResponse"
+        },
+        "TextoRequest": {
+          "properties": {
+            "texto": {
+              "type": "string",
+              "maxLength": 5000,
+              "minLength": 1,
+              "title": "Texto"
+            }
+          },
+          "additionalProperties": false,
+          "type": "object",
+          "required": [
+            "texto"
+          ],
+          "title": "TextoRequest"
+        },
+        "TextoResponse": {
+          "properties": {
+            "probabilidad_impago_texto": {
+              "type": "number",
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "title": "Probabilidad Impago Texto"
+            },
+            "banda_riesgo": {
+              "type": "string",
+              "enum": [
+                "Bajo",
+                "Medio",
+                "Alto"
+              ],
+              "title": "Banda Riesgo"
+            },
+            "sentimiento": {
+              "type": "string",
+              "enum": [
+                "positivo",
+                "negativo",
+                "neutral"
+              ],
+              "title": "Sentimiento"
+            },
+            "modelo": {
+              "type": "string",
+              "title": "Modelo"
+            }
+          },
+          "type": "object",
+          "required": [
+            "probabilidad_impago_texto",
+            "banda_riesgo",
+            "sentimiento",
+            "modelo"
+          ],
+          "title": "TextoResponse"
+        },
+        "Umbrales": {
+          "properties": {
+            "aprobar": {
+              "type": "number",
+              "title": "Aprobar"
+            },
+            "rechazar": {
+              "type": "number",
+              "title": "Rechazar"
+            },
+            "bayes": {
+              "type": "number",
+              "title": "Bayes"
+            }
+          },
+          "type": "object",
+          "required": [
+            "aprobar",
+            "rechazar",
+            "bayes"
+          ],
+          "title": "Umbrales"
+        },
+        "ValidationError": {
+          "properties": {
+            "loc": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array",
+              "title": "Location"
+            },
+            "msg": {
+              "type": "string",
+              "title": "Message"
+            },
+            "type": {
+              "type": "string",
+              "title": "Error Type"
+            }
+          },
+          "type": "object",
+          "required": [
+            "loc",
+            "msg",
+            "type"
+          ],
+          "title": "ValidationError"
+        }
+      }
+    }
+  }
+}

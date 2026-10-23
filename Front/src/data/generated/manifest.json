@@ -1,0 +1,77 @@
+{
+  "version": "2.0.0",
+  "card_version": "2.0.0",
+  "git_sha": "960db17",
+  "generado": "2026-10-23T16:10:25",
+  "datos": {
+    "crudo_sha256": "63e1b695a1bae907a79d80b208ee665da6e6a41eaec7ed4fc493ed8e145dcc34",
+    "train_sha256": "1ce71f5f0123edb39b1d0120fd142e73c2a2c066bca40bcbd0ead523b4e92e28",
+    "test_sha256": "8c1cb6a3dd0c05526e80c822c8b8211a08e0c2acd28a0221a53ec02b69b2e4ee"
+  },
+  "archivos": {
+    "src/data/generated/agregados.json": {
+      "sha256": "6bc43fcd6b576a52d56c7e8bccec480dc6b81427979cf85162a51ecac39b9678",
+      "bytes": 42582
+    },
+    "src/data/generated/api_capturas.json": {
+      "sha256": "4cba35d72b84f8ea406f702e2557d90cd28a9a5fc9de718b8cc79c1bd14715ca",
+      "bytes": 58423
+    },
+    "src/data/generated/clientes_demo.json": {
+      "sha256": "5cbf373e0878ffe48cab457c9714b23ddfaa77a9a8e980d62fdea36a982c2df1",
+      "bytes": 2213
+    },
+    "src/data/generated/ejecuciones.json": {
+      "sha256": "0ea45b0a52b961bb21ead87630a441a0c7855429c247da48ce212f2eceb4c784",
+      "bytes": 659
+    },
+    "src/data/generated/evaluacion_final.json": {
+      "sha256": "0295f333cab86dc7480d1f6bac37128ad5bee273e516f3fd3c8af5c2ab8ada46",
+      "bytes": 12182
+    },
+    "src/data/generated/gestion.json": {
+      "sha256": "68ee896a38595e291f7926c585b319661f794ee577eb21d6866b9c07152e5027",
+      "bytes": 79048
+    },
+    "src/data/generated/golden.json": {
+      "sha256": "ba60a77828f219b61d00a9e30f535da951586e763de8c5a9fd7c014a37a1cc5d",
+      "bytes": 419891
+    },
+    "src/data/generated/model_card.json": {
+      "sha256": "f71179d43fb2c7f05203788dfc9a6193ff1e7cbb925b01ab8c3c2549f65534f3",
+      "bytes": 15646
+    },
+    "src/data/generated/modelo_export.json": {
+      "sha256": "3be6ec96c6f31024b67051fa7019c310d45d9e4f4d1999298014aceb98d78d43",
+      "bytes": 9505
+    },
+    "src/data/generated/resultados_dl.json": {
+      "sha256": "675a5a5a78b02cbc225bf82ad7d77a7d4f5199dc5c95892da42f6cc60150c1a0",
+      "bytes": 98
+    },
+    "src/data/generated/texto_export.json": {
+      "sha256": "955446443d2a2f97de14fe2de7ba5c48a5a6df11e212e43ff115056209eeb4a5",
+      "bytes": 46646
+    },
+    "src/data/generated/train_log.json": {
+      "sha256": "b280041dff15bd51ca125de1ea47c8212e18f81318b151125c5ec7ea8ebfb0cf",
+      "bytes": 1441
+    },
+    "public/run/data/credit_risk.csv": {
+      "sha256": "63e1b695a1bae907a79d80b208ee665da6e6a41eaec7ed4fc493ed8e145dcc34",
+      "bytes": 3021627
+    },
+    "public/run/data/test.csv": {
+      "sha256": "8c1cb6a3dd0c05526e80c822c8b8211a08e0c2acd28a0221a53ec02b69b2e4ee",
+      "bytes": 754849
+    },
+    "public/run/data/train.csv": {
+      "sha256": "1ce71f5f0123edb39b1d0120fd142e73c2a2c066bca40bcbd0ead523b4e92e28",
+      "bytes": 3023059
+    },
+    "public/run/nube_pca.json": {
+      "sha256": "00919b763db830e45aa853aaa4dae3fad738e7d07200f649b3f71164985cf61a",
+      "bytes": 384182
+    }
+  }
+}

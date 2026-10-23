@@ -1,0 +1,308 @@
+{
+  "$defs": {
+    "Curvas": {
+      "properties": {
+        "fpr": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Fpr",
+          "type": "array"
+        },
+        "tpr": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Tpr",
+          "type": "array"
+        },
+        "recall": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Recall",
+          "type": "array"
+        },
+        "precision": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Precision",
+          "type": "array"
+        },
+        "calib_prob_media": {
+          "default": [],
+          "items": {
+            "type": "number"
+          },
+          "title": "Calib Prob Media",
+          "type": "array"
+        },
+        "calib_frac_positivos": {
+          "default": [],
+          "items": {
+            "type": "number"
+          },
+          "title": "Calib Frac Positivos",
+          "type": "array"
+        }
+      },
+      "required": [
+        "fpr",
+        "tpr",
+        "recall",
+        "precision"
+      ],
+      "title": "Curvas",
+      "type": "object"
+    },
+    "FilaModelo": {
+      "description": "Una fila de la tabla comparativa global (clásicos, DL, NLP, Spark y final).",
+      "properties": {
+        "modelo": {
+          "title": "Modelo",
+          "type": "string"
+        },
+        "familia": {
+          "enum": [
+            "línea base",
+            "clásico",
+            "deep learning",
+            "nlp",
+            "big data",
+            "final"
+          ],
+          "title": "Familia",
+          "type": "string"
+        },
+        "roc_auc_cv": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Roc Auc Cv"
+        },
+        "roc_auc_cv_std": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Roc Auc Cv Std"
+        },
+        "test": {
+          "$ref": "#/$defs/Metricas"
+        },
+        "tiempo_entrenamiento_s": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tiempo Entrenamiento S"
+        },
+        "interpretabilidad": {
+          "enum": [
+            "alta",
+            "media",
+            "baja"
+          ],
+          "title": "Interpretabilidad",
+          "type": "string"
+        },
+        "notas": {
+          "default": "",
+          "title": "Notas",
+          "type": "string"
+        }
+      },
+      "required": [
+        "modelo",
+        "familia",
+        "test",
+        "interpretabilidad"
+      ],
+      "title": "FilaModelo",
+      "type": "object"
+    },
+    "Metricas": {
+      "additionalProperties": false,
+      "properties": {
+        "roc_auc": {
+          "title": "Roc Auc",
+          "type": "number"
+        },
+        "pr_auc": {
+          "title": "Pr Auc",
+          "type": "number"
+        },
+        "ks": {
+          "title": "Ks",
+          "type": "number"
+        },
+        "brier": {
+          "title": "Brier",
+          "type": "number"
+        },
+        "accuracy": {
+          "title": "Accuracy",
+          "type": "number"
+        },
+        "precision": {
+          "title": "Precision",
+          "type": "number"
+        },
+        "recall": {
+          "title": "Recall",
+          "type": "number"
+        },
+        "f1": {
+          "title": "F1",
+          "type": "number"
+        }
+      },
+      "required": [
+        "roc_auc",
+        "pr_auc",
+        "ks",
+        "brier",
+        "accuracy",
+        "precision",
+        "recall",
+        "f1"
+      ],
+      "title": "Metricas",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "version": {
+      "default": "2.0.0",
+      "title": "Version",
+      "type": "string"
+    },
+    "generado": {
+      "title": "Generado",
+      "type": "string"
+    },
+    "notebook": {
+      "title": "Notebook",
+      "type": "string"
+    },
+    "umbral_metricas": {
+      "title": "Umbral Metricas",
+      "type": "number"
+    },
+    "modelos": {
+      "items": {
+        "$ref": "#/$defs/FilaModelo"
+      },
+      "title": "Modelos",
+      "type": "array"
+    },
+    "curvas": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Curvas"
+      },
+      "default": {},
+      "title": "Curvas",
+      "type": "object"
+    },
+    "terminos_impago": {
+      "items": {
+        "additionalProperties": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "type": "object"
+      },
+      "title": "Terminos Impago",
+      "type": "array"
+    },
+    "terminos_pago": {
+      "items": {
+        "additionalProperties": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "type": "object"
+      },
+      "title": "Terminos Pago",
+      "type": "array"
+    },
+    "sentimiento_vs_impago": {
+      "items": {
+        "additionalProperties": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "type": "object"
+      },
+      "title": "Sentimiento Vs Impago",
+      "type": "array"
+    },
+    "proyeccion_2d": {
+      "additionalProperties": {
+        "items": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "type": "array"
+      },
+      "title": "Proyeccion 2D",
+      "type": "object"
+    },
+    "delta_auc": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "title": "Delta Auc",
+      "type": "object"
+    }
+  },
+  "required": [
+    "notebook",
+    "umbral_metricas",
+    "modelos",
+    "terminos_impago",
+    "terminos_pago",
+    "sentimiento_vs_impago",
+    "proyeccion_2d",
+    "delta_auc"
+  ],
+  "title": "ResultadosNLP",
+  "type": "object"
+}

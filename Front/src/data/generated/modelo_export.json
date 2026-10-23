@@ -1,0 +1,412 @@
+{
+  "version": "2.0.0",
+  "variante": "reweighing",
+  "algoritmo": "LogisticRegression",
+  "columnas_entrada": [
+    "edad",
+    "antiguedad_laboral_anios",
+    "personas_a_cargo",
+    "ingreso_mensual",
+    "monto_credito",
+    "plazo_meses",
+    "tasa_interes_anual",
+    "num_creditos_activos",
+    "moras_ultimos_12m",
+    "relacion_deuda_ingreso",
+    "puntaje_buro",
+    "uso_cupo_tarjetas",
+    "estado_civil",
+    "situacion_laboral",
+    "tipo_vivienda",
+    "proposito",
+    "nivel_educativo"
+  ],
+  "numericas_crudas": [
+    "edad",
+    "antiguedad_laboral_anios",
+    "personas_a_cargo",
+    "ingreso_mensual",
+    "monto_credito",
+    "plazo_meses",
+    "tasa_interes_anual",
+    "num_creditos_activos",
+    "moras_ultimos_12m",
+    "relacion_deuda_ingreso",
+    "puntaje_buro",
+    "uso_cupo_tarjetas"
+  ],
+  "rango_edad": {
+    "bins": [
+      17,
+      25,
+      35,
+      45,
+      60,
+      120
+    ],
+    "etiquetas": [
+      "18-25",
+      "26-35",
+      "36-45",
+      "46-60",
+      ">60"
+    ]
+  },
+  "capping": {
+    "ingreso_mensual": [
+      578000.0,
+      7816150.000000004
+    ],
+    "monto_credito": [
+      2006000.0,
+      144522390.00000006
+    ],
+    "cuota_estimada": [
+      76469.67230188703,
+      11020996.4013205
+    ],
+    "ratio_cuota_ingreso": [
+      0.054670681889813964,
+      3.5718212524645634
+    ],
+    "ratio_monto_ingreso": [
+      1.6378624139139024,
+      37.745802553648076
+    ],
+    "antiguedad_laboral_anios": [
+      0.0,
+      52.3
+    ],
+    "relacion_deuda_ingreso": [
+      0.0,
+      1.5
+    ]
+  },
+  "preprocesador": {
+    "num": {
+      "columnas": [
+        "edad",
+        "antiguedad_laboral_anios",
+        "personas_a_cargo",
+        "ingreso_mensual",
+        "monto_credito",
+        "plazo_meses",
+        "tasa_interes_anual",
+        "num_creditos_activos",
+        "moras_ultimos_12m",
+        "relacion_deuda_ingreso",
+        "puntaje_buro",
+        "uso_cupo_tarjetas",
+        "cuota_estimada",
+        "ratio_cuota_ingreso",
+        "ratio_monto_ingreso",
+        "tiene_moras_previas"
+      ],
+      "imputacion": "median",
+      "mediana": [
+        49.0,
+        9.0,
+        1.0,
+        2234000.0,
+        12263500.0,
+        24.0,
+        26.2,
+        1.0,
+        0.0,
+        0.5555,
+        715.0,
+        0.453,
+        643254.4316645871,
+        0.27744756560207745,
+        5.114306546417193,
+        0.0
+      ],
+      "media": [
+        48.93635416666667,
+        12.869302083333334,
+        1.6165625,
+        2539324.2083333335,
+        20918729.108333334,
+        32.4975,
+        26.112552083333334,
+        1.5870833333333334,
+        0.5127083333333333,
+        0.6196629166666666,
+        708.7632291666666,
+        0.45469552083333337,
+        1243305.605748326,
+        0.4922513418014504,
+        8.277709351799936,
+        0.3385416666666667
+      ],
+      "escala": [
+        18.082703845790483,
+        12.585601906394691,
+        1.5468235786907796,
+        1369347.6413931404,
+        24678549.535592757,
+        19.470233530956943,
+        9.26889285388879,
+        1.263642153877258,
+        0.9080914959025636,
+        0.3654111399047559,
+        116.09677932112996,
+        0.25148420489818124,
+        1747946.2886659345,
+        0.6015145051633015,
+        8.163633031340872,
+        0.47321370077082753
+      ]
+    },
+    "nom": {
+      "columnas": [
+        "estado_civil",
+        "situacion_laboral",
+        "tipo_vivienda",
+        "proposito"
+      ],
+      "imputacion": "constant",
+      "relleno": "Desconocido",
+      "categorias": [
+        [
+          "Casado",
+          "Divorciado",
+          "Soltero",
+          "Union_libre",
+          "Viudo"
+        ],
+        [
+          "Desconocido",
+          "Desempleado",
+          "Empleado",
+          "Independiente",
+          "Pensionado"
+        ],
+        [
+          "Arriendo",
+          "Desconocido",
+          "Familiar",
+          "Propia"
+        ],
+        [
+          "Consolidacion_deuda",
+          "Educacion",
+          "Libre_inversion",
+          "Negocio",
+          "Vehiculo",
+          "Vivienda"
+        ]
+      ]
+    },
+    "ord": {
+      "columnas": [
+        "nivel_educativo",
+        "rango_edad"
+      ],
+      "imputacion": "most_frequent",
+      "moda": [
+        "Secundaria",
+        ">60"
+      ],
+      "categorias": [
+        [
+          "Primaria",
+          "Secundaria",
+          "Tecnico",
+          "Universitario",
+          "Posgrado"
+        ],
+        [
+          "18-25",
+          "26-35",
+          "36-45",
+          "46-60",
+          ">60"
+        ]
+      ],
+      "media": [
+        1.9328125,
+        2.461875
+      ],
+      "escala": [
+        1.1288666912042848,
+        1.3904453067423035
+      ]
+    }
+  },
+  "orden_salida": [
+    "edad",
+    "antiguedad_laboral_anios",
+    "personas_a_cargo",
+    "ingreso_mensual",
+    "monto_credito",
+    "plazo_meses",
+    "tasa_interes_anual",
+    "num_creditos_activos",
+    "moras_ultimos_12m",
+    "relacion_deuda_ingreso",
+    "puntaje_buro",
+    "uso_cupo_tarjetas",
+    "cuota_estimada",
+    "ratio_cuota_ingreso",
+    "ratio_monto_ingreso",
+    "tiene_moras_previas",
+    "estado_civil_Casado",
+    "estado_civil_Divorciado",
+    "estado_civil_Soltero",
+    "estado_civil_Union_libre",
+    "estado_civil_Viudo",
+    "situacion_laboral_Desconocido",
+    "situacion_laboral_Desempleado",
+    "situacion_laboral_Empleado",
+    "situacion_laboral_Independiente",
+    "situacion_laboral_Pensionado",
+    "tipo_vivienda_Arriendo",
+    "tipo_vivienda_Desconocido",
+    "tipo_vivienda_Familiar",
+    "tipo_vivienda_Propia",
+    "proposito_Consolidacion_deuda",
+    "proposito_Educacion",
+    "proposito_Libre_inversion",
+    "proposito_Negocio",
+    "proposito_Vehiculo",
+    "proposito_Vivienda",
+    "nivel_educativo",
+    "rango_edad"
+  ],
+  "variable_original": [
+    "edad",
+    "antiguedad_laboral_anios",
+    "personas_a_cargo",
+    "ingreso_mensual",
+    "monto_credito",
+    "plazo_meses",
+    "tasa_interes_anual",
+    "num_creditos_activos",
+    "moras_ultimos_12m",
+    "relacion_deuda_ingreso",
+    "puntaje_buro",
+    "uso_cupo_tarjetas",
+    "cuota_estimada",
+    "ratio_cuota_ingreso",
+    "ratio_monto_ingreso",
+    "tiene_moras_previas",
+    "estado_civil",
+    "estado_civil",
+    "estado_civil",
+    "estado_civil",
+    "estado_civil",
+    "situacion_laboral",
+    "situacion_laboral",
+    "situacion_laboral",
+    "situacion_laboral",
+    "situacion_laboral",
+    "tipo_vivienda",
+    "tipo_vivienda",
+    "tipo_vivienda",
+    "tipo_vivienda",
+    "proposito",
+    "proposito",
+    "proposito",
+    "proposito",
+    "proposito",
+    "proposito",
+    "nivel_educativo",
+    "rango_edad"
+  ],
+  "coeficientes": [
+    0.04060662912679484,
+    -0.05688775540615979,
+    -0.0069199789053304315,
+    -0.12117435171975835,
+    -0.018398205202514825,
+    0.01598556035831372,
+    0.017437624295454812,
+    0.13285029708146262,
+    0.3339956483025456,
+    0.6531627706515689,
+    -0.8398534211846325,
+    0.5999395746370679,
+    0.053048580383366094,
+    0.017637767160783666,
+    -0.13254616810298764,
+    0.06309248310765714,
+    -0.03581170876292743,
+    0.09097820139743361,
+    -0.04728567905677162,
+    -0.057201939137988024,
+    0.044249690025642004,
+    -0.0884067268737057,
+    0.13204399649584148,
+    -0.0036595293936164896,
+    0.0053641452333021925,
+    -0.05041332099643357,
+    0.004211626008248277,
+    -0.08243246670530312,
+    0.046265439063251,
+    0.02688396609919276,
+    0.33214446672363224,
+    -0.04935398997913744,
+    -0.03773221763997345,
+    0.09595196741500944,
+    -0.08474205928333886,
+    -0.26133960277080365,
+    -0.019993154528611543,
+    0.09773465388296171
+  ],
+  "intercepto": -0.8530662343899158,
+  "calibracion": {
+    "a": -1.021055769559969,
+    "b": -0.009546486996321985
+  },
+  "umbrales": {
+    "aprobar": 0.1778,
+    "rechazar": 0.4667,
+    "bayes": 0.25,
+    "aprobar_exacto": 0.17777777777777778,
+    "rechazar_exacto": 0.4666666666666667
+  },
+  "explicador": {
+    "media_z": [
+      -1.1772989990295932e-17,
+      -1.1096447834664976e-16,
+      3.291753443897723e-16,
+      2.4387320866440613e-17,
+      -3.3882040691620337e-17,
+      5.001901670631525e-16,
+      -6.412694449527597e-17,
+      7.313131581791291e-16,
+      4.2593243746817203e-16,
+      1.8141382357927603e-16,
+      2.97285344489732e-16,
+      -1.4909370034862e-16,
+      -2.0511659500529097e-17,
+      1.1226552095363237e-17,
+      -7.246518200313782e-17,
+      -5.455589683715327e-16,
+      0.33760416666666665,
+      0.08791666666666667,
+      0.374375,
+      0.14989583333333334,
+      0.050208333333333334,
+      0.04,
+      0.0665625,
+      0.5319791666666667,
+      0.26875,
+      0.09270833333333334,
+      0.4117708333333333,
+      0.032916666666666664,
+      0.19114583333333332,
+      0.3641666666666667,
+      0.16145833333333334,
+      0.09979166666666667,
+      0.2833333333333333,
+      0.14208333333333334,
+      0.17197916666666666,
+      0.14135416666666667,
+      7.577272143066693e-17,
+      7.967700573393207e-16
+    ],
+    "base_logit": -0.8719872889720081
+  }
+}

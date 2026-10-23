@@ -1,0 +1,116 @@
+{
+  "$defs": {
+    "Factor": {
+      "description": "Contribución de una variable al log-odds de la probabilidad calibrada (frente al cliente promedio).",
+      "properties": {
+        "variable": {
+          "title": "Variable",
+          "type": "string"
+        },
+        "contribucion": {
+          "title": "Contribucion",
+          "type": "number"
+        },
+        "efecto": {
+          "enum": [
+            "aumenta_riesgo",
+            "reduce_riesgo"
+          ],
+          "title": "Efecto",
+          "type": "string"
+        }
+      },
+      "required": [
+        "variable",
+        "contribucion",
+        "efecto"
+      ],
+      "title": "Factor",
+      "type": "object"
+    },
+    "Umbrales": {
+      "properties": {
+        "aprobar": {
+          "title": "Aprobar",
+          "type": "number"
+        },
+        "rechazar": {
+          "title": "Rechazar",
+          "type": "number"
+        },
+        "bayes": {
+          "title": "Bayes",
+          "type": "number"
+        }
+      },
+      "required": [
+        "aprobar",
+        "rechazar",
+        "bayes"
+      ],
+      "title": "Umbrales",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "probabilidad_impago": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Probabilidad Impago",
+      "type": "number"
+    },
+    "decision": {
+      "enum": [
+        "aprobar",
+        "revisar",
+        "rechazar"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "banda_riesgo": {
+      "enum": [
+        "Bajo",
+        "Medio",
+        "Alto"
+      ],
+      "title": "Banda Riesgo",
+      "type": "string"
+    },
+    "prediccion": {
+      "description": "1 si la decisión es rechazar",
+      "title": "Prediccion",
+      "type": "integer"
+    },
+    "etiqueta": {
+      "title": "Etiqueta",
+      "type": "string"
+    },
+    "umbrales": {
+      "$ref": "#/$defs/Umbrales"
+    },
+    "factores_principales": {
+      "items": {
+        "$ref": "#/$defs/Factor"
+      },
+      "title": "Factores Principales",
+      "type": "array"
+    },
+    "modelo_version": {
+      "title": "Modelo Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "probabilidad_impago",
+    "decision",
+    "banda_riesgo",
+    "prediccion",
+    "etiqueta",
+    "umbrales",
+    "factores_principales",
+    "modelo_version"
+  ],
+  "title": "PrediccionResponse",
+  "type": "object"
+}

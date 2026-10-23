@@ -1,0 +1,16 @@
+{
+  "01_definicion_problema_etica.ipynb": {
+    "estado": "error: OSError: [Errno 22] Invalid argument: 'C:\\\\Users\\\\User\\\\Desktop\\\\Introducción\\\\Back\\\\notebooks\\\\01_definicion_problema_etica.ipynb'",
+    "duracion_s": 26.2,
+    "modo": "completo",
+    "fecha": "2026-10-23T16:08:29",
+    "rutas_saneadas": 2
+  },
+  "03_limpieza_preparacion.ipynb": {
+    "estado": "error: OSError: [Errno 22] Invalid argument: 'C:\\\\Users\\\\User\\\\Desktop\\\\Introducción\\\\Back\\\\notebooks\\\\03_limpieza_preparacion.ipynb'",
+    "duracion_s": 60.4,
+    "modo": "completo",
+    "fecha": "2026-10-23T16:09:59",
+    "rutas_saneadas": 2
+  }
+}

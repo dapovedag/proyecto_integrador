@@ -1,0 +1,32 @@
+{
+  "properties": {
+    "status": {
+      "enum": [
+        "ok",
+        "degradado"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "modelo_version": {
+      "title": "Modelo Version",
+      "type": "string"
+    },
+    "modelo_cargado": {
+      "title": "Modelo Cargado",
+      "type": "boolean"
+    },
+    "api_version": {
+      "title": "Api Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "modelo_version",
+    "modelo_cargado",
+    "api_version"
+  ],
+  "title": "HealthResponse",
+  "type": "object"
+}

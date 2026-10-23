@@ -1,0 +1,245 @@
+{
+  "additionalProperties": false,
+  "description": "Datos de una solicitud. ``sexo`` se recibe solo para auditoría: no entra al modelo.",
+  "examples": [
+    {
+      "antiguedad_laboral_anios": 4.5,
+      "edad": 35,
+      "estado_civil": "Casado",
+      "ingreso_mensual": 4500000,
+      "monto_credito": 20000000,
+      "moras_ultimos_12m": 0,
+      "nivel_educativo": "Universitario",
+      "num_creditos_activos": 2,
+      "personas_a_cargo": 1,
+      "plazo_meses": 36,
+      "proposito": "Vehiculo",
+      "puntaje_buro": 720,
+      "relacion_deuda_ingreso": 0.32,
+      "sexo": "F",
+      "situacion_laboral": "Empleado",
+      "tasa_interes_anual": 24.5,
+      "texto_solicitud": "Necesito el crédito para comprar un carro para trabajar.",
+      "tipo_vivienda": "Arriendo",
+      "uso_cupo_tarjetas": 0.4
+    }
+  ],
+  "properties": {
+    "edad": {
+      "maximum": 100,
+      "minimum": 18,
+      "title": "Edad",
+      "type": "integer"
+    },
+    "sexo": {
+      "anyOf": [
+        {
+          "enum": [
+            "M",
+            "F"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Solo auditoría; no entra al modelo",
+      "title": "Sexo"
+    },
+    "estado_civil": {
+      "enum": [
+        "Soltero",
+        "Casado",
+        "Union_libre",
+        "Divorciado",
+        "Viudo"
+      ],
+      "title": "Estado Civil",
+      "type": "string"
+    },
+    "nivel_educativo": {
+      "enum": [
+        "Primaria",
+        "Secundaria",
+        "Tecnico",
+        "Universitario",
+        "Posgrado"
+      ],
+      "title": "Nivel Educativo",
+      "type": "string"
+    },
+    "situacion_laboral": {
+      "anyOf": [
+        {
+          "enum": [
+            "Empleado",
+            "Independiente",
+            "Pensionado",
+            "Desempleado"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Situacion Laboral"
+    },
+    "antiguedad_laboral_anios": {
+      "anyOf": [
+        {
+          "maximum": 70,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Antiguedad Laboral Anios"
+    },
+    "personas_a_cargo": {
+      "maximum": 20,
+      "minimum": 0,
+      "title": "Personas A Cargo",
+      "type": "integer"
+    },
+    "tipo_vivienda": {
+      "anyOf": [
+        {
+          "enum": [
+            "Arriendo",
+            "Propia",
+            "Familiar"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tipo Vivienda"
+    },
+    "ingreso_mensual": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ingreso Mensual"
+    },
+    "monto_credito": {
+      "exclusiveMinimum": 0,
+      "title": "Monto Credito",
+      "type": "number"
+    },
+    "plazo_meses": {
+      "maximum": 120,
+      "minimum": 1,
+      "title": "Plazo Meses",
+      "type": "integer"
+    },
+    "tasa_interes_anual": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Tasa Interes Anual",
+      "type": "number"
+    },
+    "proposito": {
+      "enum": [
+        "Libre_inversion",
+        "Vehiculo",
+        "Consolidacion_deuda",
+        "Vivienda",
+        "Negocio",
+        "Educacion"
+      ],
+      "title": "Proposito",
+      "type": "string"
+    },
+    "num_creditos_activos": {
+      "maximum": 50,
+      "minimum": 0,
+      "title": "Num Creditos Activos",
+      "type": "integer"
+    },
+    "moras_ultimos_12m": {
+      "maximum": 12,
+      "minimum": 0,
+      "title": "Moras Ultimos 12M",
+      "type": "integer"
+    },
+    "relacion_deuda_ingreso": {
+      "anyOf": [
+        {
+          "maximum": 5,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Relacion Deuda Ingreso"
+    },
+    "puntaje_buro": {
+      "anyOf": [
+        {
+          "maximum": 950,
+          "minimum": 150,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Puntaje Buro"
+    },
+    "uso_cupo_tarjetas": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Uso Cupo Tarjetas",
+      "type": "number"
+    },
+    "texto_solicitud": {
+      "anyOf": [
+        {
+          "maxLength": 5000,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Texto Solicitud"
+    }
+  },
+  "required": [
+    "edad",
+    "estado_civil",
+    "nivel_educativo",
+    "personas_a_cargo",
+    "monto_credito",
+    "plazo_meses",
+    "tasa_interes_anual",
+    "proposito",
+    "num_creditos_activos",
+    "moras_ultimos_12m",
+    "uso_cupo_tarjetas"
+  ],
+  "title": "ClienteRequest",
+  "type": "object"
+}

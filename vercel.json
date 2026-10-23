@@ -1,15 +1,20 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "",
-  "outputDirectory": "Front",
-  "functions": {
-    "api/index.py": {
-      "includeFiles": "{Back/api/**,Back/src/**,Back/models/modelo_final.joblib,Back/models/modelo_nlp.joblib,Back/models/model_card.json}",
-      "maxDuration": 30
-    }
-  },
+  "installCommand": "npm --prefix Front ci",
+  "buildCommand": "npm --prefix Front run build",
+  "outputDirectory": "Front/dist",
+  "cleanUrls": true,
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index" }
+    { "source": "/((?!run/|assets/|favicon).*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    { "source": "/run/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
+    { "source": "/assets/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
+    { "source": "/(.*)", "headers": [
+      { "key": "X-Content-Type-Options", "value": "nosniff" },
+      { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+      { "key": "Content-Security-Policy", "value": "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; frame-ancestors 'none'" }
+    ] }
   ]
 }

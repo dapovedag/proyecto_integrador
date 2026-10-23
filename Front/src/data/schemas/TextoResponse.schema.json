@@ -1,0 +1,40 @@
+{
+  "properties": {
+    "probabilidad_impago_texto": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Probabilidad Impago Texto",
+      "type": "number"
+    },
+    "banda_riesgo": {
+      "enum": [
+        "Bajo",
+        "Medio",
+        "Alto"
+      ],
+      "title": "Banda Riesgo",
+      "type": "string"
+    },
+    "sentimiento": {
+      "enum": [
+        "positivo",
+        "negativo",
+        "neutral"
+      ],
+      "title": "Sentimiento",
+      "type": "string"
+    },
+    "modelo": {
+      "title": "Modelo",
+      "type": "string"
+    }
+  },
+  "required": [
+    "probabilidad_impago_texto",
+    "banda_riesgo",
+    "sentimiento",
+    "modelo"
+  ],
+  "title": "TextoResponse",
+  "type": "object"
+}
