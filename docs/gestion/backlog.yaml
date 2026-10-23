@@ -986,16 +986,20 @@ historias:
       - Back/notebooks/04_eda_transformacion_visualizacion.ipynb
   - id: HU-36
     epica: E-04
-    rol: Científico de datos
+    rol: científico de datos
     quiero: evaluar si retirar las variables de señal débil (estado_civil, tasa_interes_anual, plazo_meses) mejora la parsimonia sin perder desempeño
     para: un modelo más simple y explicable en la versión 2.1
     criterios_aceptacion:
-      - "Dado el ranking del paso 3 y la permutación del paso 5, cuando se entrena la variante sin esas variables con el protocolo de train.py, entonces el AUC CV no cae más de 0,002 y el costo OOF no sube"
-      - "Dado el resultado, cuando se decide, entonces queda registrado en un ADR y en la model card de la versión 2.1"
+      - dado: el ranking del paso 3 y la importancia por permutación del paso 5
+        cuando: se entrena con el protocolo de train.py la variante sin esas tres variables
+        entonces: el AUC CV no cae más de 0,002 y el costo esperado OOF no sube
+      - dado: el resultado de la comparación
+        cuando: se toma la decisión
+        entonces: queda registrada en un ADR y en la model card de la versión 2.1
     puntos: 3
-    sprint: Backlog
+    sprint: S8
     estado: Pendiente
     paso: 8
     ids_enunciado: [P2.E3, IA2.E2]
     evidencia: []
-
+    nota: Detectado en nb03 (señal débil en Spearman, información mutua e importancia del bosque) y confirmado por la permutación de nb05 (~0). Se mantiene en v2.0.0 porque la regularización L2 las atenúa y no cambian la decisión; candidata a salir del sprint si S8 se desvía.

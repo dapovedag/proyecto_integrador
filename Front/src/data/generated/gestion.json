@@ -1,8 +1,8 @@
 {
   "fuente": {
     "backlog": "docs/gestion/backlog.yaml",
-    "backlog_sha256": "6838cc5796aa082c65ef08430ca3c9873fead744c7f3908d41c60afea6b34acd",
-    "dod_status": null
+    "backlog_sha256": "daa1c77faee32dc94fdb14707fa6cc9cd277cc17bbedce9221411bbe3d28f78d",
+    "dod_status": "Back/reports/dod_status.json"
   },
   "proyecto": "Análisis predictivo de riesgo de crédito",
   "version_modelo_objetivo": "2.0.0",
@@ -20,8 +20,8 @@
   },
   "resumen_estados": {
     "Pendiente": {
-      "historias": 21,
-      "puntos": 106
+      "historias": 22,
+      "puntos": 109
     },
     "En progreso": {
       "historias": 15,
@@ -80,9 +80,10 @@
       "historias": [
         "HU-05",
         "HU-06",
-        "HU-07"
+        "HU-07",
+        "HU-36"
       ],
-      "puntos": 21
+      "puntos": 24
     },
     {
       "id": "E-05",
@@ -256,10 +257,12 @@
         },
         {
           "ruta": "Back/reports/dod_status.json",
-          "existe": false
+          "existe": true
         }
       ],
-      "notebooks_dod_fallidos": [],
+      "notebooks_dod_fallidos": [
+        "01_definicion_problema_etica.ipynb"
+      ],
       "acreditada": false
     },
     {
@@ -309,10 +312,12 @@
         },
         {
           "ruta": "Back/reports/dod_status.json",
-          "existe": false
+          "existe": true
         }
       ],
-      "notebooks_dod_fallidos": [],
+      "notebooks_dod_fallidos": [
+        "02_exploracion_preliminar.ipynb"
+      ],
       "acreditada": false
     },
     {
@@ -426,7 +431,7 @@
         },
         {
           "ruta": "Back/reports/dod_status.json",
-          "existe": false
+          "existe": true
         }
       ],
       "notebooks_dod_fallidos": [],
@@ -469,7 +474,7 @@
         },
         {
           "ruta": "Back/models/resultados_clasicos.json",
-          "existe": false
+          "existe": true
         }
       ],
       "notebooks_dod_fallidos": [],
@@ -522,10 +527,12 @@
         },
         {
           "ruta": "Back/models/red_neuronal.keras",
-          "existe": false
+          "existe": true
         }
       ],
-      "notebooks_dod_fallidos": [],
+      "notebooks_dod_fallidos": [
+        "06_red_neuronal.ipynb"
+      ],
       "acreditada": false
     },
     {
@@ -574,11 +581,11 @@
         },
         {
           "ruta": "Back/models/resultados_nlp.json",
-          "existe": false
+          "existe": true
         },
         {
           "ruta": "db/processed/nlp_features.parquet",
-          "existe": false
+          "existe": true
         }
       ],
       "notebooks_dod_fallidos": [],
@@ -630,14 +637,16 @@
         },
         {
           "ruta": "Back/models/oof_predictions.parquet",
-          "existe": false
+          "existe": true
         },
         {
           "ruta": "Back/models/test_predictions.parquet",
-          "existe": false
+          "existe": true
         }
       ],
-      "notebooks_dod_fallidos": [],
+      "notebooks_dod_fallidos": [
+        "08_evaluacion_optimizacion.ipynb"
+      ],
       "acreditada": false
     },
     {
@@ -675,14 +684,16 @@
         },
         {
           "ruta": "Back/docker-compose.spark.yml",
-          "existe": false
+          "existe": true
         },
         {
           "ruta": "Back/models/resultados_spark.json",
           "existe": false
         }
       ],
-      "notebooks_dod_fallidos": [],
+      "notebooks_dod_fallidos": [
+        "09_spark_big_data.ipynb"
+      ],
       "acreditada": false
     },
     {
@@ -788,10 +799,12 @@
         },
         {
           "ruta": "Back/reports/dod_status.json",
-          "existe": false
+          "existe": true
         }
       ],
-      "notebooks_dod_fallidos": [],
+      "notebooks_dod_fallidos": [
+        "00_proyecto_integrador_final.ipynb"
+      ],
       "acreditada": false
     },
     {
@@ -952,11 +965,11 @@
         },
         {
           "ruta": "Back/requirements-api.lock",
-          "existe": false
+          "existe": true
         },
         {
           "ruta": "Back/requirements-dev-win.lock",
-          "existe": false
+          "existe": true
         }
       ],
       "notebooks_dod_fallidos": [],
@@ -996,7 +1009,7 @@
         },
         {
           "ruta": "Back/reports/dod_status.json",
-          "existe": false
+          "existe": true
         }
       ],
       "notebooks_dod_fallidos": [],
@@ -1329,7 +1342,7 @@
         },
         {
           "ruta": "Back/.dockerignore",
-          "existe": false
+          "existe": true
         },
         {
           "ruta": "Back/tests/test_api_slim.py",
@@ -1378,7 +1391,7 @@
       "evidencia": [
         {
           "ruta": "Back/scripts/exportar_front.py",
-          "existe": false
+          "existe": true
         },
         {
           "ruta": "Back/tests/test_exportar_front.py",
@@ -1423,15 +1436,15 @@
       "evidencia": [
         {
           "ruta": "Front/src/engine/scoring.ts",
-          "existe": false
+          "existe": true
         },
         {
           "ruta": "Front/src/engine/texto.ts",
-          "existe": false
+          "existe": true
         },
         {
           "ruta": "Front/src/data/generated/modelo_export.json",
-          "existe": false
+          "existe": true
         }
       ],
       "notebooks_dod_fallidos": [],
@@ -1504,11 +1517,11 @@
       "evidencia": [
         {
           "ruta": "Front/package.json",
-          "existe": false
+          "existe": true
         },
         {
           "ruta": "Front/src/main.tsx",
-          "existe": false
+          "existe": true
         },
         {
           "ruta": "Front/src/data/generated/gestion.json",
@@ -1594,7 +1607,7 @@
       "evidencia": [
         {
           "ruta": "Front/playwright.config.ts",
-          "existe": false
+          "existe": true
         },
         {
           "ruta": "vercel.json",
@@ -1602,7 +1615,7 @@
         },
         {
           "ruta": ".vercelignore",
-          "existe": false
+          "existe": true
         },
         {
           "ruta": "docs/gestion/adr/ADR-004-front-estatico-autonomo.md",
@@ -1796,7 +1809,7 @@
       "evidencia": [
         {
           "ruta": "Back/scripts/check.py",
-          "existe": false
+          "existe": true
         },
         {
           "ruta": "Back/tests/test_proyecto.py",
@@ -1847,7 +1860,9 @@
           "existe": true
         }
       ],
-      "notebooks_dod_fallidos": [],
+      "notebooks_dod_fallidos": [
+        "02_exploracion_preliminar.ipynb"
+      ],
       "acreditada": false
     },
     {
@@ -1874,7 +1889,7 @@
       "evidencia": [
         {
           "ruta": "db/external",
-          "existe": false
+          "existe": true
         },
         {
           "ruta": "Back/notebooks/05_modelos_clasicos.ipynb",
@@ -1917,6 +1932,38 @@
           "existe": true
         }
       ],
+      "notebooks_dod_fallidos": [],
+      "acreditada": false
+    },
+    {
+      "id": "HU-36",
+      "epica": "E-04",
+      "rol": "científico de datos",
+      "quiero": "evaluar si retirar las variables de señal débil (estado_civil, tasa_interes_anual, plazo_meses) mejora la parsimonia sin perder desempeño",
+      "para": "un modelo más simple y explicable en la versión 2.1",
+      "criterios_aceptacion": [
+        {
+          "dado": "el ranking del paso 3 y la importancia por permutación del paso 5",
+          "cuando": "se entrena con el protocolo de train.py la variante sin esas tres variables",
+          "entonces": "el AUC CV no cae más de 0,002 y el costo esperado OOF no sube"
+        },
+        {
+          "dado": "el resultado de la comparación",
+          "cuando": "se toma la decisión",
+          "entonces": "queda registrada en un ADR y en la model card de la versión 2.1"
+        }
+      ],
+      "puntos": 3,
+      "sprint": "S8",
+      "estado": "Pendiente",
+      "paso": 8,
+      "ids_enunciado": [
+        "P2.E3",
+        "IA2.E2"
+      ],
+      "nota": "Detectado en nb03 (señal débil en Spearman, información mutua e importancia del bosque) y confirmado por la permutación de nb05 (~0). Se mantiene en v2.0.0 porque la regularización L2 las atenúa y no cambian la decisión; candidata a salir del sprint si S8 se desvía.",
+      "historia": "Como científico de datos, quiero evaluar si retirar las variables de señal débil (estado_civil, tasa_interes_anual, plazo_meses) mejora la parsimonia sin perder desempeño, para un modelo más simple y explicable en la versión 2.1.",
+      "evidencia": [],
       "notebooks_dod_fallidos": [],
       "acreditada": false
     }
@@ -2107,9 +2154,10 @@
         "HU-27",
         "HU-28",
         "HU-29",
-        "HU-30"
+        "HU-30",
+        "HU-36"
       ],
-      "puntos_comprometidos": 47,
+      "puntos_comprometidos": 50,
       "puntos_hechos": 0,
       "burndown": []
     }
@@ -2511,7 +2559,8 @@
           "P2.E4"
         ],
         "historias": [
-          "HU-03"
+          "HU-03",
+          "HU-36"
         ],
         "acreditada": false
       },
@@ -2636,7 +2685,8 @@
           "IA2.E2"
         ],
         "historias": [
-          "HU-04"
+          "HU-04",
+          "HU-36"
         ],
         "acreditada": false
       },
@@ -2755,5 +2805,127 @@
       }
     ]
   },
-  "dod": null
+  "dod": {
+    "verificado": "2026-10-23T17:31:46",
+    "commit": "d3be94a",
+    "version": "2.0.0",
+    "notebooks": {
+      "00_proyecto_integrador_final.ipynb": {
+        "ejecutado": false,
+        "sin_errores": true,
+        "kernel_credit_risk": true,
+        "celda_ids": true,
+        "conclusiones": true,
+        "importa_credit_risk": true,
+        "sin_rutas_absolutas": true,
+        "figuras_interpretadas": true,
+        "artefactos": true
+      },
+      "01_definicion_problema_etica.ipynb": {
+        "ejecutado": false,
+        "sin_errores": true,
+        "kernel_credit_risk": true,
+        "celda_ids": true,
+        "conclusiones": true,
+        "importa_credit_risk": true,
+        "sin_rutas_absolutas": true,
+        "figuras_interpretadas": true,
+        "artefactos": true
+      },
+      "02_exploracion_preliminar.ipynb": {
+        "ejecutado": false,
+        "sin_errores": true,
+        "kernel_credit_risk": true,
+        "celda_ids": true,
+        "conclusiones": true,
+        "importa_credit_risk": true,
+        "sin_rutas_absolutas": true,
+        "figuras_interpretadas": true,
+        "artefactos": true
+      },
+      "03_limpieza_preparacion.ipynb": {
+        "ejecutado": true,
+        "sin_errores": true,
+        "kernel_credit_risk": true,
+        "celda_ids": true,
+        "conclusiones": true,
+        "importa_credit_risk": true,
+        "sin_rutas_absolutas": true,
+        "figuras_interpretadas": true,
+        "artefactos": true
+      },
+      "04_eda_transformacion_visualizacion.ipynb": {
+        "ejecutado": true,
+        "sin_errores": true,
+        "kernel_credit_risk": true,
+        "celda_ids": true,
+        "conclusiones": true,
+        "importa_credit_risk": true,
+        "sin_rutas_absolutas": true,
+        "figuras_interpretadas": true,
+        "artefactos": true
+      },
+      "05_modelos_clasicos.ipynb": {
+        "ejecutado": true,
+        "sin_errores": true,
+        "kernel_credit_risk": true,
+        "celda_ids": true,
+        "conclusiones": true,
+        "importa_credit_risk": true,
+        "sin_rutas_absolutas": true,
+        "figuras_interpretadas": true,
+        "artefactos": true
+      },
+      "06_red_neuronal.ipynb": {
+        "ejecutado": false,
+        "sin_errores": true,
+        "kernel_credit_risk": true,
+        "celda_ids": true,
+        "conclusiones": true,
+        "importa_credit_risk": true,
+        "sin_rutas_absolutas": true,
+        "figuras_interpretadas": true,
+        "artefactos": true
+      },
+      "07_nlp_riesgo.ipynb": {
+        "ejecutado": true,
+        "sin_errores": true,
+        "kernel_credit_risk": true,
+        "celda_ids": true,
+        "conclusiones": true,
+        "importa_credit_risk": true,
+        "sin_rutas_absolutas": true,
+        "figuras_interpretadas": true,
+        "artefactos": true
+      },
+      "08_evaluacion_optimizacion.ipynb": {
+        "ejecutado": false,
+        "sin_errores": true,
+        "kernel_credit_risk": true,
+        "celda_ids": true,
+        "conclusiones": true,
+        "importa_credit_risk": true,
+        "sin_rutas_absolutas": true,
+        "figuras_interpretadas": true,
+        "artefactos": true
+      },
+      "09_spark_big_data.ipynb": {
+        "ejecutado": false,
+        "sin_errores": true,
+        "kernel_credit_risk": true,
+        "celda_ids": true,
+        "conclusiones": true,
+        "importa_credit_risk": true,
+        "sin_rutas_absolutas": true,
+        "figuras_interpretadas": true,
+        "artefactos": false
+      }
+    },
+    "modelo": {
+      "card_version_coincide": true,
+      "protocolo_documentado": true,
+      "equidad_documentada": true
+    },
+    "fallos": 7
+  }
 }
