@@ -1,78 +1,87 @@
-# 05 · Guía de despliegue (IA3.5)
+# 05 · Despliegue y operación (IA3.5, R4)
 
-> Cubre el ítem **IA3.5: Desplegar el modelo con Docker o en la nube (AWS, GCP, Azure)**.
-> El despliegue obligatorio es **Docker en local**. La nube se documenta y se ejecuta solo si hay una cuenta con credenciales.
+> La API se despliega con **Docker**, que es lo que exige IA3.5 ("Docker o nube"), y corre en local. El **front es
+> estático y autónomo**: Vercel solo sirve archivos y nunca llama a la API (ADR-004). La guía de nube se ejecuta
+> únicamente si hay credenciales y con confirmación explícita.
 
-## 1. Prerrequisitos
-- Artefactos generados por el paso 8 en `Back/models/`: `modelo_final.joblib`, `modelo_nlp.joblib` y `model_card.json`.
-- Docker Desktop instalado (Windows: con backend WSL2).
+## 1. Flujo de una publicación
 
-## 2. Docker en local
-
-`Back/Dockerfile` (referencia):
-```dockerfile
-FROM python:3.10-slim
-WORKDIR /app
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 MODEL_DIR=/app/models
-COPY requirements-api.txt .
-RUN pip install --no-cache-dir -r requirements-api.txt
-COPY src/ ./src/
-COPY api/ ./api/
-COPY models/ ./models/
-ENV PYTHONPATH=/app/src
-EXPOSE 8000
-HEALTHCHECK CMD python -c "import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+```mermaid
+flowchart LR
+  A[train.py v2] --> B[ejecutar_notebooks.py<br/>01→08, 00 · 09 en Docker]
+  B --> C[verificar_dod.py --estricto<br/>0 fallos]
+  C --> D[exportar_front.py<br/>paquete de corrida + manifest]
+  D --> E[check.py<br/>ruff · mypy · pytest · build · golden]
+  E --> F[commit + tag]
+  F --> G[Docker: API]
+  F --> H[Vercel: front estático]
 ```
 
-`Back/docker-compose.yml` (referencia):
-```yaml
-services:
-  api:
-    build: .
-    image: riesgo-credito-api:1.0.0
-    ports:
-      - "8000:8000"
-    environment:
-      - LOG_LEVEL=info
-      - CORS_ORIGINS=http://localhost:3000,http://localhost:5173
-    restart: unless-stopped
-```
+## 2. API con Docker (local)
 
-Comandos (desde `Back/`):
-```powershell
-docker compose up --build -d
-Invoke-RestMethod http://localhost:8000/health
-docker compose logs -f api
+La imagen se construye desde `Back/` con estas propiedades:
+- Base `python:3.10-slim`.
+- Dependencias exactas de `requirements-api.lock`, generadas por `scripts/generar_lock_api.py` para Linux.
+- Paquete `credit_risk` instalado con `--no-deps`.
+- Solo los tres artefactos servidos.
+- Usuario sin privilegios (uid 10001), sistema de archivos de solo lectura y HEALTHCHECK sobre `/health`.
+
+```bash
+cd Back
+docker compose up --build -d          # http://127.0.0.1:8000/docs
+docker compose ps                     # estado "healthy"
+curl -s http://127.0.0.1:8000/health
+curl -s -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" --data-binary @api/ejemplo_request.json
 docker compose down
 ```
 
-## 3. Nube (opcional, si hay credenciales)
+Imagen: `riesgo-credito-api:2.0.0`. La versión de la imagen es la del paquete, y la verifica `tests/test_proyecto.py`.
 
-### GCP Cloud Run (recomendado: escala a cero y tiene capa gratuita)
-```powershell
-gcloud auth login
-gcloud config set project <PROJECT_ID>
+## 3. PySpark con Docker (notebook 09, IA3.6)
+
+`Back/docker-compose.spark.yml` usa `quay.io/jupyter/pyspark-notebook:2026-10-19` (Spark 4.2, Java 21) y ejecuta el
+notebook con papermill y el kernel `credit-risk`: `python scripts/ejecutar_notebooks.py 09`. Ver ADR-005.
+
+## 4. Front estático (Vercel)
+
+- **Configuración:** `vercel.json` instala y construye solo `Front/` (`npm --prefix Front ci && npm --prefix Front run build`) y publica `Front/dist`.
+- **Cabeceras:** `Cache-Control: immutable` para `/run/*` y `/assets/*`, y una CSP con `connect-src 'self'` que impide cualquier llamada a otro origen.
+- **Exclusiones:** `.vercelignore` deja fuera `.env*` (contiene tokens), `Back/`, `db/` y `docs/`.
+- **Requisito previo:** el paquete de corrida (`Front/src/data/generated`, `Front/public/run`) debe estar commiteado. Se genera en local con `exportar_front.py` después de la corrida real.
+- **Publicación:** solo con confirmación explícita del responsable. Este clon no tiene remoto configurado.
+
+## 5. Nube para la API (opcional, con credenciales)
+
+### GCP Cloud Run (recomendado: escala a cero)
+```bash
+gcloud auth login && gcloud config set project <PROJECT_ID>
 gcloud artifacts repositories create riesgo-credito --repository-format=docker --location=us-central1
-gcloud builds submit --tag us-central1-docker.pkg.dev/<PROJECT_ID>/riesgo-credito/api:1.0.0 .
-gcloud run deploy riesgo-credito-api --image us-central1-docker.pkg.dev/<PROJECT_ID>/riesgo-credito/api:1.0.0 --region us-central1 --port 8000 --allow-unauthenticated --memory 1Gi
+gcloud builds submit --tag us-central1-docker.pkg.dev/<PROJECT_ID>/riesgo-credito/api:2.0.0 Back
+gcloud run deploy riesgo-credito-api --image us-central1-docker.pkg.dev/<PROJECT_ID>/riesgo-credito/api:2.0.0 \
+  --region us-central1 --port 8000 --memory 1Gi --no-allow-unauthenticated
 ```
 
 ### AWS App Runner
-1. Crear un repositorio ECR: `aws ecr create-repository --repository-name riesgo-credito-api`.
-2. `docker tag` + `docker push` al ECR (después de `aws ecr get-login-password | docker login ...`).
-3. App Runner → *Create service* → origen ECR → puerto 8000 → health check `/health`.
+1. Crear el repositorio: `aws ecr create-repository --repository-name riesgo-credito-api`.
+2. Publicar la imagen: `docker tag` y `docker push` a ECR.
+3. Crear el servicio en App Runner desde ECR, con puerto 8000 y health check en `/health`.
 
 ### Azure Container Apps
-```powershell
-az login
+```bash
 az group create -n rg-riesgo-credito -l eastus
-az containerapp up -n riesgo-credito-api -g rg-riesgo-credito --source . --ingress external --target-port 8000
+az containerapp up -n riesgo-credito-api -g rg-riesgo-credito --source Back --ingress external --target-port 8000
 ```
 
-## 4. Buenas prácticas de producción (R4)
-- Versionar la imagen con la versión del modelo (`api:1.0.0`).
-- No incluir datos personales en la imagen ni en los logs.
-- Monitorear: latencia, tasa de errores y **deriva de datos** (comparar la distribución de entradas con la de train).
-- Reentrenar cuando el AUC en producción caiga por debajo del umbral acordado.
-- Autenticación (API key o OAuth) antes de exponer la API públicamente.
+Antes de exponer la API públicamente hay que agregar autenticación (API key u OAuth 2.0) y limitar el número de peticiones.
+
+## 6. Operación del modelo (R4)
+
+| Señal | Cómo se mide | Umbral | Acción |
+|---|---|---|---|
+| Deriva de la población | PSI del puntaje y de cada variable (`credit_risk.monitoring`) frente a train | < 0,10 estable · 0,10–0,25 vigilar · ≥ 0,25 | Recalibrar el sigmoide (barato). Si persiste, reentrenar con `train.py`. |
+| Desempeño | AUC, KS y Brier sobre la cosecha madura (impagos observados a 12 meses) | AUC < 0,75 o Brier +20 % | Reentrenar y comparar con champion–challenger. |
+| Política | Tasas de aprobar, revisar y rechazar, impago entre aprobados y carga de revisión | Revisión > 35 % (capacidad) | Revisar costos (ADR-002) con negocio. |
+| Equidad | DI de aprobación automática por sexo y edad, con IC 95 % (`credit_risk.fairness.auditar`) | DI < 0,8 | Escalar a comité. Variantes de mitigación según ADR-003. |
+| Servicio | Latencia, tasa de 5xx, `/health` (registros con `X-Request-ID`) | p95 > 500 ms o 5xx > 1 % | Escalar réplicas y revisar los registros. |
+
+**Champion–challenger.** Un modelo nuevo (challenger) se entrena con el mismo protocolo y se evalúa en paralelo con el modelo vigente (champion) sobre el mismo tráfico, sin decidir: solo se registran sus predicciones. Se promueve si mejora el costo esperado sin degradar la equidad ni la calibración. Cada promoción sube la versión semántica del modelo y queda registrada en la model card.
