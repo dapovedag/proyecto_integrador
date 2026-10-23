@@ -1,54 +1,72 @@
-# 06 · Informe de resultados (resumen ejecutivo)
+# 06 · Informe de resultados: riesgo de crédito (modelo v2.0.0)
 
-**Proyecto:** Análisis predictivo de riesgo de crédito en instituciones financieras
-**Versión del modelo:** 1.1.0 · **Fuente:** `Back/models/model_card.json` (generado por `Back/train.py`)
+> Resumen ejecutivo para un público no técnico. Todas las cifras vienen de `Back/models/model_card.json` (corrida del
+> 2026-10-23) y de los notebooks ejecutados. Los detalles técnicos están en el notebook final
+> (`Back/notebooks/00_proyecto_integrador_final.ipynb`) y en el sitio del proyecto.
 
-## 1. Problema
-Antes de aprobar un crédito, la institución necesita estimar la **probabilidad de impago** de cada solicitante. Un impago no detectado (falso negativo) cuesta más que rechazar a un buen cliente (falso positivo); para esta solución se asumió una relación de costos **3:1**.
+## 1. El problema
 
-## 2. Datos
-- `db/credit_risk.csv`: datos sintéticos realistas del sector financiero, con 12.144 registros (incluidos duplicados intencionales).
-- 19 variables financieras y demográficas, un texto libre de la solicitud y el objetivo `default` (35,6 % de impago).
-- Se detectaron y trataron nulos, duplicados, valores inválidos y atípicos; el contrato de datos se verifica con `validar_dataset()`.
+Cuando alguien solicita un crédito, la entidad tiene que decidir sin saber si esa persona pagará. Si aprueba a quien no paga, pierde gran parte del dinero prestado. Si rechaza a quien sí habría pagado, pierde el margen del negocio y a un buen cliente. Revisar cada solicitud a mano también cuesta tiempo y dinero.
 
-## 3. Solución
-- **Modelo tabular:** se eligió con validación cruzada solo sobre entrenamiento, se **calibró** y su umbral de decisión se fijó por **costo de negocio**. La variable `sexo` **no entra al modelo**; solo se usa para auditar la equidad.
-- **Modelo de texto (NLP):** TF-IDF + regresión logística sobre el texto de la solicitud, con sentimiento por léxico en la API.
-- **API REST (FastAPI)** con 5 endpoints, documentación en `/docs`, validación de entradas y CORS habilitado para el Front.
+El proyecto construye una herramienta que **estima la probabilidad de impago** de cada solicitante y, con ella, **recomienda una de tres acciones: aprobar, enviar a revisión manual o rechazar**.
 
-## 4. Resultados (conjunto de prueba, evaluado una sola vez)
+## 2. Los datos
 
-Modelo servido **v1.0.0**: regresión logística (artefacto vigente de `Back/models/`).
+Se usaron 12.144 solicitudes con 17 variables financieras y demográficas y el texto libre de cada solicitud. El 35,6 % de los solicitantes no pagó.
 
-| Métrica | Valor |
-|---|---|
-| ROC-AUC | **0,8465** (meta ≥ 0,70 ✔) |
-| Recall (impagos detectados) | 0,8103 |
-| Precisión | 0,6291 |
-| F1 | 0,7083 |
-| KS | 0,5464 |
-| Brier | 0,1573 |
-| Umbral de decisión | 0,4396 |
+Los datos son **sintéticos pero realistas**: incluyen errores intencionales (duplicados, edades imposibles, datos faltantes) que se corrigieron con reglas documentadas. Tras la limpieza quedaron 12.000 clientes únicos:
+- 9.600 para construir el modelo.
+- 2.400 reservados para evaluarlo una sola vez, al final.
 
-Bandas de riesgo: **Bajo** < 0,20 ≤ **Medio** < 0,50 ≤ **Alto**.
+## 3. La solución
 
-> El protocolo corregido de `train.py` (selección por CV, calibración y umbral por costo; v1.1.0) obtuvo **ROC-AUC CV(5) = 0,8584** para la regresión logística, pero el reentrenamiento completo no terminó dentro del tiempo disponible. Los artefactos servidos siguen siendo los de la v1.0.0.
+- **Un modelo de regresión logística calibrado.** Se probaron 16 modelos, entre ellos bosques aleatorios, redes neuronales, modelos de lenguaje (BERT y GPT-2) y Spark. Ninguno lo superó de forma demostrable, y este es el más fácil de explicar y de auditar.
+- **Una política de decisión basada en costos.** Equivocarse aprobando a un mal pagador cuesta 45 % del monto, rechazar a un buen cliente cuesta 15 % y revisar a mano cuesta 8 %. Con esos supuestos:
+
+  | Probabilidad estimada de impago | Acción recomendada |
+  |---|---|
+  | Menor que 17,8 % | **Aprobar** automáticamente |
+  | Entre 17,8 % y 46,7 % | **Revisión manual** por un analista |
+  | Mayor que 46,7 % | **Rechazar** |
+
+- **Explicación de cada decisión.** Cada respuesta indica qué variables empujaron la probabilidad hacia arriba o hacia abajo (por ejemplo, "uso del cupo alto" o "buen puntaje de buró").
+
+## 4. Resultados (evaluación única sobre 2.400 clientes nunca vistos)
+
+| Indicador | Resultado | Lectura |
+|---|---|---|
+| Capacidad de distinguir buenos de malos pagadores (AUC) | **0,846** | Meta del proyecto: 0,70. El azar es 0,50. |
+| Solicitudes aprobadas automáticamente | **39,7 %** | Sin intervención humana |
+| Solicitudes enviadas a revisión | **28,8 %** | Dentro de la capacidad del equipo (35 %) |
+| Solicitudes rechazadas | **31,5 %** | |
+| Impago entre los aprobados | **9,8 %** | Frente a 35,6 % sin modelo |
+| Ahorro frente a decidir solo aprobar/rechazar | **6,1 %** del costo esperado | Gracias a la banda de revisión |
+
+**Lo que más pesa en el riesgo:** el puntaje de buró, la relación deuda/ingreso, el uso del cupo de las tarjetas y las moras recientes. Las variables demográficas casi no influyen.
 
 ## 5. Ética y equidad
 
-- `sexo` **no se usa como predictor**; solo para auditar.
-- Tasa de aprobación: F = 53,6 %, M = 54,8 %. **Disparate impact = 0,978** (cumple la regla del 80 %).
-- Pendiente: la auditoría por **edad** con TPR y FPR (ya implementada en `train.py` v1.1.0) queda sin publicar hasta completar el reentrenamiento. El notebook 08 reportó un DI por edad de 0,74, que requiere mitigación.
-- Datos personales: los IDs son anónimos y la API no registra datos personales en los logs.
+- **El sexo nunca entra al modelo.** Solo se usa para auditar que el trato sea parejo. La tasa de aprobación de hombres y mujeres es casi igual: el índice de impacto dispar (DI) es 0,97, donde 1 sería igualdad perfecta.
+- **Disparidad por edad, corregida.** En su primera versión, el modelo aprobaba menos a los jóvenes (DI 0,72). Quitar la edad no lo resolvía, porque la disparidad viaja por variables como el ingreso o la antigüedad laboral. Con una técnica de reponderación, el índice subió a **0,90**, por encima del 0,8 de referencia, a cambio de un costo adicional de solo 0,6 %.
+- **Explicabilidad y privacidad.** Cada decisión trae su explicación, y el tratamiento de datos sigue la Ley 1581 de 2012.
 
 ## 6. Limitaciones
-- Los datos son sintéticos: hay que validar el modelo con datos reales antes de usarlo.
-- Los notebooks de redes neuronales (06), NLP avanzado con BERT/GPT (07) y Spark (09) están escritos pero **sin ejecución acreditada**, por falta de dependencias pesadas.
-- La explicación por cliente (`factores_principales`) es una aproximación, no una relación causal.
-- Es una herramienta de **apoyo a la decisión**, no un reemplazo del analista de crédito.
 
-## 7. Próximos pasos
-1. Instalar las dependencias pesadas y ejecutar los notebooks 05, 06, 07 y 09.
-2. Mitigar la disparidad por grupo, si la hay, ajustando en validación.
-3. Probar el despliegue en Docker y en la nube (guía en `docs/05_despliegue.md`).
-4. Monitorear la deriva de datos y la calibración en producción.
+1. **Datos sintéticos.** Las cifras ilustran la metodología, no el desempeño en una cartera real. Al aplicar el mismo método a un conjunto real y público (German Credit), la capacidad baja a 0,786 y la disparidad por edad es mayor. Por eso la auditoría de equidad es indispensable.
+2. **El texto de la solicitud no aporta de forma demostrable.** Además, en estos datos su señal está inflada por cómo se generaron, así que no se usa para decidir.
+3. **Margen estadístico en la equidad por edad.** El índice de 0,90 tiene un margen que llega hasta 0,78, por debajo del 0,8 de referencia, así que debe vigilarse con más datos.
+4. **Costos supuestos.** Los costos son supuestos documentados. Si cambian, los umbrales se recalculan solos.
+
+## 7. Recomendaciones y próximos pasos
+
+1. **Piloto en paralelo.** Probar el modelo junto al proceso actual, sin que decida, durante una o dos cosechas de crédito, y comparar los resultados.
+2. **Seguimiento mensual.** Vigilar la estabilidad de la población (PSI), la equidad por grupo y la tasa real de impago. Recalibrar si alguna señal se mueve.
+3. **Validar los costos con el área financiera.** Confirmar los costos del negocio y la capacidad real de revisión antes de producción.
+4. **Simplificar el modelo (versión 2.1).** Evaluar retirar tres variables que casi no aportan.
+
+## 8. Cómo se puede comprobar
+
+- Todo el proceso corre en local con salidas reales: un comando entrena el modelo y los notebooks se ejecutan de punta a punta.
+- La API se levanta con Docker y se verificó de verdad.
+- El sitio web reproduce la corrida real y calcula en el navegador las mismas probabilidades que la API, con una diferencia menor que una millonésima.
+- Los criterios de calidad se verifican con un solo comando: `python Back/scripts/check.py`.

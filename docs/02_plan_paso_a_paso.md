@@ -1,10 +1,18 @@
 # 02 · Plan paso a paso (se sigue estrictamente)
 
+> **Versión 2 (2026-10-23).** Este plan es el original del proyecto. La ejecución v2 lo cumple con los ajustes de
+> los ADR (`docs/gestion/adr/`), que priman sobre el texto de abajo:
+> - la lógica vive en un paquete único `Back/src/credit_risk` (no solo `models.py`/`nlp.py`);
+> - la decisión es aprobar / revisar / rechazar con la regla de Chow (ADR-002), sin umbrales por grupo (ADR-003);
+> - Spark corre en Docker con Java 21 (ADR-005);
+> - los notebooks se escriben en formato *percent* y se ejecutan con papermill (`Back/README.md`);
+> - el front es estático y reproduce la corrida real (ADR-004).
+
 > **Reglas de ejecución**
 > 1. Los pasos se ejecutan **en orden**. Un paso solo se cierra cuando cumple su **criterio de hecho**.
 > 2. Cada paso produce **un entregable** en la ruta indicada. Si no existe el archivo, el paso no está hecho.
 > 3. Cada notebook empieza con una celda Markdown que lista los **IDs del enunciado** que cubre ([01_enunciado.md](01_enunciado.md)) y termina con una celda de **conclusiones**.
-> 4. Todo el código del back vive en `Back/`; los datos, en `db/`; la documentación, en `docs/`. **No se toca `Front/`.**
+> 4. Todo el código del back vive en `Back/`; los datos, en `db/`; la documentación, en `docs/`. El front (`Front/`) solo consume el paquete de corrida que exporta el back (ADR-004).
 > 5. Reproducibilidad: semilla `RANDOM_STATE = 42` en todo; rutas relativas tomadas de `Back/src/credit_risk/config.py`; nada de rutas absolutas en los notebooks.
 > 6. Los notebooks deben correr de principio a fin con *Restart & Run All* sin errores, y se guardan **con las salidas**.
 > 7. La lógica reutilizable (limpieza, features, entrenamiento) se escribe en `Back/src/credit_risk/` y los notebooks la importan. Así la API usa exactamente el mismo preprocesamiento.
@@ -240,7 +248,7 @@ Estructura del proyecto: [04_arquitectura_backend.md](04_arquitectura_backend.md
 5. **Spark MLlib:** `Pipeline(StringIndexer, OneHotEncoder, VectorAssembler, StandardScaler, LogisticRegression)`, evaluado con `BinaryClassificationEvaluator` (AUC) y comparado con scikit-learn.
 6. **Scoring por lotes:** aplicar el modelo de MLlib a todo el dataset y guardar las predicciones (simula un proceso batch nocturno).
 
-**Prerrequisito:** Java 17 instalado (`JAVA_HOME`). En Windows, si la escritura falla por `winutils`, ejecutar este notebook en Docker (imagen `jupyter/pyspark-notebook`) o en Colab y documentarlo.
+**Prerrequisito (v2, ADR-005):** Docker. El notebook corre dentro de `quay.io/jupyter/pyspark-notebook:2026-10-19` (Spark 4.2 y Java 21) con `python Back/scripts/ejecutar_notebooks.py 09`; así se evitan `winutils` y la ruta con tilde en Windows.
 
 **Criterio de hecho:** el notebook corre completo; existe el Parquet particionado; hay una métrica AUC de MLlib comparada con sklearn.
 
@@ -299,16 +307,14 @@ Estructura del proyecto: [04_arquitectura_backend.md](04_arquitectura_backend.md
 | **Cubre** | R1, R4 |
 | **Entregable** | `Back/README.md` con los comandos verificados + el sistema corriendo |
 
-**Comandos (PowerShell, desde `Back/`)**
-```powershell
+**Comandos (desde `Back/`; detalle en `Back/README.md`)**
+```bash
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-python -m pytest
-jupyter lab                                  # notebooks en http://localhost:8888
-uvicorn api.main:app --reload --port 8000    # API en http://localhost:8000/docs
-# Alternativa contenedor:
-docker compose up --build
+.venv/Scripts/python -m pip install -e ".[api,nb,dl,nlp,dev]"
+.venv/Scripts/python -m ipykernel install --user --name credit-risk
+.venv/Scripts/python scripts/check.py --sin-front          # ruff · mypy · pytest · DoD
+.venv/Scripts/python -m uvicorn api.main:app --port 8000    # API en http://127.0.0.1:8000/docs
+docker compose up --build                                   # alternativa contenedor
 ```
 
 **Prueba rápida de la API**
