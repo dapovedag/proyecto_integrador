@@ -1,11 +1,534 @@
 {
   "nombre": "riesgo_credito",
-  "version": "1.0.0",
-  "fecha_entrenamiento": "2026-10-09",
-  "algoritmo": "LogisticRegression",
-  "comparacion_roc_auc_test": {
-    "LogisticRegression": 0.8465,
-    "HistGradientBoostingClassifier": 0.8339
+  "version": "2.0.0",
+  "fecha_entrenamiento": "2026-10-23",
+  "algoritmo": "LogisticRegression calibrado (sigmoide, ensemble=False)",
+  "familia": "Regresión logística",
+  "variante_equidad": "reweighing",
+  "excepcion_equidad": false,
+  "fuente_de_verdad": "Back/train.py → credit_risk.entrenamiento.entrenar()",
+  "modo_rapido": false,
+  "protocolo": [
+    "Partición estratificada 80/20 con semilla 42; imputación con estadísticos de train.",
+    "Selección de familia por ROC-AUC CV(5) en train (RandomizedSearchCV, 8 iteraciones) con regla de parsimonia ΔAUC < 0.005 → regresión logística.",
+    "Calibración sigmoide con ensemble=False (un estimador base y un calibrador OOF).",
+    "Umbrales por regla de Chow con costos por unidad de exposición (ADR-002).",
+    "Variante de equidad elegida por menor costo OOF con DI ≥ 0,8 en sexo y edad (ADR-003).",
+    "Test usado una única vez para la evaluación final."
+  ],
+  "datos": {
+    "hash_train_sha256": "1ce71f5f0123edb39b1d0120fd142e73c2a2c066bca40bcbd0ead523b4e92e28",
+    "hash_test_sha256": "8c1cb6a3dd0c05526e80c822c8b8211a08e0c2acd28a0221a53ec02b69b2e4ee",
+    "n_train": 9600,
+    "n_test": 2400,
+    "tasa_default_train": 0.3556,
+    "tasa_default_test": 0.3558,
+    "validacion_contrato": {
+      "columnas_minimas": true,
+      "target_binario": true,
+      "prevalencia_5_40": true,
+      "filas_min_1000": true,
+      "texto_no_vacio_95": true,
+      "texto_distintos_200": true,
+      "nulos_en_3_columnas": true,
+      "hay_duplicados": true,
+      "hay_atipicos_ingreso": true,
+      "diccionario_existe": true,
+      "ok": true
+    }
+  },
+  "seleccion_cv_train": {
+    "Regresión logística": {
+      "roc_auc_cv": 0.8582,
+      "roc_auc_cv_std": 0.0052,
+      "hiperparametros": {
+        "C": 0.031489
+      }
+    },
+    "Gradient Boosting (HGB)": {
+      "roc_auc_cv": 0.8525,
+      "roc_auc_cv_std": 0.0051,
+      "hiperparametros": {
+        "l2_regularization": 0.133112,
+        "learning_rate": 0.023088,
+        "max_iter": 151,
+        "max_leaf_nodes": 31
+      }
+    }
+  },
+  "variantes_equidad": [
+    {
+      "variante": "base",
+      "descripcion": "Todas las variables de entrada (sexo nunca entra).",
+      "roc_auc_oof": 0.8579,
+      "costo_medio": 0.05004,
+      "tasa_aprobacion": 0.3816,
+      "tasa_revision": 0.295,
+      "tasa_rechazo": 0.3234,
+      "impago_en_aprobados": 0.0753,
+      "supera_capacidad_revision": false,
+      "di_sexo": 0.9788,
+      "di_edad": 0.7207,
+      "cumple_equidad": false,
+      "precio_equidad_costo": 0.0
+    },
+    {
+      "variante": "sin_edad",
+      "descripcion": "Sin edad ni rango de edad como predictores.",
+      "roc_auc_oof": 0.8582,
+      "costo_medio": 0.04979,
+      "tasa_aprobacion": 0.3817,
+      "tasa_revision": 0.2945,
+      "tasa_rechazo": 0.3239,
+      "impago_en_aprobados": 0.0742,
+      "supera_capacidad_revision": false,
+      "di_sexo": 0.9837,
+      "di_edad": 0.7099,
+      "cumple_equidad": false,
+      "precio_equidad_costo": -0.00025
+    },
+    {
+      "variante": "reweighing",
+      "descripcion": "Pesos de Kamiran-Calders por grupo de edad en el entrenamiento.",
+      "roc_auc_oof": 0.857,
+      "costo_medio": 0.05033,
+      "tasa_aprobacion": 0.3807,
+      "tasa_revision": 0.2959,
+      "tasa_rechazo": 0.3233,
+      "impago_en_aprobados": 0.0766,
+      "supera_capacidad_revision": false,
+      "di_sexo": 0.9811,
+      "di_edad": 0.8924,
+      "cumple_equidad": true,
+      "precio_equidad_costo": 0.00029
+    }
+  ],
+  "costos": {
+    "lgd_fn": 0.45,
+    "margen_fp": 0.15,
+    "revision": 0.08,
+    "capacidad_revision": 0.35
+  },
+  "umbrales": {
+    "aprobar": 0.1778,
+    "rechazar": 0.4667,
+    "bayes": 0.25
+  },
+  "bandas_riesgo": {
+    "Bajo": [
+      0.0,
+      0.1778
+    ],
+    "Medio": [
+      0.1778,
+      0.4667
+    ],
+    "Alto": [
+      0.4667,
+      1.0
+    ]
+  },
+  "decisiones": {
+    "Bajo": "aprobar",
+    "Medio": "revisar",
+    "Alto": "rechazar"
+  },
+  "sensibilidad_umbrales": [
+    {
+      "lgd": 0.45,
+      "margen": 0.1,
+      "aprobar_si_p_menor": 0.1778,
+      "rechazar_si_p_mayor": 0.2,
+      "banda_revision": true
+    },
+    {
+      "lgd": 0.45,
+      "margen": 0.15,
+      "aprobar_si_p_menor": 0.1778,
+      "rechazar_si_p_mayor": 0.4667,
+      "banda_revision": true
+    },
+    {
+      "lgd": 0.45,
+      "margen": 0.2,
+      "aprobar_si_p_menor": 0.1778,
+      "rechazar_si_p_mayor": 0.6,
+      "banda_revision": true
+    },
+    {
+      "lgd": 0.55,
+      "margen": 0.1,
+      "aprobar_si_p_menor": 0.1455,
+      "rechazar_si_p_mayor": 0.2,
+      "banda_revision": true
+    },
+    {
+      "lgd": 0.55,
+      "margen": 0.15,
+      "aprobar_si_p_menor": 0.1455,
+      "rechazar_si_p_mayor": 0.4667,
+      "banda_revision": true
+    },
+    {
+      "lgd": 0.55,
+      "margen": 0.2,
+      "aprobar_si_p_menor": 0.1455,
+      "rechazar_si_p_mayor": 0.6,
+      "banda_revision": true
+    },
+    {
+      "lgd": 0.65,
+      "margen": 0.1,
+      "aprobar_si_p_menor": 0.1231,
+      "rechazar_si_p_mayor": 0.2,
+      "banda_revision": true
+    },
+    {
+      "lgd": 0.65,
+      "margen": 0.15,
+      "aprobar_si_p_menor": 0.1231,
+      "rechazar_si_p_mayor": 0.4667,
+      "banda_revision": true
+    },
+    {
+      "lgd": 0.65,
+      "margen": 0.2,
+      "aprobar_si_p_menor": 0.1231,
+      "rechazar_si_p_mayor": 0.6,
+      "banda_revision": true
+    },
+    {
+      "lgd": 0.75,
+      "margen": 0.1,
+      "aprobar_si_p_menor": 0.1067,
+      "rechazar_si_p_mayor": 0.2,
+      "banda_revision": true
+    },
+    {
+      "lgd": 0.75,
+      "margen": 0.15,
+      "aprobar_si_p_menor": 0.1067,
+      "rechazar_si_p_mayor": 0.4667,
+      "banda_revision": true
+    },
+    {
+      "lgd": 0.75,
+      "margen": 0.2,
+      "aprobar_si_p_menor": 0.1067,
+      "rechazar_si_p_mayor": 0.6,
+      "banda_revision": true
+    }
+  ],
+  "metricas_test": {
+    "roc_auc": 0.8456,
+    "pr_auc": 0.7675,
+    "ks": 0.5384,
+    "brier": 0.1491,
+    "accuracy": 0.7829,
+    "precision": 0.7205,
+    "recall": 0.637,
+    "f1": 0.6762
+  },
+  "metricas_test_umbral_bayes": {
+    "roc_auc": 0.8456,
+    "pr_auc": 0.7675,
+    "ks": 0.5384,
+    "brier": 0.1491,
+    "accuracy": 0.7329,
+    "precision": 0.5872,
+    "recall": 0.8396,
+    "f1": 0.6911
+  },
+  "decision_test": {
+    "costo_medio": 0.05369,
+    "tasa_aprobacion": 0.3971,
+    "tasa_revision": 0.2883,
+    "tasa_rechazo": 0.3146,
+    "impago_en_aprobados": 0.0976,
+    "supera_capacidad_revision": false
+  },
+  "equidad_test": {
+    "sexo": {
+      "grupos": [
+        {
+          "grupo": "F",
+          "n": 1182,
+          "tasa_aprobacion": 0.3909,
+          "aprobacion_buenos_pagadores": 0.5456,
+          "rechazo_buenos_pagadores": 0.1334,
+          "prob_media": 0.3517,
+          "tasa_impago_real": 0.3596,
+          "error_calibracion": -0.0079,
+          "cuenta_para_di": true
+        },
+        {
+          "grupo": "M",
+          "n": 1218,
+          "tasa_aprobacion": 0.4031,
+          "aprobacion_buenos_pagadores": 0.5665,
+          "rechazo_buenos_pagadores": 0.1394,
+          "prob_media": 0.3471,
+          "tasa_impago_real": 0.3522,
+          "error_calibracion": -0.0051,
+          "cuenta_para_di": true
+        }
+      ],
+      "disparate_impact": 0.9696,
+      "di_ic95": [
+        0.8682,
+        0.9974
+      ],
+      "di_igualdad_oportunidades": 0.963,
+      "cumple_regla_80": true
+    },
+    "edad": {
+      "grupos": [
+        {
+          "grupo": "18-29",
+          "n": 474,
+          "tasa_aprobacion": 0.3734,
+          "aprobacion_buenos_pagadores": 0.5311,
+          "rechazo_buenos_pagadores": 0.1443,
+          "prob_media": 0.3495,
+          "tasa_impago_real": 0.3565,
+          "error_calibracion": -0.007,
+          "cuenta_para_di": true
+        },
+        {
+          "grupo": "30-59",
+          "n": 1161,
+          "tasa_aprobacion": 0.3936,
+          "aprobacion_buenos_pagadores": 0.5595,
+          "rechazo_buenos_pagadores": 0.1368,
+          "prob_media": 0.3533,
+          "tasa_impago_real": 0.3704,
+          "error_calibracion": -0.017,
+          "cuenta_para_di": true
+        },
+        {
+          "grupo": "60+",
+          "n": 765,
+          "tasa_aprobacion": 0.417,
+          "aprobacion_buenos_pagadores": 0.5667,
+          "rechazo_buenos_pagadores": 0.1314,
+          "prob_media": 0.3432,
+          "tasa_impago_real": 0.3333,
+          "error_calibracion": 0.0099,
+          "cuenta_para_di": true
+        }
+      ],
+      "disparate_impact": 0.8955,
+      "di_ic95": [
+        0.7803,
+        0.9771
+      ],
+      "di_igualdad_oportunidades": 0.9373,
+      "cumple_regla_80": true
+    },
+    "cumple_todo": true
+  },
+  "importancia_permutacion": [
+    {
+      "variable": "puntaje_buro",
+      "importancia": 0.08632,
+      "desviacion": 0.00145
+    },
+    {
+      "variable": "relacion_deuda_ingreso",
+      "importancia": 0.04711,
+      "desviacion": 0.00172
+    },
+    {
+      "variable": "uso_cupo_tarjetas",
+      "importancia": 0.04292,
+      "desviacion": 0.00467
+    },
+    {
+      "variable": "moras_ultimos_12m",
+      "importancia": 0.01288,
+      "desviacion": 0.00259
+    },
+    {
+      "variable": "proposito",
+      "importancia": 0.0035,
+      "desviacion": 0.00031
+    },
+    {
+      "variable": "monto_credito",
+      "importancia": 0.00237,
+      "desviacion": 0.00047
+    },
+    {
+      "variable": "num_creditos_activos",
+      "importancia": 0.00111,
+      "desviacion": 0.0005
+    },
+    {
+      "variable": "antiguedad_laboral_anios",
+      "importancia": 0.00099,
+      "desviacion": 0.00027
+    },
+    {
+      "variable": "ingreso_mensual",
+      "importancia": 0.00094,
+      "desviacion": 0.00062
+    },
+    {
+      "variable": "situacion_laboral",
+      "importancia": 0.00065,
+      "desviacion": 0.00013
+    },
+    {
+      "variable": "tipo_vivienda",
+      "importancia": 9e-05,
+      "desviacion": 0.00011
+    },
+    {
+      "variable": "personas_a_cargo",
+      "importancia": 5e-05,
+      "desviacion": 2e-05
+    },
+    {
+      "variable": "tasa_interes_anual",
+      "importancia": 5e-05,
+      "desviacion": 0.0001
+    },
+    {
+      "variable": "estado_civil",
+      "importancia": -1e-05,
+      "desviacion": 0.00029
+    },
+    {
+      "variable": "plazo_meses",
+      "importancia": -0.0001,
+      "desviacion": 0.00013
+    },
+    {
+      "variable": "nivel_educativo",
+      "importancia": -0.00017,
+      "desviacion": 0.0001
+    },
+    {
+      "variable": "edad",
+      "importancia": -0.00075,
+      "desviacion": 0.00048
+    }
+  ],
+  "monitoreo": {
+    "psi_puntaje_train_test": 0.003,
+    "estado": "estable",
+    "psi_variables": [
+      {
+        "variable": "num_creditos_activos",
+        "psi": 0.0084,
+        "estado": "estable"
+      },
+      {
+        "variable": "antiguedad_laboral_anios",
+        "psi": 0.0072,
+        "estado": "estable"
+      },
+      {
+        "variable": "edad",
+        "psi": 0.0065,
+        "estado": "estable"
+      },
+      {
+        "variable": "uso_cupo_tarjetas",
+        "psi": 0.0048,
+        "estado": "estable"
+      },
+      {
+        "variable": "relacion_deuda_ingreso",
+        "psi": 0.0042,
+        "estado": "estable"
+      },
+      {
+        "variable": "monto_credito",
+        "psi": 0.0041,
+        "estado": "estable"
+      },
+      {
+        "variable": "tipo_vivienda",
+        "psi": 0.0041,
+        "estado": "estable"
+      },
+      {
+        "variable": "plazo_meses",
+        "psi": 0.0039,
+        "estado": "estable"
+      },
+      {
+        "variable": "puntaje_buro",
+        "psi": 0.0033,
+        "estado": "estable"
+      },
+      {
+        "variable": "tasa_interes_anual",
+        "psi": 0.0032,
+        "estado": "estable"
+      },
+      {
+        "variable": "proposito",
+        "psi": 0.002,
+        "estado": "estable"
+      },
+      {
+        "variable": "ingreso_mensual",
+        "psi": 0.0015,
+        "estado": "estable"
+      },
+      {
+        "variable": "personas_a_cargo",
+        "psi": 0.0013,
+        "estado": "estable"
+      },
+      {
+        "variable": "situacion_laboral",
+        "psi": 0.001,
+        "estado": "estable"
+      },
+      {
+        "variable": "estado_civil",
+        "psi": 0.0009,
+        "estado": "estable"
+      },
+      {
+        "variable": "nivel_educativo",
+        "psi": 0.0006,
+        "estado": "estable"
+      },
+      {
+        "variable": "moras_ultimos_12m",
+        "psi": 0.0002,
+        "estado": "estable"
+      }
+    ]
+  },
+  "modelo_texto": {
+    "algoritmo": "TF-IDF (1-2 gramas) + LogisticRegression calibrado",
+    "metricas": {
+      "oof_train": {
+        "roc_auc": 0.6404,
+        "pr_auc": 0.4809,
+        "ks": 0.2529,
+        "brier": 0.2148,
+        "accuracy": 0.6704,
+        "precision": 0.5534,
+        "recall": 0.3796,
+        "f1": 0.4503
+      },
+      "test": {
+        "roc_auc": 0.641,
+        "pr_auc": 0.4899,
+        "ks": 0.2677,
+        "brier": 0.2142,
+        "accuracy": 0.6675,
+        "precision": 0.5444,
+        "recall": 0.4016,
+        "f1": 0.4623
+      }
+    }
   },
   "variables_entrada": [
     "edad",
@@ -21,115 +544,50 @@
     "puntaje_buro",
     "uso_cupo_tarjetas",
     "estado_civil",
-    "nivel_educativo",
     "situacion_laboral",
     "tipo_vivienda",
-    "proposito"
+    "proposito",
+    "nivel_educativo"
   ],
-  "variables_derivadas": [
-    "ratio_monto_ingreso",
-    "cuota_estimada",
-    "ratio_cuota_ingreso"
-  ],
-  "variable_excluida_auditoria": "sexo",
-  "n_train": 9600,
-  "n_test": 2400,
-  "tasa_default_train": 0.3556,
-  "metricas_test": {
-    "roc_auc": 0.8465,
-    "f1": 0.7083,
-    "recall": 0.8103,
-    "precision": 0.6291,
-    "ks": 0.5464,
-    "brier": 0.1573
-  },
-  "umbral_decision": 0.4396,
-  "bandas_riesgo": {
-    "Bajo": [
-      0.0,
-      0.2
+  "variables_modelo": {
+    "numericas": [
+      "edad",
+      "antiguedad_laboral_anios",
+      "personas_a_cargo",
+      "ingreso_mensual",
+      "monto_credito",
+      "plazo_meses",
+      "tasa_interes_anual",
+      "num_creditos_activos",
+      "moras_ultimos_12m",
+      "relacion_deuda_ingreso",
+      "puntaje_buro",
+      "uso_cupo_tarjetas",
+      "cuota_estimada",
+      "ratio_cuota_ingreso",
+      "ratio_monto_ingreso",
+      "tiene_moras_previas"
     ],
-    "Medio": [
-      0.2,
-      0.5
+    "nominales": [
+      "estado_civil",
+      "situacion_laboral",
+      "tipo_vivienda",
+      "proposito"
     ],
-    "Alto": [
-      0.5,
-      1.0
+    "ordinales": [
+      "nivel_educativo",
+      "rango_edad"
     ]
   },
-  "metricas_nlp": {
-    "roc_auc": 0.6436,
-    "f1": 0.5446,
-    "recall": 0.6358,
-    "precision": 0.4763,
-    "ks": 0.2716,
-    "brier": 0.2314,
-    "umbral": 0.4465
-  },
-  "modelo_nlp": "tfidf_logreg",
-  "equidad": {
-    "atributo": "sexo",
-    "tasa_aprobacion": {
-      "F": 0.5355,
-      "M": 0.5476
-    },
-    "disparate_impact": 0.9779,
-    "regla_80": true
-  },
-  "importancia_permutacion": {
-    "edad": -0.0,
-    "antiguedad_laboral_anios": 0.00019,
-    "personas_a_cargo": -0.00012,
-    "ingreso_mensual": -0.00053,
-    "monto_credito": 8e-05,
-    "plazo_meses": -6e-05,
-    "tasa_interes_anual": 0.00027,
-    "num_creditos_activos": 0.00166,
-    "moras_ultimos_12m": 0.01407,
-    "relacion_deuda_ingreso": 0.05456,
-    "puntaje_buro": 0.08418,
-    "uso_cupo_tarjetas": 0.04076,
-    "estado_civil": 0.00041,
-    "nivel_educativo": -0.00021,
-    "situacion_laboral": 0.00069,
-    "tipo_vivienda": -6e-05,
-    "proposito": 0.00503
-  },
-  "medianas_train": {
-    "edad": 49.0,
-    "antiguedad_laboral_anios": 9.0,
-    "personas_a_cargo": 1.0,
-    "ingreso_mensual": 2234000.0,
-    "monto_credito": 12263500.0,
-    "plazo_meses": 24.0,
-    "tasa_interes_anual": 26.2,
-    "num_creditos_activos": 1.0,
-    "moras_ultimos_12m": 0.0,
-    "relacion_deuda_ingreso": 0.5555000000000001,
-    "puntaje_buro": 715.0,
-    "uso_cupo_tarjetas": 0.453
-  },
-  "direccion_riesgo": {
-    "edad": -1,
-    "antiguedad_laboral_anios": -1,
-    "personas_a_cargo": 1,
-    "ingreso_mensual": -1,
-    "monto_credito": 1,
-    "plazo_meses": 1,
-    "tasa_interes_anual": -1,
-    "num_creditos_activos": 1,
-    "moras_ultimos_12m": 1,
-    "relacion_deuda_ingreso": 1,
-    "puntaje_buro": -1,
-    "uso_cupo_tarjetas": 1
-  },
+  "variable_excluida_auditoria": "sexo",
   "limitaciones": [
-    "Datos con nulos, duplicados y atipicos intencionales; se limpian reglas basicas e imputacion por mediana/moda.",
-    "Modelo no calibrado explicitamente; las probabilidades son orientativas.",
-    "Los factores principales son una aproximacion simple, no explicaciones causales.",
-    "El sexo no entra al modelo, pero otras variables pueden actuar como proxy.",
-    "El modelo NLP es TF-IDF + regresion logistica, sensible al vocabulario de entrenamiento.",
-    "Uso academico/demostrativo; no debe usarse como unica base de decisiones de credito."
-  ]
+    "Dataset sintético realista (db/generacion/generar_dataset.py): los resultados ilustran la metodología, no el desempeño en una cartera real.",
+    "El texto de la solicitud se generó a partir de plantillas condicionadas al riesgo: su señal está sobreestimada y por eso el modelo de texto no forma parte de la decisión principal.",
+    "Los costos (LGD, margen, revisión) son supuestos documentados en ADR-002; la sensibilidad está en la card.",
+    "La regla de 4/5 es una alerta de equidad, no una norma colombiana de crédito; ver ADR-003.",
+    "Las contribuciones son asociaciones del modelo, no efectos causales.",
+    "Monitorear PSI del puntaje y de las variables; recalibrar si PSI ≥ 0,25 (docs/05_despliegue.md).",
+    "Uso académico: no debe ser la única base de una decisión de crédito."
+  ],
+  "duracion_entrenamiento_s": 490.1
 }

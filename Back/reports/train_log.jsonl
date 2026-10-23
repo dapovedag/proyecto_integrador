@@ -1,0 +1,11 @@
+{"t": 1.27, "linea": "Datos: train=9600 test=2400 prevalencia=0.3556"}
+{"t": 16.46, "linea": "  Regresión logística: AUC CV = 0.8582 {'C': 0.031489}"}
+{"t": 321.6, "linea": "  Gradient Boosting (HGB): AUC CV = 0.8525 {'l2_regularization': 0.133112, 'learning_rate': 0.023088, 'max_iter': 151, 'max_leaf_nodes': 31}"}
+{"t": 321.6, "linea": "Familia elegida: Regresión logística (parsimonia: ΔAUC=-0.0057, umbral 0.005)"}
+{"t": 364.6, "linea": "  variante base: costo=0.0500 AUC=0.8579 DI sexo=0.9788 edad=0.7207"}
+{"t": 395.37, "linea": "  variante sin_edad: costo=0.0498 AUC=0.8582 DI sexo=0.9837 edad=0.7099"}
+{"t": 424.03, "linea": "  variante reweighing: costo=0.0503 AUC=0.8570 DI sexo=0.9811 edad=0.8924"}
+{"t": 424.04, "linea": "Variante elegida: reweighing"}
+{"t": 433.23, "linea": "Test: {'roc_auc': 0.8456, 'pr_auc': 0.7675, 'ks': 0.5384, 'brier': 0.1491, 'accuracy': 0.7829, 'precision': 0.7205, 'recall': 0.637, 'f1': 0.6762} | decisión: {'costo_medio': 0.05369, 'tasa_aprobacion': 0.3971, 'tasa_revision': 0.2883, 'tasa_rechazo': 0.3146, 'impago_en_aprobados': 0.0976, 'supera_capacidad_revision': False}"}
+{"t": 490.4, "linea": "Artefactos escritos en Back/models"}
+{"t": 490.4, "linea": "Duración: 490.1 s"}

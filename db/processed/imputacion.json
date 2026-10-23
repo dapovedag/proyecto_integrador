@@ -1,0 +1,26 @@
+{
+  "mediana": {
+    "edad": 49.0,
+    "antiguedad_laboral_anios": 9.0,
+    "personas_a_cargo": 1.0,
+    "ingreso_mensual": 2234000.0,
+    "monto_credito": 12263500.0,
+    "plazo_meses": 24.0,
+    "tasa_interes_anual": 26.2,
+    "num_creditos_activos": 1.0,
+    "moras_ultimos_12m": 0.0,
+    "relacion_deuda_ingreso": 0.5555,
+    "puntaje_buro": 715.0,
+    "uso_cupo_tarjetas": 0.453
+  },
+  "moda": {
+    "sexo": "M",
+    "estado_civil": "Soltero",
+    "nivel_educativo": "Secundaria",
+    "proposito": "Libre_inversion"
+  },
+  "desconocido": {
+    "situacion_laboral": "Desconocido",
+    "tipo_vivienda": "Desconocido"
+  }
+}
