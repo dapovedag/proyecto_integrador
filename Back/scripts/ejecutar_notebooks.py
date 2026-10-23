@@ -51,6 +51,17 @@ def sanear(path: Path) -> int:
     return reemplazos + n
 
 
+def tomar_lock() -> bool:
+    """Crea el lock de forma atómica (O_CREAT | O_EXCL): dos procesos nunca lo obtienen a la vez."""
+    try:
+        fd = os.open(LOCK, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    except FileExistsError:
+        return False
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        f.write(f"pid={os.getpid()} desde {datetime.now():%Y-%m-%d %H:%M:%S}")
+    return True
+
+
 def _reemplazar(origen: Path, destino: Path, intentos: int = 10) -> None:
     """Reemplazo atómico con reintentos (en Windows otro proceso puede tener el archivo abierto un instante)."""
     for i in range(intentos):
@@ -100,14 +111,12 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     REPORTES.mkdir(parents=True, exist_ok=True)
-    if args.esperar:
-        limite = time.time() + 3 * 3600
-        while LOCK.exists() and time.time() < limite:
-            time.sleep(15)
-    if LOCK.exists():
-        print(f"Otra ejecución está en curso ({LOCK.read_text(encoding='utf-8')}). Abortado.")
-        return 2
-    LOCK.write_text(f"pid={os.getpid()} desde {datetime.now():%Y-%m-%d %H:%M:%S}", encoding="utf-8")
+    limite = time.time() + (3 * 3600 if args.esperar else 0)
+    while not tomar_lock():
+        if time.time() >= limite:
+            print(f"Otra ejecución está en curso ({LOCK.read_text(encoding='utf-8', errors='replace')}). Abortado.")
+            return 2
+        time.sleep(15)
     registro_path = REPORTES / "ejecuciones.json"
     registro = json.loads(registro_path.read_text(encoding="utf-8")) if registro_path.exists() else {}
     fallos = 0
