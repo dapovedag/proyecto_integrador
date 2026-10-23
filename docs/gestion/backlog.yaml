@@ -1,0 +1,986 @@
+# Backlog del producto: FUENTE ÚNICA.
+# backlog.md, trazabilidad.md, el checklist de 01_enunciado.md y Front/src/data/generated/gestion.json
+# se generan desde aquí con:  python Back/scripts/generar_evidencia.py
+#
+# Convenciones
+# - estado: Pendiente | En progreso | En revisión | Hecho  (Hecho exige cumplir definicion_de_hecho.md)
+# - puntos: Fibonacci (1, 2, 3, 5, 8, 13). null = "no estimado" (solo para el trabajo del MVP, S1–S4).
+# - sprint: sprint en el que la historia está comprometida hoy. sprint_mvp: sprint del MVP donde se intentó.
+# - evidencia: rutas relativas a la raíz del repositorio. Una historia solo cuenta como acreditada
+#   si está en "Hecho" Y todas sus rutas existen (y, si hay dod_status.json, sus notebooks cumplen la DoD).
+# - Las historias HU-00…HU-12 vienen del MVP. La auditoría QA (report_qa.md, 2026-10-16) mostró que
+#   ninguna cumplía su criterio de hecho con evidencia; volvieron al backlog y se re-estimaron para v2.
+
+proyecto: Análisis predictivo de riesgo de crédito
+version_modelo_objetivo: "2.0.0"
+metodologia:
+  gestion: Scrum
+  ciclo_analitico: CRISP-DM
+  practicas: MLOps
+  fases_crisp_dm:
+    F1: Business Understanding
+    F2: Data Understanding + Data Preparation
+    F3: Modeling
+    F4: Evaluation
+    F5: Deployment
+
+sprints:
+  - id: S1
+    nombre: Problema y datos entendidos (MVP)
+    inicio: "2026-10-09"
+    fin: "2026-10-16"
+    objetivo: Problema definido y datos explorados.
+    fase: [F1, F2]
+    nota: Ventana compartida S1–S4; no se registraron fechas ni puntos por sprint.
+  - id: S2
+    nombre: Datos listos (MVP)
+    inicio: "2026-10-09"
+    fin: "2026-10-16"
+    objetivo: Datos limpios y EDA avanzado.
+    fase: [F2]
+    nota: Ventana compartida S1–S4.
+  - id: S3
+    nombre: Modelado (MVP)
+    inicio: "2026-10-09"
+    fin: "2026-10-16"
+    objetivo: Modelos clásicos, redes, NLP y evaluación.
+    fase: [F3, F4]
+    nota: Ventana compartida S1–S4.
+  - id: S4
+    nombre: Despliegue (MVP)
+    inicio: "2026-10-09"
+    fin: "2026-10-16"
+    objetivo: Spark, API, integrador y ejecución local.
+    fase: [F5]
+    nota: Ventana compartida S1–S4.
+  - id: S5
+    nombre: Fundaciones
+    inicio: "2026-10-23"
+    fin: "2026-10-29"
+    objetivo: >-
+      Entorno probado y un único paquete credit_risk con tests, DoD automatizada y gestión
+      verificable (backlog único, DoR, DoD multinivel, ADRs, trazabilidad calculada).
+    fase: [F2, F3]
+    burndown: []
+  - id: S6
+    nombre: Datos y modelado
+    inicio: "2026-10-30"
+    fin: "2026-11-05"
+    objetivo: >-
+      Notebooks 01–07 y 09 reescritos sobre credit_risk y ejecutados con papermill (kernel
+      credit-risk), con sus artefactos y conclusiones redactadas después de ver las salidas.
+    fase: [F1, F2, F3]
+    burndown: []
+  - id: S7
+    nombre: Modelo v2.0.0
+    inicio: "2026-11-06"
+    fin: "2026-11-12"
+    objetivo: >-
+      Modelo v2.0.0 seleccionado sin fuga, calibrado, con política aprobar/revisar/rechazar,
+      equidad evaluada y servido por la API v2 en Docker; paquete de corrida exportado.
+    fase: [F4, F5]
+    burndown: []
+  - id: S8
+    nombre: Producto y comunicación
+    inicio: "2026-11-13"
+    fin: "2026-11-19"
+    objetivo: >-
+      Front estático autónomo con un capítulo por entregable y motor exacto, documentación
+      coherente con v2.0.0 y checklist del enunciado acreditado por cálculo.
+    fase: [F5]
+    burndown: []
+
+epicas:
+  - id: E-01
+    nombre: Gestión ágil y gobierno del proyecto
+    objetivo: Scrum aplicado de verdad, con artefactos verificables y trazabilidad calculada.
+  - id: E-02
+    nombre: Comprensión del negocio y ética (F1)
+    objetivo: Problema de impago formulado con métricas de negocio y riesgos éticos explícitos.
+  - id: E-03
+    nombre: Datos (F2)
+    objetivo: Datos explorados, validados y preparados con un pipeline único y sin fuga.
+  - id: E-04
+    nombre: Modelado (F3)
+    objetivo: Modelos clásicos, redes neuronales y NLP entrenados y comparados con evidencia ejecutada.
+  - id: E-05
+    nombre: Evaluación, política de decisión y equidad (F4)
+    objetivo: Un modelo v2.0.0 seleccionado sin usar test, calibrado, con costos explícitos y auditado en equidad.
+  - id: E-06
+    nombre: Big Data
+    objetivo: Procesamiento y modelado con PySpark real.
+  - id: E-07
+    nombre: Despliegue del modelo (F5)
+    objetivo: API REST del modelo servido, en Docker, reproducible desde un clon limpio.
+  - id: E-08
+    nombre: Integración y comunicación (F5)
+    objetivo: Notebook integrador, informe y documentación coherentes con v2.0.0.
+  - id: E-09
+    nombre: Plataforma y calidad
+    objetivo: Paquete instalable como fuente única, tests, gate de calidad y ejecución reproducible.
+  - id: E-10
+    nombre: Front estático autónomo
+    objetivo: Sitio estático que muestra los resultados reales y simula la corrida con fidelidad, sin back.
+
+historias:
+  # ---------------------------------------------------------------- HU del MVP (re-trabajo en v2)
+  - id: HU-00
+    epica: E-01
+    rol: equipo del proyecto
+    quiero: un backlog único, sprints con objetivo, DoR y DoD verificables, ADRs y retrospectivas
+    para: gestionar el proyecto con Scrum y poder demostrarlo con evidencia
+    criterios_aceptacion:
+      - dado: el archivo docs/gestion/backlog.yaml
+        cuando: se ejecuta python Back/scripts/generar_evidencia.py
+        entonces: se generan backlog.md, trazabilidad.md, el checklist de 01_enunciado.md y gestion.json sin errores
+      - dado: cada paso 0–12 del plan
+        cuando: se revisa trazabilidad.md
+        entonces: cada paso y cada ID del enunciado tienen al menos una historia
+      - dado: un sprint cerrado
+        cuando: se lee sprints.md
+        entonces: tiene review, retrospectiva y burndown con datos reales
+    puntos: 5
+    sprint: S5
+    sprint_mvp: S1
+    estado: En progreso
+    paso: 0
+    ids_enunciado: [E1, R3]
+    evidencia:
+      - docs/gestion/backlog.yaml
+      - docs/gestion/definicion_de_hecho.md
+      - docs/gestion/definicion_de_listo.md
+      - docs/gestion/sprints.md
+      - docs/gestion/riesgos.md
+      - docs/gestion/trazabilidad.md
+    nota: En el MVP se marcó Hecho con retros vacías y estados desactualizados (QA, paso 0).
+
+  - id: HU-01
+    epica: E-02
+    rol: analista de crédito
+    quiero: el problema de impago definido con métricas de negocio y riesgos éticos
+    para: confiar en el uso del modelo y conocer sus límites
+    criterios_aceptacion:
+      - dado: el notebook 01 ejecutado con papermill
+        cuando: se ejecuta verificar_dod.py
+        entonces: el notebook cumple todos los criterios de nivel notebook
+      - dado: el notebook 01
+        cuando: se lee
+        entonces: tiene Contexto, Formulación, Datasets, Métricas, Ética y Conclusión, y la tabla de variables sensibles que reutiliza el paso 8
+    puntos: 3
+    sprint: S6
+    sprint_mvp: S1
+    estado: Pendiente
+    paso: 1
+    ids_enunciado: [IA1.1, IA1.3, E5, F1]
+    evidencia:
+      - Back/notebooks/01_definicion_problema_etica.ipynb
+      - Back/reports/dod_status.json
+    nota: Contenido documental existente; no importa credit_risk ni corre con el kernel credit-risk.
+
+  - id: HU-02
+    epica: E-03
+    rol: científico de datos
+    quiero: explorar el dataset con el entorno, las librerías y operaciones básicas
+    para: entender su estructura y calidad antes de prepararlo
+    criterios_aceptacion:
+      - dado: el notebook 02 ejecutado
+        cuando: se revisa
+        entonces: incluye configuración del entorno (celda IN_COLAB), librerías, inspección, filtrado, selección, ordenamiento y agregaciones (pandas y DuckDB)
+      - dado: el notebook 02
+        cuando: se cuentan sus figuras
+        entonces: hay al menos 3 histogramas, 2 dispersiones y 3 boxplots, cada uno con interpretación
+    puntos: 3
+    sprint: S6
+    sprint_mvp: S1
+    estado: Pendiente
+    paso: 2
+    ids_enunciado: [P1.1, P1.2, P1.3, P1.4, P1.5, P1.E1, P1.E2, P1.E3, P1.E4, E3]
+    evidencia:
+      - Back/notebooks/02_exploracion_preliminar.ipynb
+      - docs/03_contrato_datos.md
+      - Back/reports/dod_status.json
+
+  - id: HU-03
+    epica: E-03
+    rol: científico de datos
+    quiero: limpiar y preparar los datos con el pipeline del paquete
+    para: entrenar sin fuga y con las mismas transformaciones que se sirven
+    criterios_aceptacion:
+      - dado: credit_risk.features
+        cuando: se ajusta el preprocesador
+        entonces: usa las 6 variables derivadas, ordinal para nivel_educativo y rango_edad y winsorizer p1–p99 ajustado solo en train
+      - dado: el notebook 03 ejecutado
+        cuando: se revisan db/processed
+        entonces: existen train.csv, test.csv y feature_list.json sin nulos ni duplicados, con su SHA-256
+    puntos: 5
+    sprint: S6
+    sprint_mvp: S2
+    estado: Pendiente
+    paso: 3
+    ids_enunciado: [P2.1, P2.2, P2.3, P2.4, P2.5, P2.6, P2.E1, P2.E2, P2.E3, P2.E4, F2]
+    evidencia:
+      - Back/notebooks/03_limpieza_preparacion.ipynb
+      - Back/src/credit_risk/features.py
+      - Back/tests/test_features.py
+      - db/processed/train.csv
+      - db/processed/test.csv
+      - db/processed/feature_list.json
+    nota: En el MVP features.py divergía de nb03 (3 variables, one-hot, sin capping).
+
+  - id: HU-04
+    epica: E-03
+    rol: analista de crédito
+    quiero: ver los patrones, correlaciones y variables que más influyen en el impago
+    para: entender los factores de riesgo
+    criterios_aceptacion:
+      - dado: el notebook 04 ejecutado
+        cuando: se revisa
+        entonces: tiene Matplotlib, Seaborn y plotnine, atípicos antes/después, PCA con varianza explicada y proyección 2D, y tabla final de variables relevantes
+      - dado: cada figura del notebook 04
+        cuando: se ejecuta verificar_dod.py
+        entonces: figuras_interpretadas es verdadero
+    puntos: 8
+    sprint: S6
+    sprint_mvp: S2
+    estado: Pendiente
+    paso: 4
+    ids_enunciado: [IA1.2, IA1.E1, IA1.E2, IA2.2, IA2.4, IA2.5, IA2.E1, IA2.E2, F2, R2]
+    evidencia:
+      - Back/notebooks/04_eda_transformacion_visualizacion.ipynb
+      - Back/reports/dod_status.json
+    nota: QA marcó gráficos sin interpretación (c46, c51, c56).
+
+  - id: HU-05
+    epica: E-04
+    rol: científico de datos
+    quiero: entrenar y comparar modelos clásicos con validación cruzada en train
+    para: tener una referencia sólida y una selección sin fuga
+    criterios_aceptacion:
+      - dado: Dummy, LR, árbol, RF y HGB
+        cuando: se evalúan con CV estratificada de 5 folds en train
+        entonces: se reportan ROC-AUC, PR-AUC, KS, Brier y F1 con las mismas métricas para todos
+      - dado: el notebook 05 ejecutado
+        cuando: termina
+        entonces: existe Back/models/resultados_clasicos.json y el mejor modelo supera a la línea base
+    puntos: 5
+    sprint: S6
+    sprint_mvp: S3
+    estado: Pendiente
+    paso: 5
+    ids_enunciado: [F3, IA3.3, R2]
+    evidencia:
+      - Back/notebooks/05_modelos_clasicos.ipynb
+      - Back/models/resultados_clasicos.json
+    nota: En el MVP el nb05 tenía 0 celdas ejecutadas.
+
+  - id: HU-06
+    epica: E-04
+    rol: científico de datos
+    quiero: entrenar una CNN 1D y una RNN (GRU) en TensorFlow/Keras
+    para: comparar Deep Learning con los modelos clásicos
+    criterios_aceptacion:
+      - dado: TensorFlow 2.20 instalado (ADR-006)
+        cuando: se ejecuta el notebook 06
+        entonces: MLP, CNN 1D y GRU se entrenan con class_weight y EarlyStopping y se evalúan en test
+      - dado: el notebook 06 ejecutado
+        cuando: se revisan los artefactos
+        entonces: existen red_neuronal.keras, resultados_dl.json con historiales y la tabla clásicos vs DL con tiempos
+    puntos: 8
+    sprint: S6
+    sprint_mvp: S3
+    estado: En progreso
+    paso: 6
+    ids_enunciado: [IA3.2, IA3.E2, IA3.3, F3, R2]
+    evidencia:
+      - Back/src/credit_risk/dl.py
+      - Back/notebooks/06_red_neuronal.ipynb
+      - Back/models/resultados_dl.json
+      - Back/models/red_neuronal.keras
+    nota: En el MVP no se entrenó ninguna red y la conclusión afirmaba lo contrario.
+
+  - id: HU-07
+    epica: E-04
+    rol: analista de crédito
+    quiero: que el texto de la solicitud aporte a la evaluación del riesgo
+    para: aprovechar la información no estructurada
+    criterios_aceptacion:
+      - dado: los 4.454 textos únicos
+        cuando: se ejecuta el notebook 07
+        entonces: hay frecuencias, n-gramas, TF-IDF+LR, sentimiento con BERT y embeddings sentence-transformers vs GPT-2 en 2D
+      - dado: el modelo combinado
+        cuando: se compara con el tabular
+        entonces: se reporta ΔAUC con IC bootstrap y existen resultados_nlp.json y nlp_features.parquet
+    puntos: 8
+    sprint: S6
+    sprint_mvp: S3
+    estado: En progreso
+    paso: 7
+    ids_enunciado: [IA3.1, IA3.E1, F3, R2]
+    evidencia:
+      - Back/src/credit_risk/nlp.py
+      - Back/src/credit_risk/nlp_avanzado.py
+      - Back/notebooks/07_nlp_riesgo.ipynb
+      - Back/models/resultados_nlp.json
+      - db/processed/nlp_features.parquet
+    nota: En el MVP el nb07 tenía 19 celdas sin ejecutar.
+
+  - id: HU-08
+    epica: E-05
+    rol: analista de crédito
+    quiero: un modelo final calibrado, con umbrales justificados por costo y auditado en equidad
+    para: tomar decisiones justas, explicables y confiables
+    criterios_aceptacion:
+      - dado: las predicciones OOF y de test guardadas por train.py
+        cuando: se ejecuta el notebook 08
+        entonces: no reentrena y sus métricas coinciden con model_card.json (lo verifica un test)
+      - dado: el notebook 08
+        cuando: se revisa
+        entonces: muestra calibración, curva de costo con sensibilidad, tabla final de modelos, equidad antes/después, SHAP global, 3 casos y PSI train/test
+    puntos: 8
+    sprint: S7
+    sprint_mvp: S3
+    estado: Pendiente
+    paso: 8
+    ids_enunciado: [F4, IA1.3, IA3.3, R1]
+    evidencia:
+      - Back/notebooks/08_evaluacion_optimizacion.ipynb
+      - Back/models/modelo_final.joblib
+      - Back/models/model_card.json
+      - Back/models/oof_predictions.parquet
+      - Back/models/test_predictions.parquet
+    nota: En el MVP el modelo servido (v1.0.0, umbral 0,4396) no era el del nb08 (0,25).
+
+  - id: HU-09
+    epica: E-06
+    rol: científico de datos
+    quiero: procesar y modelar los datos con PySpark
+    para: demostrar que la solución escala a grandes volúmenes
+    criterios_aceptacion:
+      - dado: el contenedor quay.io/jupyter/pyspark-notebook:2026-10-19 (ADR-005)
+        cuando: se ejecuta el notebook 09 con docker-compose.spark.yml
+        entonces: usa esquema explícito, transformaciones, Spark SQL y escribe Parquet particionado
+      - dado: el notebook 09 ejecutado
+        cuando: se revisa resultados_spark.json
+        entonces: contiene el AUC de MLlib comparado con sklearn y la versión de Spark
+    puntos: 5
+    sprint: S6
+    sprint_mvp: S4
+    estado: Pendiente
+    paso: 9
+    ids_enunciado: [IA3.6]
+    evidencia:
+      - Back/notebooks/09_spark_big_data.ipynb
+      - Back/docker-compose.spark.yml
+      - Back/models/resultados_spark.json
+    nota: En el MVP el nb09 corrió con respaldo pandas/pyarrow, sin PySpark.
+
+  - id: HU-10
+    epica: E-07
+    rol: sistema de originación del banco
+    quiero: consumir el modelo servido por una API REST
+    para: integrar la decisión aprobar/revisar/rechazar en el proceso de crédito
+    criterios_aceptacion:
+      - dado: la API v2 con el modelo cargado en lifespan
+        cuando: se envía el cliente demo de riesgo bajo a /predict
+        entonces: responde banda Bajo y decisión aprobar, con contribuciones y la versión 2.0.0
+      - dado: una petición con un campo inválido
+        cuando: se envía a /predict
+        entonces: responde 422 marcando el campo
+      - dado: el repositorio
+        cuando: se ejecuta python -m pytest Back/tests/test_api.py
+        entonces: todas las pruebas pasan
+    puntos: 5
+    sprint: S7
+    sprint_mvp: S4
+    estado: En progreso
+    paso: 10
+    ids_enunciado: [IA3.4, IA3.E3, R4, F5]
+    evidencia:
+      - Back/api/main.py
+      - Back/api/schemas.py
+      - Back/api/service.py
+      - Back/tests/test_api.py
+      - Back/models/model_card.json
+    nota: Código v2 escrito, pendiente de pruebas con el modelo v2.0.0.
+
+  - id: HU-11
+    epica: E-08
+    rol: docente evaluador
+    quiero: un notebook final integrador y un informe ejecutivo
+    para: evaluar el proyecto completo en un solo recorrido
+    criterios_aceptacion:
+      - dado: el notebook 00 ejecutado
+        cuando: se revisa
+        entonces: usa el pipeline de credit_risk y el modelo servido, predice 3 clientes (bajo, medio, alto) y llama a la API con TestClient
+      - dado: el informe 06
+        cuando: se compara con model_card.json
+        entonces: todas sus cifras coinciden con la card v2.0.0
+    puntos: 5
+    sprint: S8
+    sprint_mvp: S4
+    estado: Pendiente
+    paso: 11
+    ids_enunciado: [PF1, E2, E4, F5]
+    evidencia:
+      - Back/notebooks/00_proyecto_integrador_final.ipynb
+      - docs/06_informe_resultados.md
+      - Back/reports/dod_status.json
+    nota: En el MVP el nb00 tenía flujo propio y umbral 0,24.
+
+  - id: HU-12
+    epica: E-07
+    rol: equipo del proyecto
+    quiero: lanzar todo en local con comandos documentados desde un clon limpio
+    para: demostrar que la solución funciona sin pasos ocultos
+    criterios_aceptacion:
+      - dado: un clon limpio en otra carpeta
+        cuando: se siguen los comandos de Back/README.md
+        entonces: se instala el entorno, pasan los tests y /health responde 200
+      - dado: la API levantada en un puerto libre verificado
+        cuando: se envía el ejemplo de Back/api/ejemplo_request.json a /predict
+        entonces: devuelve probabilidad, banda y decisión
+    puntos: 3
+    sprint: S8
+    sprint_mvp: S4
+    estado: Pendiente
+    paso: 12
+    ids_enunciado: [R1, R4]
+    evidencia:
+      - Back/README.md
+      - Back/api/ejemplo_request.json
+    nota: En el MVP se marcó Hecho sin prueba desde clon limpio.
+
+  # ---------------------------------------------------------------- HU nuevas de v2
+  - id: HU-13
+    epica: E-09
+    rol: científico de datos
+    quiero: un único paquete instalable credit_risk con toda la lógica
+    para: que notebooks, train.py, API y exportador usen exactamente el mismo código
+    criterios_aceptacion:
+      - dado: Back/pyproject.toml
+        cuando: se ejecuta pip install -e ".[api,nb,dl,nlp,dev]"
+        entonces: import credit_risk funciona y __version__ es 2.0.0
+      - dado: los módulos data, features, models, fairness y monitoring
+        cuando: se ejecuta python -m pytest --cov
+        entonces: pasan y la cobertura del núcleo es ≥ 80 %
+      - dado: la API
+        cuando: se importa api.main
+        entonces: no carga shap, torch, TensorFlow ni matplotlib (imports perezosos)
+    puntos: 8
+    sprint: S5
+    estado: En progreso
+    paso: 3
+    ids_enunciado: [E2, R1]
+    evidencia:
+      - Back/pyproject.toml
+      - Back/src/credit_risk/__init__.py
+      - Back/src/credit_risk/config.py
+      - Back/src/credit_risk/data.py
+      - Back/src/credit_risk/features.py
+      - Back/src/credit_risk/models.py
+      - Back/tests/test_data.py
+      - Back/tests/test_models.py
+
+  - id: HU-14
+    epica: E-09
+    rol: científico de datos
+    quiero: probar el entorno (TensorFlow, torch, PySpark en Docker) antes de escribir notebooks
+    para: no descubrir bloqueos de dependencias al final del sprint
+    criterios_aceptacion:
+      - dado: Back/.venv con Python 3.10
+        cuando: se importan tensorflow, sklearn y torch en ambos órdenes
+        entonces: no hay WinError 1114 o queda documentada la mitigación
+      - dado: el contenedor de PySpark
+        cuando: se escribe un Parquet de prueba
+        entonces: termina sin error y la versión de Spark queda registrada en ADR-005
+      - dado: el kernel
+        cuando: se ejecuta python -m ipykernel install --user --name credit-risk
+        entonces: jupyter kernelspec list muestra credit-risk
+    puntos: 3
+    sprint: S5
+    estado: En progreso
+    paso: 2
+    ids_enunciado: [P1.1, P1.2]
+    evidencia:
+      - docs/gestion/adr/ADR-005-pyspark-en-docker.md
+      - docs/gestion/adr/ADR-006-tensorflow-2-20-cpu.md
+      - docs/gestion/adr/ADR-008-python-3-10-sklearn-1-4-2.md
+      - Back/requirements-api.lock
+      - Back/requirements-dev-win.lock
+
+  - id: HU-15
+    epica: E-01
+    rol: equipo del proyecto
+    quiero: que la DoD de los notebooks se verifique con un script
+    para: no volver a declarar Hecho algo que no se ejecutó
+    criterios_aceptacion:
+      - dado: los 10 notebooks 00–09
+        cuando: se ejecuta python Back/scripts/verificar_dod.py --estricto
+        entonces: sale con código 0 y Back/reports/dod_status.json registra fallos 0
+      - dado: un notebook sin ejecutar o con una figura sin interpretar
+        cuando: se ejecuta verificar_dod.py --estricto
+        entonces: sale con código 1 e indica el criterio que falla
+    puntos: 3
+    sprint: S5
+    estado: En progreso
+    paso: 0
+    ids_enunciado: [E1, R3]
+    evidencia:
+      - Back/scripts/verificar_dod.py
+      - Back/reports/dod_status.json
+
+  - id: HU-16
+    epica: E-01
+    rol: docente evaluador
+    quiero: una matriz de trazabilidad y un checklist del enunciado calculados, no marcados a mano
+    para: verificar cada ID del enunciado contra su evidencia
+    criterios_aceptacion:
+      - dado: backlog.yaml y dod_status.json
+        cuando: se ejecuta python Back/scripts/generar_evidencia.py dos veces seguidas
+        entonces: la segunda ejecución no cambia ningún archivo (idempotente)
+      - dado: un ID cuya historia no está en Hecho o le falta una ruta de evidencia
+        cuando: se genera el checklist
+        entonces: el ID queda [ ] en 01_enunciado.md
+    puntos: 3
+    sprint: S5
+    estado: En progreso
+    paso: 0
+    ids_enunciado: [E1, R3]
+    evidencia:
+      - Back/scripts/generar_evidencia.py
+      - docs/gestion/backlog.md
+      - docs/gestion/trazabilidad.md
+      - Front/src/data/generated/gestion.json
+
+  - id: HU-17
+    epica: E-09
+    rol: científico de datos
+    quiero: ejecutar los notebooks con papermill, kernel credit-risk y una cola con lock
+    para: obtener salidas reales y tiempos medidos sin saturar la máquina
+    criterios_aceptacion:
+      - dado: Back/scripts/ejecutar_notebooks.py
+        cuando: se ejecuta un notebook con -p FAST True
+        entonces: termina con salidas, kernel credit-risk y un log de tiempos
+      - dado: dos ejecuciones pesadas pedidas a la vez
+        cuando: corre la cola
+        entonces: se ejecutan en serie
+    puntos: 3
+    sprint: S6
+    estado: En progreso
+    paso: 2
+    ids_enunciado: [P1.1, E2]
+    evidencia:
+      - Back/scripts/ejecutar_notebooks.py
+      - Back/src/credit_risk/notebook.py
+
+  - id: HU-18
+    epica: E-05
+    rol: analista de crédito
+    quiero: una decisión aprobar/revisar/rechazar derivada de costos explícitos (regla de Chow)
+    para: que las bandas de riesgo y la acción coincidan y no dependan del modelo
+    criterios_aceptacion:
+      - dado: C_FN=0,45, C_FP=0,15 y C_R=0,08 en config.py
+        cuando: se calculan los umbrales
+        entonces: aprobar si p<0,1778, rechazar si p>0,4667 y revisar en medio
+      - dado: cualquier probabilidad
+        cuando: se calculan banda y decisión
+        entonces: Bajo↔aprobar, Medio↔revisar, Alto↔rechazar (test de coherencia)
+      - dado: LGD entre 0,45 y 0,75 y margen entre 0,10 y 0,20
+        cuando: se ejecuta el análisis de sensibilidad
+        entonces: se reportan los umbrales y el costo esperado de cada escenario
+    puntos: 5
+    sprint: S7
+    estado: En progreso
+    paso: 8
+    ids_enunciado: [F4, R1, R4]
+    evidencia:
+      - Back/src/credit_risk/config.py
+      - Back/src/credit_risk/models.py
+      - Back/tests/test_models.py
+      - docs/gestion/adr/ADR-002-costos-regla-de-chow.md
+
+  - id: HU-19
+    epica: E-05
+    rol: científico de datos
+    quiero: seleccionar el modelo v2.0.0 por CV en train y evaluar en test una sola vez
+    para: publicar métricas de test no sesgadas y una sola fuente de verdad
+    criterios_aceptacion:
+      - dado: python Back/train.py
+        cuando: termina
+        entonces: escribe modelo_final.joblib, model_card.json v2.0.0, oof_predictions.parquet y test_predictions.parquet
+      - dado: dos candidatos con ΔAUC CV < 0,005
+        cuando: se aplica la regla de parsimonia
+        entonces: se elige la regresión logística
+      - dado: model_card.json
+        cuando: se recalcula el SHA-256 de train.csv y test.csv
+        entonces: coincide con el registrado en la card
+    puntos: 8
+    sprint: S7
+    estado: En progreso
+    paso: 8
+    ids_enunciado: [F4, R1, IA3.3]
+    evidencia:
+      - Back/train.py
+      - Back/src/credit_risk/entrenamiento.py
+      - Back/models/model_card.json
+      - docs/gestion/adr/ADR-001-fuente-unica-del-modelo.md
+
+  - id: HU-20
+    epica: E-05
+    rol: oficial de cumplimiento
+    quiero: medir y mitigar la disparidad por sexo y edad sobre la aprobación automática
+    para: que el modelo no discrimine y la decisión quede razonada
+    criterios_aceptacion:
+      - dado: las variantes base, sin_edad y reweighing evaluadas con predicciones OOF
+        cuando: se seleccionan
+        entonces: gana la de menor costo esperado con DI ≥ 0,8 en sexo y edad, o la excepción queda razonada en ADR-003
+      - dado: cada grupo con n ≥ 30
+        cuando: se calcula el DI
+        entonces: se reporta con IC bootstrap 95 % (500 réplicas), igualdad de oportunidades y calibración por grupo
+      - dado: la política servida
+        cuando: se revisa
+        entonces: no usa umbrales distintos por grupo
+    puntos: 8
+    sprint: S7
+    estado: En progreso
+    paso: 8
+    ids_enunciado: [IA1.3, F4]
+    evidencia:
+      - Back/src/credit_risk/fairness.py
+      - Back/tests/test_fairness_monitoring.py
+      - docs/gestion/adr/ADR-003-equidad.md
+      - Back/models/model_card.json
+
+  - id: HU-21
+    epica: E-05
+    rol: analista de riesgo de modelos
+    quiero: el PSI por variable y del score entre train y test
+    para: detectar deriva y saber cuándo recalibrar
+    criterios_aceptacion:
+      - dado: dos muestras
+        cuando: se calcula el PSI
+        entonces: devuelve 0 para muestras idénticas y crece con el desplazamiento (test)
+      - dado: el notebook 08
+        cuando: se revisa
+        entonces: muestra el PSI train/test con su lectura (<0,1 estable; 0,1–0,25 vigilar; >0,25 actuar)
+    puntos: 3
+    sprint: S7
+    estado: En progreso
+    paso: 8
+    ids_enunciado: [R4]
+    evidencia:
+      - Back/src/credit_risk/monitoring.py
+      - Back/tests/test_fairness_monitoring.py
+
+  - id: HU-22
+    epica: E-07
+    rol: equipo de operaciones
+    quiero: la API v2 en una imagen Docker probada
+    para: desplegarla igual en local y en la nube
+    criterios_aceptacion:
+      - dado: Back/Dockerfile con usuario no-root y .dockerignore
+        cuando: se ejecuta docker compose up --build
+        entonces: /health responde 200 con la versión 2.0.0
+      - dado: requirements-api.lock
+        cuando: se ejecuta test_api_slim
+        entonces: api.main se importa solo con las dependencias de la API
+    puntos: 3
+    sprint: S7
+    estado: Pendiente
+    paso: 10
+    ids_enunciado: [IA3.5, R4]
+    evidencia:
+      - Back/Dockerfile
+      - Back/docker-compose.yml
+      - Back/.dockerignore
+      - Back/tests/test_api_slim.py
+      - docs/05_despliegue.md
+    nota: En el MVP Docker nunca se probó.
+
+  - id: HU-23
+    epica: E-08
+    rol: equipo del front
+    quiero: un paquete de corrida exportado desde la ejecución real del back
+    para: que el front muestre solo resultados reales, con hashes verificables
+    criterios_aceptacion:
+      - dado: la corrida local terminada
+        cuando: se ejecuta python Back/scripts/exportar_front.py
+        entonces: escribe Front/src/data/generated y Front/public/run con manifest.json (versión, git sha y SHA-256 por archivo)
+      - dado: los agregados exportados
+        cuando: se recalculan con DuckDB
+        entonces: coinciden (test_exportar_front)
+      - dado: golden.json
+        cuando: se revisa
+        entonces: contiene unos 300 clientes de test, los 3 de demo y unos 50 textos con las salidas de Python
+    puntos: 8
+    sprint: S7
+    estado: Pendiente
+    paso: 11
+    ids_enunciado: [F5, E4]
+    evidencia:
+      - Back/scripts/exportar_front.py
+      - Back/tests/test_exportar_front.py
+      - Front/public/run/manifest.json
+
+  - id: HU-24
+    epica: E-10
+    rol: visitante del sitio
+    quiero: que el simulador calcule en el navegador con el mismo modelo que sirve la API
+    para: probar clientes sin depender del back
+    criterios_aceptacion:
+      - dado: modelo_export.json y golden.json
+        cuando: se ejecuta npm --prefix Front run test
+        entonces: scoring.ts y texto.ts reproducen las salidas de Python con |Δ| < 1e-6
+      - dado: una diferencia mayor
+        cuando: se ejecuta el build
+        entonces: el build falla
+    puntos: 8
+    sprint: S8
+    estado: Pendiente
+    paso: 11
+    ids_enunciado: [R1, R4, F5]
+    evidencia:
+      - Front/src/engine/scoring.ts
+      - Front/src/engine/texto.ts
+      - Front/src/data/generated/modelo_export.json
+
+  - id: HU-25
+    epica: E-10
+    rol: docente evaluador
+    quiero: reproducir cada notebook ejecutado celda a celda en el sitio
+    para: revisar la evidencia sin instalar nada
+    criterios_aceptacion:
+      - dado: el JSON de un notebook exportado
+        cuando: se pulsa Ejecutar todo
+        entonces: el contador [n] avanza y las salidas aparecen con la duración real comprimida
+      - dado: un KPI del sitio
+        cuando: se abre su fuente
+        entonces: el reproductor se posiciona en la celda exacta que lo produjo
+    puntos: 5
+    sprint: S8
+    estado: Pendiente
+    paso: 11
+    ids_enunciado: [PF1, F5]
+    evidencia:
+      - Front/src/components/NotebookPlayer.tsx
+
+  - id: HU-26
+    epica: E-10
+    rol: docente evaluador
+    quiero: un capítulo por entregable con actividades, notebook, visualizaciones, aprendizaje y criterio de hecho
+    para: recorrer el proyecto paso a paso con su evidencia
+    criterios_aceptacion:
+      - dado: las rutas /metodologia y /paso/1 a /paso/11
+        cuando: se recorren con Playwright
+        entonces: cada capítulo muestra IDs, fase CRISP-DM, sprint, HU y "Lo que aprendimos"
+      - dado: cualquier cifra mostrada
+        cuando: se compara con el manifest
+        entonces: coincide con la card y con resultados_*.json (test de consistencia)
+    puntos: 8
+    sprint: S8
+    estado: Pendiente
+    paso: 11
+    ids_enunciado: [F5, E4, E1]
+    evidencia:
+      - Front/package.json
+      - Front/src/main.tsx
+      - Front/src/data/generated/gestion.json
+
+  - id: HU-27
+    epica: E-10
+    rol: integrador del banco
+    quiero: ver la API reproducida (Swagger, capturas reales y consola de prueba)
+    para: entender el contrato REST sin levantar el servidor
+    criterios_aceptacion:
+      - dado: las capturas reales de /health, /model/info, /predict, un 422 y /predict/text
+        cuando: se abre el capítulo del paso 10
+        entonces: se muestran petición, respuesta, estado y latencia medidos
+      - dado: el formulario de la consola
+        cuando: se pulsa Probar
+        entonces: responde el motor local con la misma forma que /predict
+    puntos: 5
+    sprint: S8
+    estado: Pendiente
+    paso: 10
+    ids_enunciado: [IA3.4, IA3.E3, F5]
+    evidencia:
+      - Front/src/components/ApiConsole.tsx
+      - Front/public/run/api_capturas.json
+
+  - id: HU-28
+    epica: E-10
+    rol: equipo del proyecto
+    quiero: que el sitio funcione con el back apagado y no haga peticiones fuera de sus estáticos
+    para: desplegarlo como estático en Vercel sin riesgo ni dependencias
+    criterios_aceptacion:
+      - dado: uvicorn y Docker detenidos
+        cuando: se ejecuta npx --prefix Front playwright test
+        entonces: todas las rutas cargan y la prueba falla si sale cualquier petición que no sea un estático del sitio
+      - dado: el build de producción
+        cuando: se mide
+        entonces: JS inicial < 250 KB gz y Lighthouse ≥ 90
+      - dado: .vercelignore
+        cuando: se revisa
+        entonces: excluye .env*, Back/, db/ y docs/
+    puntos: 5
+    sprint: S8
+    estado: Pendiente
+    paso: 12
+    ids_enunciado: [R4, F5]
+    evidencia:
+      - Front/playwright.config.ts
+      - vercel.json
+      - .vercelignore
+      - docs/gestion/adr/ADR-004-front-estatico-autonomo.md
+
+  - id: HU-29
+    epica: E-08
+    rol: docente evaluador
+    quiero: documentación coherente con el modelo v2.0.0
+    para: que ningún documento contradiga lo servido
+    criterios_aceptacion:
+      - dado: docs/README.md, 04_arquitectura, 05_despliegue, 06_informe y 07_libreto_front
+        cuando: se buscan versiones, umbrales y archivos citados
+        entonces: solo aparece la versión 2.0.0, los umbrales de ADR-002 y archivos que existen
+      - dado: report_dev.md v2
+        cuando: se lee
+        entonces: responde cada hallazgo de report_qa.md con su evidencia
+    puntos: 5
+    sprint: S8
+    estado: Pendiente
+    paso: 11
+    ids_enunciado: [E2, F5, R3]
+    evidencia:
+      - docs/README.md
+      - docs/04_arquitectura_backend.md
+      - docs/05_despliegue.md
+      - docs/06_informe_resultados.md
+      - docs/07_libreto_front.md
+      - report_dev.md
+
+  - id: HU-30
+    epica: E-01
+    rol: equipo del proyecto
+    quiero: lecciones aprendidas y el aprendizaje por unidad documentados
+    para: convertir los errores del MVP en controles y mostrar qué aporta cada unidad
+    criterios_aceptacion:
+      - dado: cada lección del MVP
+        cuando: se lee lecciones_aprendidas.md
+        entonces: tiene un control automático en v2 y el comando que lo comprueba
+      - dado: cada unidad del enunciado
+        cuando: se lee la sección Aprendizaje por unidad
+        entonces: indica qué se aprende y en qué notebook o paso se evidencia
+    puntos: 3
+    sprint: S8
+    estado: En progreso
+    paso: 0
+    ids_enunciado: [E1, R3, E4]
+    evidencia:
+      - docs/gestion/lecciones_aprendidas.md
+      - docs/gestion/sprints.md
+
+  - id: HU-31
+    epica: E-01
+    rol: docente evaluador
+    quiero: las decisiones de arquitectura documentadas como ADR
+    para: entender por qué se eligió cada alternativa y cómo se verifica
+    criterios_aceptacion:
+      - dado: docs/gestion/adr
+        cuando: se revisa
+        entonces: existen ADR-001 a ADR-008 en formato MADR con evidencia o verificación y un índice
+      - dado: un ADR con resultados pendientes
+        cuando: se ejecuta train.py v2
+        entonces: su sección Resultados se completa con las cifras de la card
+    puntos: 3
+    sprint: S5
+    estado: En progreso
+    paso: 0
+    ids_enunciado: [R3, E1]
+    evidencia:
+      - docs/gestion/adr/README.md
+      - docs/gestion/adr/ADR-001-fuente-unica-del-modelo.md
+      - docs/gestion/adr/ADR-002-costos-regla-de-chow.md
+      - docs/gestion/adr/ADR-003-equidad.md
+      - docs/gestion/adr/ADR-004-front-estatico-autonomo.md
+      - docs/gestion/adr/ADR-007-duckdb.md
+
+  - id: HU-32
+    epica: E-09
+    rol: equipo del proyecto
+    quiero: un gate de calidad local en un solo comando
+    para: no integrar nada que rompa lint, tipos, tests, DoD o build
+    criterios_aceptacion:
+      - dado: Back/scripts/check.py
+        cuando: se ejecuta
+        entonces: corre ruff, mypy src api, pytest --cov, verificar_dod.py y el build del front, y sale 0 solo si todo pasa
+      - dado: Back/
+        cuando: se ejecuta la suite
+        entonces: un test falla si aparece un archivo .R, .ps1 u otro lenguaje distinto de Python
+    puntos: 5
+    sprint: S5
+    estado: Pendiente
+    paso: 0
+    ids_enunciado: [R3, R1]
+    evidencia:
+      - Back/scripts/check.py
+      - Back/tests/test_proyecto.py
+
+  - id: HU-33
+    epica: E-03
+    rol: científico de datos
+    quiero: consultas analíticas con DuckDB sobre el CSV de registro
+    para: hacer filtrado, selección y agregaciones en SQL, reproducibles y rápidas
+    criterios_aceptacion:
+      - dado: db/credit_risk.csv
+        cuando: se ejecutan las consultas DuckDB de los notebooks 02 y 04
+        entonces: los resultados coinciden con los equivalentes en pandas
+      - dado: el CSV
+        cuando: termina cualquier consulta
+        entonces: el archivo no se modifica (sigue siendo el dato de registro)
+    puntos: 3
+    sprint: S6
+    estado: Pendiente
+    paso: 4
+    ids_enunciado: [P1.4, IA2.2]
+    evidencia:
+      - Back/notebooks/02_exploracion_preliminar.ipynb
+      - Back/notebooks/04_eda_transformacion_visualizacion.ipynb
+      - docs/gestion/adr/ADR-007-duckdb.md
+
+  - id: HU-34
+    epica: E-03
+    rol: docente evaluador
+    quiero: la metodología replicada sobre un dataset real (German Credit, UCI)
+    para: comprobar que el enfoque no depende del dataset sintético
+    criterios_aceptacion:
+      - dado: German Credit en db/external con su licencia
+        cuando: se ejecuta el apéndice del notebook 05
+        entonces: se reportan AUC por CV y una auditoría de equidad
+    puntos: 3
+    sprint: S6
+    estado: Pendiente
+    paso: 5
+    ids_enunciado: [E3]
+    evidencia:
+      - db/external
+      - Back/notebooks/05_modelos_clasicos.ipynb
+
+  - id: HU-35
+    epica: E-03
+    rol: científico de datos
+    quiero: los verbos de dplyr y la gramática de ggplot2 aplicados con equivalentes en Python
+    para: cubrir IA2.1 e IA2.3 sin salir de Python
+    criterios_aceptacion:
+      - dado: la sección dplyr del notebook 04
+        cuando: se ejecuta
+        entonces: filter, select, mutate, group_by+summarise, arrange y %>% se aplican con pandas encadenado y hay tabla de equivalencias (R solo como referencia)
+      - dado: la sección ggplot2
+        cuando: se ejecuta
+        entonces: hay al menos 3 gráficos plotnine (ggplot + aes + geom_* + facet_wrap + theme) interpretados
+    puntos: 3
+    sprint: S6
+    estado: Pendiente
+    paso: 4
+    ids_enunciado: [IA2.1, IA2.3]
+    evidencia:
+      - Back/notebooks/04_eda_transformacion_visualizacion.ipynb

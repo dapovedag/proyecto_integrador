@@ -219,3 +219,4 @@ Flujo: `F1 → F2 → F3 → F4 → F5`
 | IA3.E1 | Modelo NLP de riesgo | 7 | [ ] |
 | IA3.E2 | Red neuronal entrenada y evaluada | 6 | [ ] |
 | IA3.E3 | API RESTful | 10 | [ ] |
+| **Total acreditado** | Calculado con `python Back/scripts/generar_evidencia.py` | — | **0/47** |
