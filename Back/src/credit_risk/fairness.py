@@ -25,6 +25,8 @@ from credit_risk.models import Umbrales, decidir
 def grupo_edad(edad: pd.Series | np.ndarray) -> np.ndarray:
     """Grupo de edad para auditoría (independiente de ``rango_edad``, que es una variable del modelo)."""
     e = pd.to_numeric(pd.Series(np.asarray(edad)), errors="coerce")
+    lo, hi = config.EDAD_VALIDA
+    e = e.where(e.between(lo, hi))  # edades imposibles (p. ej. 150) → desconocida, no "60+"
     g = pd.cut(e, config.GRUPOS_EDAD_BINS, labels=config.GRUPOS_EDAD_LABELS).astype(object)
     return g.where(e.notna(), config.GRUPO_EDAD_DESCONOCIDO).fillna(config.GRUPO_EDAD_DESCONOCIDO).to_numpy()
 

@@ -15,8 +15,9 @@ from credit_risk.monitoring import estado_psi, psi, psi_por_variable
 
 
 def test_grupos_de_edad() -> None:
-    g = grupo_edad(pd.Series([18, 29, 30, 59, 60, np.nan]))
-    assert g.tolist() == ["18-29", "18-29", "30-59", "30-59", "60+", config.GRUPO_EDAD_DESCONOCIDO]
+    g = grupo_edad(pd.Series([18, 29, 30, 59, 60, np.nan, 150, 5]))
+    d = config.GRUPO_EDAD_DESCONOCIDO
+    assert g.tolist() == ["18-29", "18-29", "30-59", "30-59", "60+", d, d, d]
 
 
 def test_kamiran_calders_independiza_grupo_y_objetivo() -> None:

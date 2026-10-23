@@ -1,0 +1,50 @@
+[
+  {
+    "variable": "sexo",
+    "tipo": "protegida (sexo)",
+    "uso_en_modelo": "NO: solo auditoría",
+    "grupos_auditoria": "M / F",
+    "auditoria_paso_8": "DI de la aprobación automática con IC bootstrap 95 %",
+    "riesgo": "Discriminación directa por sexo"
+  },
+  {
+    "variable": "edad",
+    "tipo": "protegida (edad)",
+    "uso_en_modelo": "Sí, auditada (variante sin_edad)",
+    "grupos_auditoria": "18-29 / 30-59 / 60+ / desconocida",
+    "auditoria_paso_8": "DI con IC, igualdad de oportunidades; variantes sin_edad y reweighing",
+    "riesgo": "Penalizar a jóvenes o a adultos mayores"
+  },
+  {
+    "variable": "estado_civil",
+    "tipo": "sensible (situación familiar)",
+    "uso_en_modelo": "Sí, vigilada",
+    "grupos_auditoria": "Soltero / Casado / Union_libre / Divorciado / Viudo",
+    "auditoria_paso_8": "Tasa observada por grupo (descriptiva; fuera del criterio DI de ADR-003)",
+    "riesgo": "Discriminación por situación familiar"
+  },
+  {
+    "variable": "personas_a_cargo",
+    "tipo": "proxy potencial",
+    "uso_en_modelo": "Sí, vigilada",
+    "grupos_auditoria": "-",
+    "auditoria_paso_8": "Importancia y explicaciones (SHAP)",
+    "riesgo": "Proxy de sexo o de estado civil"
+  },
+  {
+    "variable": "tipo_vivienda",
+    "tipo": "proxy socioeconómico",
+    "uso_en_modelo": "Sí, vigilada",
+    "grupos_auditoria": "-",
+    "auditoria_paso_8": "Importancia y explicaciones (SHAP)",
+    "riesgo": "Proxy de nivel socioeconómico"
+  },
+  {
+    "variable": "texto_solicitud",
+    "tipo": "texto libre",
+    "uso_en_modelo": "No en el modelo servido (paso 7)",
+    "grupos_auditoria": "-",
+    "auditoria_paso_8": "-",
+    "riesgo": "Puede revelar datos sensibles o sesgos de redacción"
+  }
+]
