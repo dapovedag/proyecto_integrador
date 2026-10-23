@@ -35,3 +35,10 @@ En el MVP el nb09 corrió sin PySpark (respaldo con pandas y pyarrow), lo que no
 - S5a: prueba de humo que escribe un Parquet dentro del contenedor (registrada en la review de S5).
 - `docker compose -f Back/docker-compose.spark.yml run …` ejecuta nb09; existe `Back/models/resultados_spark.json`.
 - `python Back/scripts/verificar_dod.py`: nb09 → `artefactos`.
+
+## Ajustes tras la implementación (2026-10-23)
+
+- **Sin `pip install -e` dentro del contenedor.** La imagen trae Python 3.13 y el `pyproject` exige `<3.13` y `numpy==1.26.4`. Por eso `credit_risk` se expone con `PYTHONPATH=/work/Back/src`. El notebook 09 solo usa funciones puras del paquete.
+- **Disco local del contenedor para escribir.** Escribir Parquet directamente sobre el montaje de Windows (9p) tardó unos 390 s por escritura, frente a unos 3 s en `/tmp`. Spark escribe en el disco del contenedor y copia el resultado final a `db/processed/spark/`.
+- **Resultado:** ejecución real en 188,7 s. MLlib obtiene AUC 0,8441 en el mismo test que scikit-learn (0,8459), con una correlación de probabilidades de 0,995. El scoring por lotes de 12.000 solicitudes tarda 1,9 s.
+- **Versiones en el contenedor:** el kernel se registra como `credit-risk (Python 3.13 · PySpark 4.2, Docker)` y scikit-learn es la 1.9.1. Queda anotado en `resultados_spark.json` y no afecta a la comparación, porque ambos modelos se entrenan en el contenedor.

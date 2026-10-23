@@ -1,0 +1,15 @@
+# PySpark en Docker (ADR-005 · IA3.6). Separado de la API (docker-compose.yml).
+# Uso desde Back/:
+#   docker compose -f docker-compose.spark.yml run --rm spark notebooks/09_spark_big_data.ipynb --completo
+# o, con el registro de tiempos y el saneo de rutas:
+#   python scripts/ejecutar_notebooks.py 09 [--rapido]
+services:
+  spark:
+    build:
+      context: ./docker/spark
+    image: riesgo-credito-spark:2.0.0
+    volumes:
+      - ..:/work            # raíz del proyecto: db/, Back/src (credit_risk), Back/notebooks, Back/models
+    working_dir: /work/Back
+    healthcheck:
+      disable: true         # la imagen base vigila un servidor Jupyter que aquí no se levanta
