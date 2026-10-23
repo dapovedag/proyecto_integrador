@@ -25,7 +25,7 @@ os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 try:  # torch antes que scikit-learn (ver docstring)
     import torch as _torch_mod  # noqa: F401
 except (ImportError, OSError):  # pragma: no cover - sin el extra [nlp] o DLL ya en conflicto
-    _torch_mod = None
+    _torch_mod = None  # type: ignore[assignment]
 
 import numpy as np
 import pandas as pd
@@ -298,5 +298,5 @@ def proyeccion_2d(X: np.ndarray, y: np.ndarray, n_muestra: int = 1500,
     pca = PCA(n_components=2, random_state=semilla).fit(X)
     idx = np.random.default_rng(semilla).choice(len(X), size=min(n_muestra, len(X)), replace=False)
     Z = pca.transform(X[idx])
-    puntos = [[round(float(a), 4), round(float(b), 4), int(c)] for (a, b), c in zip(Z, np.asarray(y)[idx])]
+    puntos = [[round(float(a), 4), round(float(b), 4), int(c)] for (a, b), c in zip(Z, np.asarray(y)[idx], strict=True)]
     return puntos, pca.explained_variance_ratio_.round(4).tolist()

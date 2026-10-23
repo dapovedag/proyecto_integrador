@@ -44,7 +44,8 @@ ESTADOS = ("Pendiente", "En progreso", "En revisión", "Hecho")
 FIBONACCI = {1, 2, 3, 5, 8, 13, 21}
 TITULO_CHECKLIST = "## Checklist global"
 ID_TOTAL = "**Total acreditado**"
-AVISO = "<!-- Archivo generado por Back/scripts/generar_evidencia.py desde docs/gestion/backlog.yaml. No editar a mano. -->"
+AVISO = ("<!-- Archivo generado por Back/scripts/generar_evidencia.py desde docs/gestion/backlog.yaml. "
+         "No editar a mano. -->")
 
 # IDs individuales del enunciado (docs/01_enunciado.md). Las filas agrupadas del checklist
 # (p. ej. "P1.E1–E4") se expanden a estos IDs.
@@ -233,7 +234,7 @@ def _partir_fila(linea: str) -> list[str]:
 def localizar_checklist(lineas: list[str]) -> tuple[int, int]:
     """Índices [inicio, fin) de las líneas de la tabla del checklist (cabecera incluida)."""
     try:
-        titulo = next(i for i, l in enumerate(lineas) if l.startswith(TITULO_CHECKLIST))
+        titulo = next(i for i, ln in enumerate(lineas) if ln.startswith(TITULO_CHECKLIST))
     except StopIteration as exc:
         raise SystemExit(f"No se encontró '{TITULO_CHECKLIST}' en {rel(ENUNCIADO_MD)}") from exc
     inicio = next(i for i in range(titulo + 1, len(lineas)) if lineas[i].lstrip().startswith("|"))
@@ -266,7 +267,8 @@ def reescribir_checklist(texto: str, filas: list[FilaChecklist]) -> str:
     for f in filas:
         nuevas.append(f"| {f.id} | {f.item} | {f.paso} | {'[x]' if f.acreditada else '[ ]'} |")
     n = sum(f.acreditada for f in filas)
-    nuevas.append(f"| {ID_TOTAL} | Calculado con `python Back/scripts/generar_evidencia.py` | — | **{n}/{len(filas)}** |")
+    calculo = "Calculado con `python Back/scripts/generar_evidencia.py`"
+    nuevas.append(f"| {ID_TOTAL} | {calculo} | — | **{n}/{len(filas)}** |")
     return "\n".join(lineas[:inicio] + nuevas + lineas[fin:])
 
 
@@ -314,7 +316,8 @@ def generar_backlog_md(backlog: dict[str, Any], historias: list[Historia],
         o.append(f"| {e} | {res[e]['historias']} | {res[e]['puntos']} |")
     o.append(f"| **Total** | **{len(historias)}** | **{sum(h.puntos or 0 for h in historias)}** |")
     o += ["", "## Puntos por sprint", "",
-          "| Sprint | Fechas | Objetivo | Historias | Comprometidos | Hechos (acreditados) |", "|---|---|---|---|---|---|"]
+          "| Sprint | Fechas | Objetivo | Historias | Comprometidos | Hechos (acreditados) |",
+          "|---|---|---|---|---|---|"]
     for s in sprints:
         comp = "no estimado" if s["puntos_comprometidos"] is None else s["puntos_comprometidos"]
         hech = "no estimado" if s["puntos_hechos"] is None else s["puntos_hechos"]
@@ -358,6 +361,9 @@ def generar_trazabilidad_md(filas: list[FilaChecklist], historias: list[Historia
     cubiertos = {i for h in historias for i in h.datos["ids_enunciado"]}
     sin_cubrir = [i for i in IDS_ENUNCIADO if i not in cubiertos]
     n = sum(f.acreditada for f in filas)
+    resumen_dod = (f"`dod_status.json` del {dod.get('verificado')}, commit {dod.get('commit')}, "
+                   f"fallos {dod.get('fallos')}" if dod else
+                   "sin `dod_status.json` (ejecutar `python Back/scripts/verificar_dod.py`)")
     o = [AVISO, "", "# Matriz de trazabilidad", "",
          "> ID del enunciado → historia → paso del plan → evidencia → estado. Se calcula desde "
          "[`backlog.yaml`](backlog.yaml) y, si existe, `Back/reports/dod_status.json`.",
@@ -365,10 +371,11 @@ def generar_trazabilidad_md(filas: list[FilaChecklist], historias: list[Historia
          "de evidencia existen y sus notebooks cumplen la DoD.", "",
          "## Resumen", "",
          f"- Filas del checklist acreditadas: **{n}/{len(filas)}**.",
-         f"- IDs individuales cubiertos por al menos una HU: **{len(IDS_ENUNCIADO) - len(sin_cubrir)}/{len(IDS_ENUNCIADO)}**"
+         f"- IDs individuales cubiertos por al menos una HU: "
+         f"**{len(IDS_ENUNCIADO) - len(sin_cubrir)}/{len(IDS_ENUNCIADO)}**"
          + (f" (sin cubrir: {', '.join(sin_cubrir)})." if sin_cubrir else "."),
          f"- Historias acreditadas: **{sum(h.acreditada for h in historias)}/{len(historias)}**.",
-         f"- DoD de notebooks: {'`dod_status.json` del ' + str(dod.get('verificado')) + ', commit ' + str(dod.get('commit')) + ', fallos ' + str(dod.get('fallos')) if dod else 'sin `dod_status.json` (ejecutar `python Back/scripts/verificar_dod.py`)'}.",
+         f"- DoD de notebooks: {resumen_dod}.",
          "", "## Matriz por fila del checklist", "",
          "| ID | Ítem | Paso | Historias (estado) | Evidencia existente | Acreditado |", "|---|---|---|---|---|---|"]
     for f in filas:
