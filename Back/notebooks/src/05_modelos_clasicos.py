@@ -119,10 +119,11 @@ figura_front("curva_pr", "Curvas precisión-recall en test",
              ejes={"x": "Recall (impagos detectados)", "y": "Precisión"}, clave="pr_clasicos")
 
 # %% [markdown]
-# **Interpretación.** Todas las curvas de los modelos entrenados quedan por encima de la diagonal (azar) y de
-# la línea base, cuya curva coincide con ella. Las curvas de la regresión logística y del boosting casi se
-# superponen: con estos datos un modelo lineal ya capta casi toda la señal. En precisión-recall, la línea
-# punteada es la prevalencia (35,6 %), que es lo que obtendría un clasificador sin información.
+# **Interpretación.** Todos los modelos entrenados quedan muy por encima de la diagonal; la línea base
+# coincide con ella (AUC 0,50). La regresión logística (AUC 0,846) y el Random Forest (0,840) casi se
+# superponen, mientras que el árbol (0,821) y el boosting con hiperparámetros por defecto (0,829) quedan por
+# debajo: con estos datos un modelo lineal capta casi toda la señal. En precisión-recall, la línea punteada es
+# la prevalencia (35,6 %), lo que obtendría un clasificador sin información; la logística alcanza PR-AUC 0,768.
 
 # %%
 fig, axes = plt.subplots(1, len(probs), figsize=(16, 3.4))
@@ -142,9 +143,10 @@ for k, (nombre, p) in enumerate(probs.items()):
                  ejes={"x": "Predicción", "y": "Real"}, clave=f"confusion_modelo_{k}", nota=f"{nombre} · umbral {UMBRAL:.2f}")
 
 # %% [markdown]
-# **Interpretación.** Con el umbral de costo 0,25 los modelos priorizan detectar impagos (falsos negativos
-# caros) a costa de rechazar algunos buenos pagadores. La línea base predice siempre la misma clase, por eso
-# su matriz tiene una sola columna ocupada: es la referencia mínima que cualquier modelo debe superar.
+# **Interpretación.** Con el umbral de costo 0,25 los modelos priorizan detectar impagos (un falso negativo
+# cuesta tres veces más que un falso positivo): la logística detecta el 84,5 % de los impagos (recall) con una
+# precisión del 58,6 %. La línea base asigna a todos la prevalencia (0,356 ≥ 0,25), así que marca a todos como
+# impago: una sola columna ocupada, recall 1 y precisión igual a la prevalencia.
 
 # %% [markdown]
 # ## 3. Interpretabilidad
@@ -170,9 +172,11 @@ figura_front("barras_h", "Regresión logística: 15 coeficientes de mayor magnit
              opciones={"color_por": "signo"})
 
 # %% [markdown]
-# **Interpretación.** En rojo, lo que **aumenta** el riesgo; en verde, lo que lo **reduce**. El historial de
-# pago (moras), la carga financiera (deuda/ingreso, cuota/ingreso, uso de cupo) y el puntaje de buró dominan,
-# lo que es coherente con el negocio de crédito. Ninguna variable sensible (sexo) participa en el modelo.
+# **Interpretación.** En rojo, lo que **aumenta** el riesgo; en verde, lo que lo **reduce**. Dominan el puntaje
+# de buró (−0,86 por desviación estándar), la relación deuda/ingreso (+0,72), el uso del cupo de tarjetas (+0,60)
+# y las moras recientes (+0,37), coherente con el negocio de crédito. El propósito *Vivienda* tiene coeficiente
+# negativo aunque su tasa bruta de impago es alta: es un efecto **condicional** (su riesgo ya lo explican el
+# monto y la carga financiera), no marginal. El sexo no participa en el modelo.
 
 # %%
 imp = importancia_permutacion(modelos["Regresión logística"], X_te, y_te, n_repeats=2 if FAST else 5,
@@ -188,9 +192,10 @@ figura_front("barras_h", "Importancia por permutación (regresión logística, t
              ejes={"x": "Caída del ROC-AUC", "y": "Variable de entrada"}, clave="permutacion_lr")
 
 # %% [markdown]
-# **Interpretación.** La permutación confirma el ranking de los coeficientes con una métrica independiente del
-# modelo: desordenar el puntaje de buró o las moras hace caer el AUC mucho más que cualquier variable
-# demográfica. Las variables con importancia cercana a cero aportan poco a la discriminación.
+# **Interpretación.** La permutación confirma el ranking con una métrica independiente de los coeficientes:
+# desordenar el puntaje de buró hace caer el AUC en 0,083, la deuda/ingreso en 0,060, el uso de cupo en 0,033 y
+# las moras en 0,015; la edad y las demás variables demográficas quedan prácticamente en cero. Cuatro variables
+# financieras concentran casi toda la capacidad de discriminación.
 
 # %% [markdown]
 # ## 4. Resultados para la comparación global (pasos 6, 7 y 8)
@@ -255,9 +260,11 @@ res.replicacion_german_credit = replica
 replica
 
 # %% [markdown]
-# **Interpretación.** Sobre datos reales el mismo protocolo obtiene un AUC propio de este dataset (que es
-# pequeño y más difícil), y la auditoría de equidad por edad funciona igual: el código de auditoría no
-# depende del dataset. Es la evidencia de que la solución es trasladable (R4).
+# **Interpretación.** Sobre datos reales el mismo protocolo obtiene AUC 0,786 ± 0,020 (un dataset pequeño y más
+# difícil). La auditoría revela algo importante: con la misma política, los menores de 25 años se aprobarían
+# automáticamente el 24,8 % de las veces frente al 45,2 % de los mayores (DI 0,55). La disparidad por edad no es
+# un artefacto del dataset sintético: aparece con más fuerza en datos reales, y por eso la auditoría y la
+# mitigación del paso 8 son indispensables para implementar la solución (R4).
 
 # %%
 ruta = guardar_resultados(res, "resultados_clasicos")
@@ -272,4 +279,14 @@ display(Markdown(
 # %% [markdown]
 # ## Conclusiones
 #
-# *(Se redactan después de la ejecución, a partir de las salidas reales de este notebook.)*
+# 1. **Todos los modelos superan con claridad a la línea base** (AUC 0,50) y a la meta del proyecto
+#    (AUC ≥ 0,70): el mejor alcanza 0,858 en CV y 0,846 en test, con KS 0,545.
+# 2. **La regresión logística gana** en CV (0,8578 ± 0,005) y en test, entrena en menos de un segundo y es la
+#    más interpretable; el Random Forest queda cerca (0,853 en CV) y el boosting por defecto, por debajo. La
+#    selección se hizo solo con CV en train; test se usó una vez, después de congelarla.
+# 3. **Cuatro variables financieras explican casi todo**: puntaje de buró, deuda/ingreso, uso de cupo y moras.
+#    Las demográficas aportan casi nada a la discriminación, lo que es deseable desde la ética.
+# 4. **La metodología es trasladable**: replicada en German Credit (datos reales) obtiene AUC 0,786 y destapa una
+#    disparidad por edad fuerte (DI 0,55), que justifica la auditoría y la mitigación del paso 8.
+# 5. Los resultados quedan en `resultados_clasicos.json` para la comparación con redes neuronales (paso 6), NLP
+#    (paso 7), Spark (paso 9) y el modelo servido (paso 8).
