@@ -175,48 +175,48 @@ Flujo: `F1 → F2 → F3 → F4 → F5`
 | PF1 | Notebook final que predice la probabilidad de impago | 11 | [ ] |
 | E1 | Metodología ágil | 0 | [ ] |
 | E2 | Todas las fases del proceso analítico | 1–12 | [ ] |
-| E3 | Datos reales o realistas del sector financiero | 2 (dato: [03_contrato_datos.md](03_contrato_datos.md)) | [ ] |
+| E3 | Datos reales o realistas del sector financiero | 2 (dato: [03_contrato_datos.md](03_contrato_datos.md)) | [x] |
 | E4 | Integración de los dos módulos | 11 | [ ] |
-| E5 | Problema en contexto | 1 | [ ] |
-| F1 | Definir el problema | 1 | [ ] |
-| F2 | Explorar y preparar los datos | 2, 3, 4 | [ ] |
-| F3 | Analizar y modelar | 5, 6, 7 | [ ] |
-| F4 | Evaluar y optimizar | 8 | [ ] |
+| E5 | Problema en contexto | 1 | [x] |
+| F1 | Definir el problema | 1 | [x] |
+| F2 | Explorar y preparar los datos | 2, 3, 4 | [x] |
+| F3 | Analizar y modelar | 5, 6, 7 | [x] |
+| F4 | Evaluar y optimizar | 8 | [x] |
 | F5 | Desplegar y comunicar | 10, 11, 12 | [ ] |
 | R1 | Modelo funcional | 8, 12 | [ ] |
-| R2 | Técnicas de análisis de datos, IA y NLP | 4–7 | [ ] |
+| R2 | Técnicas de análisis de datos, IA y NLP | 4–7 | [x] |
 | R3 | Buenas prácticas de gestión | 0 | [ ] |
 | R4 | Potencial de implementación real | 10, 12 | [ ] |
-| P1.1 | Entorno Colab/Jupyter | 2 | [ ] |
-| P1.2 | Pandas, NumPy, Matplotlib, Seaborn | 2 | [ ] |
-| P1.3 | Cargar y explorar los datos | 2 | [ ] |
-| P1.4 | Filtrado, selección, ordenamiento, agregaciones | 2 | [ ] |
-| P1.5 | Histogramas, dispersión, boxplots | 2 | [ ] |
-| P1.E1–E4 | Entregable de Prog-U1 | 2 | [ ] |
-| P2.1 | Faltantes y duplicados | 3 | [ ] |
-| P2.2 | One-Hot / Label Encoding | 3 | [ ] |
-| P2.3 | Normalización y estandarización | 3 | [ ] |
-| P2.4 | Nuevas variables | 3 | [ ] |
-| P2.5 | Reducción de dimensionalidad | 3 | [ ] |
-| P2.6 | División train/test | 3 | [ ] |
+| P1.1 | Entorno Colab/Jupyter | 2 | [x] |
+| P1.2 | Pandas, NumPy, Matplotlib, Seaborn | 2 | [x] |
+| P1.3 | Cargar y explorar los datos | 2 | [x] |
+| P1.4 | Filtrado, selección, ordenamiento, agregaciones | 2 | [x] |
+| P1.5 | Histogramas, dispersión, boxplots | 2 | [x] |
+| P1.E1–E4 | Entregable de Prog-U1 | 2 | [x] |
+| P2.1 | Faltantes y duplicados | 3 | [x] |
+| P2.2 | One-Hot / Label Encoding | 3 | [x] |
+| P2.3 | Normalización y estandarización | 3 | [x] |
+| P2.4 | Nuevas variables | 3 | [x] |
+| P2.5 | Reducción de dimensionalidad | 3 | [x] |
+| P2.6 | División train/test | 3 | [x] |
 | P2.E1–E4 | Entregable de Prog-U2 | 3 | [ ] |
-| IA1.1 | Explorar datasets y definir el problema | 1 | [ ] |
-| IA1.2 | Preprocesamiento y EDA | 4 | [ ] |
-| IA1.3 | Análisis ético | 1, 8 | [ ] |
-| IA1.E1–E2 | Entregable de IA-U1 | 4 | [ ] |
-| IA2.1 | Pandas y dplyr | 4 | [ ] |
-| IA2.2 | Filtrado, selección, agregación | 4 | [ ] |
-| IA2.3 | Matplotlib, Seaborn, ggplot2 | 4 | [ ] |
-| IA2.4 | Normalización, estandarización, PCA | 4 | [ ] |
-| IA2.5 | Atípicos | 4 | [ ] |
+| IA1.1 | Explorar datasets y definir el problema | 1 | [x] |
+| IA1.2 | Preprocesamiento y EDA | 4 | [x] |
+| IA1.3 | Análisis ético | 1, 8 | [x] |
+| IA1.E1–E2 | Entregable de IA-U1 | 4 | [x] |
+| IA2.1 | Pandas y dplyr | 4 | [x] |
+| IA2.2 | Filtrado, selección, agregación | 4 | [x] |
+| IA2.3 | Matplotlib, Seaborn, ggplot2 | 4 | [x] |
+| IA2.4 | Normalización, estandarización, PCA | 4 | [x] |
+| IA2.5 | Atípicos | 4 | [x] |
 | IA2.E1–E2 | Entregable de IA-U2 | 4 | [ ] |
-| IA3.1 | NLP: texto, sentimiento, BERT, GPT | 7 | [ ] |
-| IA3.2 | CNN/RNN en TensorFlow/Keras | 6 | [ ] |
-| IA3.3 | Clásicos vs Deep Learning | 5, 6, 8 | [ ] |
+| IA3.1 | NLP: texto, sentimiento, BERT, GPT | 7 | [x] |
+| IA3.2 | CNN/RNN en TensorFlow/Keras | 6 | [x] |
+| IA3.3 | Clásicos vs Deep Learning | 5, 6, 8 | [x] |
 | IA3.4 | API Flask/FastAPI | 10 | [ ] |
-| IA3.5 | Docker / nube | 10 | [ ] |
-| IA3.6 | Big Data (Spark/Hadoop) | 9 | [ ] |
-| IA3.E1 | Modelo NLP de riesgo | 7 | [ ] |
-| IA3.E2 | Red neuronal entrenada y evaluada | 6 | [ ] |
+| IA3.5 | Docker / nube | 10 | [x] |
+| IA3.6 | Big Data (Spark/Hadoop) | 9 | [x] |
+| IA3.E1 | Modelo NLP de riesgo | 7 | [x] |
+| IA3.E2 | Red neuronal entrenada y evaluada | 6 | [x] |
 | IA3.E3 | API RESTful | 10 | [ ] |
-| **Total acreditado** | Calculado con `python Back/scripts/generar_evidencia.py` | — | **0/47** |
+| **Total acreditado** | Calculado con `python Back/scripts/generar_evidencia.py` | — | **35/47** |

@@ -56,39 +56,43 @@ sprints:
   - id: S5
     nombre: Fundaciones
     inicio: "2026-10-23"
-    fin: "2026-10-29"
+    fin: "2026-10-23"
     objetivo: >-
       Entorno probado y un único paquete credit_risk con tests, DoD automatizada y gestión
       verificable (backlog único, DoR, DoD multinivel, ADRs, trazabilidad calculada).
     fase: [F2, F3]
-    burndown: []
+    burndown: git
+    nota: Ejecutado en una ventana comprimida el 2026-10-23 (rama feat/v2-senior); el burndown se calcula desde los commits que citan cada HU.
   - id: S6
     nombre: Datos y modelado
-    inicio: "2026-10-30"
-    fin: "2026-11-05"
+    inicio: "2026-10-23"
+    fin: "2026-10-23"
     objetivo: >-
       Notebooks 01–07 y 09 reescritos sobre credit_risk y ejecutados con papermill (kernel
       credit-risk), con sus artefactos y conclusiones redactadas después de ver las salidas.
     fase: [F1, F2, F3]
-    burndown: []
+    burndown: git
+    nota: Ejecutado en una ventana comprimida el 2026-10-23 (rama feat/v2-senior); el burndown se calcula desde los commits que citan cada HU.
   - id: S7
     nombre: Modelo v2.0.0
-    inicio: "2026-11-06"
-    fin: "2026-11-12"
+    inicio: "2026-10-23"
+    fin: "2026-10-23"
     objetivo: >-
       Modelo v2.0.0 seleccionado sin fuga, calibrado, con política aprobar/revisar/rechazar,
       equidad evaluada y servido por la API v2 en Docker; paquete de corrida exportado.
     fase: [F4, F5]
-    burndown: []
+    burndown: git
+    nota: Ejecutado en una ventana comprimida el 2026-10-23 (rama feat/v2-senior); el burndown se calcula desde los commits que citan cada HU.
   - id: S8
     nombre: Producto y comunicación
-    inicio: "2026-11-13"
-    fin: "2026-11-19"
+    inicio: "2026-10-23"
+    fin: "2026-10-23"
     objetivo: >-
       Front estático autónomo con un capítulo por entregable y motor exacto, documentación
       coherente con v2.0.0 y checklist del enunciado acreditado por cálculo.
     fase: [F5]
-    burndown: []
+    burndown: git
+    nota: Ejecutado en una ventana comprimida el 2026-10-23 (rama feat/v2-senior); el burndown se calcula desde los commits que citan cada HU.
 
 epicas:
   - id: E-01
@@ -169,7 +173,7 @@ historias:
     puntos: 3
     sprint: S6
     sprint_mvp: S1
-    estado: Pendiente
+    estado: Hecho
     paso: 1
     ids_enunciado: [IA1.1, IA1.3, E5, F1]
     evidencia:
@@ -192,7 +196,7 @@ historias:
     puntos: 3
     sprint: S6
     sprint_mvp: S1
-    estado: Pendiente
+    estado: Hecho
     paso: 2
     ids_enunciado: [P1.1, P1.2, P1.3, P1.4, P1.5, P1.E1, P1.E2, P1.E3, P1.E4, E3]
     evidencia:
@@ -215,7 +219,7 @@ historias:
     puntos: 5
     sprint: S6
     sprint_mvp: S2
-    estado: Pendiente
+    estado: Hecho
     paso: 3
     ids_enunciado: [P2.1, P2.2, P2.3, P2.4, P2.5, P2.6, P2.E1, P2.E2, P2.E3, P2.E4, F2]
     evidencia:
@@ -242,7 +246,7 @@ historias:
     puntos: 8
     sprint: S6
     sprint_mvp: S2
-    estado: Pendiente
+    estado: Hecho
     paso: 4
     ids_enunciado: [IA1.2, IA1.E1, IA1.E2, IA2.2, IA2.4, IA2.5, IA2.E1, IA2.E2, F2, R2]
     evidencia:
@@ -265,7 +269,7 @@ historias:
     puntos: 5
     sprint: S6
     sprint_mvp: S3
-    estado: Pendiente
+    estado: Hecho
     paso: 5
     ids_enunciado: [F3, IA3.3, R2]
     evidencia:
@@ -288,7 +292,7 @@ historias:
     puntos: 8
     sprint: S6
     sprint_mvp: S3
-    estado: En progreso
+    estado: Hecho
     paso: 6
     ids_enunciado: [IA3.2, IA3.E2, IA3.3, F3, R2]
     evidencia:
@@ -313,7 +317,7 @@ historias:
     puntos: 8
     sprint: S6
     sprint_mvp: S3
-    estado: En progreso
+    estado: Hecho
     paso: 7
     ids_enunciado: [IA3.1, IA3.E1, F3, R2]
     evidencia:
@@ -339,7 +343,7 @@ historias:
     puntos: 8
     sprint: S7
     sprint_mvp: S3
-    estado: Pendiente
+    estado: Hecho
     paso: 8
     ids_enunciado: [F4, IA1.3, IA3.3, R1]
     evidencia:
@@ -365,7 +369,7 @@ historias:
     puntos: 5
     sprint: S6
     sprint_mvp: S4
-    estado: Pendiente
+    estado: Hecho
     paso: 9
     ids_enunciado: [IA3.6]
     evidencia:
@@ -392,7 +396,7 @@ historias:
     puntos: 5
     sprint: S7
     sprint_mvp: S4
-    estado: En progreso
+    estado: Hecho
     paso: 10
     ids_enunciado: [IA3.4, IA3.E3, R4, F5]
     evidencia:
@@ -418,7 +422,7 @@ historias:
     puntos: 5
     sprint: S8
     sprint_mvp: S4
-    estado: Pendiente
+    estado: Hecho
     paso: 11
     ids_enunciado: [PF1, E2, E4, F5]
     evidencia:
@@ -442,7 +446,7 @@ historias:
     puntos: 3
     sprint: S8
     sprint_mvp: S4
-    estado: Pendiente
+    estado: Hecho
     paso: 12
     ids_enunciado: [R1, R4]
     evidencia:
@@ -468,7 +472,7 @@ historias:
         entonces: no carga shap, torch, TensorFlow ni matplotlib (imports perezosos)
     puntos: 8
     sprint: S5
-    estado: En progreso
+    estado: Hecho
     paso: 3
     ids_enunciado: [E2, R1]
     evidencia:
@@ -498,7 +502,7 @@ historias:
         entonces: jupyter kernelspec list muestra credit-risk
     puntos: 3
     sprint: S5
-    estado: En progreso
+    estado: Hecho
     paso: 2
     ids_enunciado: [P1.1, P1.2]
     evidencia:
@@ -522,7 +526,7 @@ historias:
         entonces: sale con código 1 e indica el criterio que falla
     puntos: 3
     sprint: S5
-    estado: En progreso
+    estado: Hecho
     paso: 0
     ids_enunciado: [E1, R3]
     evidencia:
@@ -543,7 +547,7 @@ historias:
         entonces: el ID queda [ ] en 01_enunciado.md
     puntos: 3
     sprint: S5
-    estado: En progreso
+    estado: Hecho
     paso: 0
     ids_enunciado: [E1, R3]
     evidencia:
@@ -566,7 +570,7 @@ historias:
         entonces: se ejecutan en serie
     puntos: 3
     sprint: S6
-    estado: En progreso
+    estado: Hecho
     paso: 2
     ids_enunciado: [P1.1, E2]
     evidencia:
@@ -590,7 +594,7 @@ historias:
         entonces: se reportan los umbrales y el costo esperado de cada escenario
     puntos: 5
     sprint: S7
-    estado: En progreso
+    estado: Hecho
     paso: 8
     ids_enunciado: [F4, R1, R4]
     evidencia:
@@ -616,7 +620,7 @@ historias:
         entonces: coincide con el registrado en la card
     puntos: 8
     sprint: S7
-    estado: En progreso
+    estado: Hecho
     paso: 8
     ids_enunciado: [F4, R1, IA3.3]
     evidencia:
@@ -642,7 +646,7 @@ historias:
         entonces: no usa umbrales distintos por grupo
     puntos: 8
     sprint: S7
-    estado: En progreso
+    estado: Hecho
     paso: 8
     ids_enunciado: [IA1.3, F4]
     evidencia:
@@ -665,7 +669,7 @@ historias:
         entonces: muestra el PSI train/test con su lectura (<0,1 estable; 0,1–0,25 vigilar; >0,25 actuar)
     puntos: 3
     sprint: S7
-    estado: En progreso
+    estado: Hecho
     paso: 8
     ids_enunciado: [R4]
     evidencia:
@@ -686,7 +690,7 @@ historias:
         entonces: api.main se importa solo con las dependencias de la API
     puntos: 3
     sprint: S7
-    estado: Pendiente
+    estado: Hecho
     paso: 10
     ids_enunciado: [IA3.5, R4]
     evidencia:
@@ -714,13 +718,13 @@ historias:
         entonces: contiene unos 300 clientes de test, los 3 de demo y unos 50 textos con las salidas de Python
     puntos: 8
     sprint: S7
-    estado: Pendiente
+    estado: Hecho
     paso: 11
     ids_enunciado: [F5, E4]
     evidencia:
       - Back/scripts/exportar_front.py
-      - Back/tests/test_exportar_front.py
-      - Front/public/run/manifest.json
+      - Back/tests/test_contratos.py
+      - Front/src/data/generated/manifest.json
 
   - id: HU-24
     epica: E-10
@@ -893,7 +897,7 @@ historias:
         entonces: su sección Resultados se completa con las cifras de la card
     puntos: 3
     sprint: S5
-    estado: En progreso
+    estado: Hecho
     paso: 0
     ids_enunciado: [R3, E1]
     evidencia:
@@ -939,7 +943,7 @@ historias:
         entonces: el archivo no se modifica (sigue siendo el dato de registro)
     puntos: 3
     sprint: S6
-    estado: Pendiente
+    estado: Hecho
     paso: 4
     ids_enunciado: [P1.4, IA2.2]
     evidencia:
@@ -958,7 +962,7 @@ historias:
         entonces: se reportan AUC por CV y una auditoría de equidad
     puntos: 3
     sprint: S6
-    estado: Pendiente
+    estado: Hecho
     paso: 5
     ids_enunciado: [E3]
     evidencia:
@@ -979,7 +983,7 @@ historias:
         entonces: hay al menos 3 gráficos plotnine (ggplot + aes + geom_* + facet_wrap + theme) interpretados
     puntos: 3
     sprint: S6
-    estado: Pendiente
+    estado: Hecho
     paso: 4
     ids_enunciado: [IA2.1, IA2.3]
     evidencia:

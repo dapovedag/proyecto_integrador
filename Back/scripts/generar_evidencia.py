@@ -25,6 +25,7 @@ import argparse
 import hashlib
 import json
 import re
+import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -284,9 +285,37 @@ def resumen_estados(historias: list[Historia]) -> dict[str, dict[str, int]]:
     return res
 
 
+def cierres_desde_git() -> dict[str, str]:
+    """Fecha ISO del último commit que cita cada HU (el log se recorre del más reciente al más antiguo)."""
+    try:
+        log = subprocess.run(["git", "log", "--format=%cI%x1f%s%x1e"], cwd=RAIZ, capture_output=True,
+                             text=True, encoding="utf-8", check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return {}
+    cierres: dict[str, str] = {}
+    for registro in log.split(""):
+        if "" not in registro:
+            continue
+        fecha, asunto = registro.strip().split("", 1)
+        for hu in re.findall(r"HU-\d{2}", asunto):
+            cierres.setdefault(hu, fecha)
+    return cierres
+
+
+def burndown_git(historias: list[Historia], comprometidos: int, cierres: dict[str, str]) -> list[dict[str, Any]]:
+    """Puntos restantes tras cada cierre real (commit) de una HU acreditada del sprint."""
+    eventos = sorted((cierres[h.id], h.id, h.puntos or 0) for h in historias if h.acreditada and h.id in cierres)
+    restantes, serie = comprometidos, []
+    for fecha, hu, pts in eventos:
+        restantes -= pts
+        serie.append({"fecha": fecha, "hu": hu, "puntos": pts, "restantes": restantes})
+    return serie
+
+
 def resumen_sprints(backlog: dict[str, Any], historias: list[Historia]) -> list[dict[str, Any]]:
     """Por sprint: HU comprometidas, puntos comprometidos y hechos. S1–S4 usan ``sprint_mvp``."""
     salida = []
+    cierres = cierres_desde_git()
     for s in backlog["sprints"]:
         mvp = "burndown" not in s  # los sprints del MVP no tienen burndown ni estimación
         hs = [h for h in historias if (h.datos.get("sprint_mvp") if mvp else h.datos["sprint"]) == s["id"]]
@@ -297,7 +326,8 @@ def resumen_sprints(backlog: dict[str, Any], historias: list[Historia]) -> list[
             "historias": [h.id for h in hs],
             "puntos_comprometidos": None if mvp else sum(h.puntos or 0 for h in hs),
             "puntos_hechos": None if mvp else sum(h.puntos or 0 for h in hs if h.acreditada),
-            "burndown": s.get("burndown"),
+            "burndown": (burndown_git(hs, sum(h.puntos or 0 for h in hs), cierres)
+                         if s.get("burndown") == "git" else s.get("burndown")),
         })
     return salida
 
