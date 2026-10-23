@@ -442,7 +442,8 @@ function barras(spec: FiguraSpec, ctx: ContextoOpcion): Obj {
   const ejeCat = ejeCategoria(h ? spec.ejes?.y : spec.ejes?.x, cats, {
     inverse: h,
     nameGap: h ? 12 : 30,
-    nameLocation: h ? "end" : "middle",
+    // con inverse, "start" queda arriba: el nombre del eje no choca con los ticks del eje de valores
+    nameLocation: h ? "start" : "middle",
     axisLabel: {
       hideOverlap: !h,
       interval: h ? 0 : "auto",
@@ -804,7 +805,7 @@ export function construirOpcion(spec: FiguraSpec, ctx: ContextoOpcion = {}): Obj
     animationDuration: reducido ? 0 : 750,
     animationDurationUpdate: reducido ? 0 : 450,
     animationEasing: "cubicOut",
-    aria: { enabled: true, label: { description: `${spec.titulo}. ${spec.clave ?? ""}` } },
+    aria: { enabled: true, label: { description: `${spec.titulo}. ${spec.lectura ?? ""}` } },
     ...o,
   };
 }

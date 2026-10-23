@@ -370,8 +370,10 @@ export interface FiguraSpec {
   subtitulo?: string;
   ejes?: { x?: string; y?: string };
   datos: DatosFigura;
-  /** Clave de interpretación (una línea) que acompaña la figura. */
+  /** Identificador técnico de la figura dentro de su notebook (p. ej. `roc_clasicos`). */
   clave?: string;
+  /** Lectura humana (una línea) que acompaña la figura en los capítulos. */
+  lectura?: string;
   nota?: string;
   opciones?: OpcionesFigura;
   notebook?: string;

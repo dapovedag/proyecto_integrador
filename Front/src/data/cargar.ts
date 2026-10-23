@@ -83,7 +83,8 @@ export function enCache<T>(ruta: string): T | undefined {
 /* ------------------------------------------------------------------ */
 /* JSON opcionales de src/data/generated                               */
 /* ------------------------------------------------------------------ */
-const generados = import.meta.glob<{ default: unknown }>("./generated/*.json");
+// golden.json es solo para pruebas (paridad con Python): no se publica.
+const generados = import.meta.glob<{ default: unknown }>(["./generated/*.json", "!./generated/golden.json"]);
 
 /** Nombres disponibles en src/data/generated (sin extensión). */
 export const generadosDisponibles = Object.keys(generados).map((k) => k.replace("./generated/", "").replace(/\.json$/, ""));

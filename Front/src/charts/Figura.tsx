@@ -138,7 +138,7 @@ function Lienzo({ spec, alto }: { spec: FiguraSpec; alto?: number }) {
       className="figura__lienzo"
       style={{ height: h }}
       role="img"
-      aria-label={`${spec.titulo}${spec.clave ? `. ${spec.clave}` : ""}`}
+      aria-label={`${spec.titulo}${spec.lectura ? `. ${spec.lectura}` : ""}`}
       data-tipo={spec.tipo}
     />
   );
@@ -172,10 +172,10 @@ export function Figura({ spec, alto, sinTitulo, sinPie, superficie = "panel", cl
         </figcaption>
       )}
       {spec.tipo === "kpi" ? <Kpis spec={spec} /> : spec.tipo === "tabla" ? <TablaDatos spec={spec} /> : <Lienzo spec={spec} alto={alto} />}
-      {spec.clave && (
+      {spec.lectura && (
         <p className="figura__clave">
           <span className="figura__clave-rotulo">Lectura</span>
-          {spec.clave}
+          {spec.lectura}
         </p>
       )}
       {spec.nota && <p className="figura__nota">{spec.nota}</p>}

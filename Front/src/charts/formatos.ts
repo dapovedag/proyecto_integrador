@@ -58,6 +58,11 @@ export const dec2 = (v: number | null | undefined) => dec(v, 2);
 export function compacto(v: number | null | undefined): string {
   if (vacio(v)) return "—";
   const n = v as number;
+  if (n !== 0 && Math.abs(n) < 0.1) {
+    // magnitudes pequeñas (p. ej. ΔAUC 0,0012): cifras significativas en lugar de "0,00" o "-0"
+    const s = nf({ maximumSignificantDigits: 2 }).format(n);
+    return s === "-0" ? "0" : s;
+  }
   if (Math.abs(n) < 10000) return num(n, Math.abs(n) < 10 && !Number.isInteger(n) ? 2 : 0);
   return nf({ notation: "compact", maximumFractionDigits: 1 }).format(n).replace(/\s/g, NBSP);
 }

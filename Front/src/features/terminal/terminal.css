@@ -1,0 +1,104 @@
+/* RunTerminal */
+.rt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.rt-decision {
+  display: inline-block;
+  color: var(--text);
+  padding-left: 10px;
+  border-left: 2px solid var(--ok);
+}
+.rt__pie {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.rt__barra {
+  position: relative;
+  flex: 1;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--line);
+}
+.rt__barra > span {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--accent), var(--ok));
+}
+.rt__barra > i {
+  position: absolute;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 1.5px solid var(--line-3);
+  transition: border-color var(--dur-2), background var(--dur-2);
+}
+.rt__barra > i.on {
+  background: var(--ok);
+  border-color: var(--ok);
+}
+.rt__reloj {
+  flex: none;
+  font-size: var(--fs-xs);
+  color: var(--text);
+}
+.rt__card {
+  padding: var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  background: linear-gradient(120deg, rgba(52, 211, 153, 0.07), transparent 55%), var(--panel);
+  opacity: 0.35;
+  filter: saturate(0.3);
+  transition: opacity var(--dur-4) var(--ease-out), filter var(--dur-4) var(--ease-out), transform var(--dur-4) var(--ease-out);
+  transform: translateY(6px);
+}
+.rt__card--ver {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+.rt__card-cab {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  font-size: var(--fs-2xs);
+}
+.rt__card-rejilla {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-5);
+  margin: 0 0 var(--space-4);
+}
+.rt__card-rejilla dd {
+  margin: 6px 0 4px;
+  font-size: var(--fs-lg);
+  color: var(--text);
+}
+.rt__card-nota {
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+}
+@media (max-width: 900px) {
+  .rt__card-rejilla {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 520px) {
+  .rt__pie {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+  .rt__card-rejilla {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+}

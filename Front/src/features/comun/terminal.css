@@ -1,0 +1,248 @@
+/* Terminal y piezas comunes de las features (JSON resaltado, botón copiar, sintaxis de consola) */
+
+.term {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  background: linear-gradient(180deg, #0c0d12, #090a0d);
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+  min-width: 0;
+}
+.term__barra {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 42px;
+  padding: 6px var(--space-3) 6px var(--space-4);
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+}
+.term__luces {
+  display: inline-flex;
+  gap: 6px;
+  flex: none;
+}
+.term__luces i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+}
+.term__titulo {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-2xs);
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.term__controles {
+  display: inline-flex;
+  gap: 6px;
+  flex: none;
+}
+.term__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-2);
+  font-size: var(--fs-2xs);
+  font-family: var(--font-mono);
+  color: var(--text-2);
+  transition: color var(--dur-1), border-color var(--dur-1), background var(--dur-1);
+}
+.term__btn:hover:not([disabled]) {
+  color: var(--text);
+  border-color: var(--line-3);
+}
+.term__btn[disabled] {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.term__btn--play {
+  color: #fff;
+  background: var(--accent);
+  border-color: transparent;
+}
+.term__btn--play:hover:not([disabled]) {
+  background: #6670ff;
+  border-color: transparent;
+}
+.term__btn--icono {
+  width: 28px;
+  padding: 0;
+  justify-content: center;
+}
+.term__cuerpo {
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--text-2);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: auto;
+}
+.term__linea {
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 1.7em;
+}
+.term__linea--comando {
+  color: var(--text);
+  margin-top: 0.5em;
+}
+.term__linea--comando:first-child {
+  margin-top: 0;
+}
+.term__prompt {
+  color: var(--ok);
+  margin-right: 0.8ch;
+  user-select: none;
+}
+.term__linea--nota {
+  color: var(--text-3);
+  font-style: italic;
+}
+.term__linea--salida {
+  animation: term-entra 240ms var(--ease-out) both;
+}
+@keyframes term-entra {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+}
+.term__cursor {
+  display: inline-block;
+  width: 0.62em;
+  height: 1.1em;
+  margin-left: 1px;
+  vertical-align: -0.18em;
+  background: var(--accent-2);
+  animation: term-cursor 1s steps(1) infinite;
+}
+@keyframes term-cursor {
+  50% {
+    opacity: 0;
+  }
+}
+.term__pie {
+  border-top: 1px solid var(--line);
+  padding: var(--space-3) var(--space-5);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+/* Sintaxis de consola */
+.tk-num {
+  color: #f0a35e;
+}
+.tk-clave {
+  color: var(--text-3);
+}
+.tk-cad {
+  color: #5fd0dc;
+}
+.tk-var {
+  color: var(--mod2-2);
+}
+.tk-ok {
+  color: var(--ok);
+  font-weight: 600;
+}
+.tk-warn {
+  color: var(--warn);
+}
+.tk-bad {
+  color: var(--bad);
+}
+.tk-dim {
+  color: var(--text-3);
+}
+.tk-acento {
+  color: var(--accent-2);
+}
+
+/* JSON resaltado */
+.json {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--text-2);
+  white-space: pre;
+  overflow: auto;
+}
+.json code {
+  font-size: inherit;
+}
+.j-clave {
+  color: var(--accent-2);
+}
+.j-cadena {
+  color: #5fd0dc;
+}
+.j-numero {
+  color: #f0a35e;
+}
+.j-literal {
+  color: var(--mod2-2);
+}
+.j-punt {
+  color: var(--text-3);
+}
+
+/* Copiar */
+.copiar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-2);
+  font-size: var(--fs-2xs);
+  font-family: var(--font-mono);
+  color: var(--text-2);
+  background: rgba(255, 255, 255, 0.02);
+  transition: color var(--dur-1), border-color var(--dur-1);
+}
+.copiar:hover {
+  color: var(--text);
+  border-color: var(--line-3);
+}
+.copiar--hecho {
+  color: var(--ok);
+  border-color: rgba(52, 211, 153, 0.4);
+}
+
+@media (max-width: 720px) {
+  .term {
+    border-radius: var(--radius-m);
+  }
+  .term__barra {
+    flex-wrap: wrap;
+    padding: 8px var(--space-3);
+  }
+  .term__titulo {
+    flex-basis: calc(100% - 60px);
+  }
+  .term__controles {
+    width: 100%;
+  }
+  .term__cuerpo {
+    padding: var(--space-3) var(--space-3) var(--space-4);
+    font-size: 11.5px;
+  }
+}
+
+@keyframes nb-gira {
+  to {
+    transform: rotate(360deg);
+  }
+}

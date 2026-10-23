@@ -42,7 +42,7 @@ export function specCostoEsperado(): FiguraSpec {
         { desde: U.rechazar, hasta: 1, etiqueta: "Rechazar" },
       ],
     },
-    clave: "La política elige, para cada p, la acción de menor costo esperado: por eso los umbrales salen de los costos y no del modelo.",
+    lectura: "La política elige, para cada p, la acción de menor costo esperado: por eso los umbrales salen de los costos y no del modelo.",
     opciones: { formato_x: "pct", formato_y: "pct", color_por: "banda", max_y: 0.3 },
     notebook: "08",
     version: card.version,

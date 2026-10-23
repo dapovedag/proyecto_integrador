@@ -44,7 +44,8 @@ function dodDelPaso(dod: DodStatus | null, paso: PasoMeta): { ok: boolean; crite
         .filter(([, v]) => typeof v === "boolean")
         .map(([t, v]) => ({ texto: t.replace(/_/g, " "), ok: v as boolean }));
     const ok = typeof e.ok === "boolean" ? e.ok : criterios.length > 0 && criterios.every((x) => x.ok);
-    return { ok, criterios, fecha: e.fecha ?? dod.generado, sha: dod.git_sha };
+    const d = dod as DodStatus & { verificado?: string; commit?: string };
+    return { ok, criterios, fecha: e.fecha ?? d.generado ?? d.verificado, sha: d.git_sha ?? d.commit };
   }
   return null;
 }

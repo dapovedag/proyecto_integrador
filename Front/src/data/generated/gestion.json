@@ -2958,8 +2958,8 @@
     ]
   },
   "dod": {
-    "verificado": "2026-10-23T18:24:17",
-    "commit": "60b40a0",
+    "verificado": "2026-10-23T18:44:13",
+    "commit": "2135c81",
     "version": "2.0.0",
     "notebooks": {
       "00_proyecto_integrador_final.ipynb": {

@@ -10,7 +10,7 @@
 - Filas del checklist acreditadas: **35/47**.
 - IDs individuales cubiertos por al menos una HU: **55/55**.
 - Historias acreditadas: **27/37**.
-- DoD de notebooks: `dod_status.json` del 2026-10-23T18:24:17, commit 60b40a0, fallos 0.
+- DoD de notebooks: `dod_status.json` del 2026-10-23T18:44:13, commit 2135c81, fallos 0.
 
 ## Matriz por fila del checklist
 

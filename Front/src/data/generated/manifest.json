@@ -1,8 +1,8 @@
 {
   "version": "2.0.0",
   "card_version": "2.0.0",
-  "git_sha": "5589ed8",
-  "generado": "2026-10-23T18:00:45",
+  "git_sha": "2135c81",
+  "generado": "2026-10-23T18:44:54",
   "datos": {
     "crudo_sha256": "63e1b695a1bae907a79d80b208ee665da6e6a41eaec7ed4fc493ed8e145dcc34",
     "train_sha256": "1ce71f5f0123edb39b1d0120fd142e73c2a2c066bca40bcbd0ead523b4e92e28",
@@ -14,8 +14,8 @@
       "bytes": 42582
     },
     "src/data/generated/api_capturas.json": {
-      "sha256": "24a37375d1d2ee45db12532130a1f90a76fe83079287a77fe94f755988022632",
-      "bytes": 58422
+      "sha256": "7500064a1b792c428584278f3896c0d7d9aac287c7322266a6c0a7caa5038acd",
+      "bytes": 58416
     },
     "src/data/generated/clientes_demo.json": {
       "sha256": "5cbf373e0878ffe48cab457c9714b23ddfaa77a9a8e980d62fdea36a982c2df1",
@@ -26,7 +26,7 @@
       "bytes": 2253
     },
     "src/data/generated/dod_status.json": {
-      "sha256": "72048435e28eb8dd9501fd8d4b9baf010f1c2ccc2fa0cd4bbc60b263597a581b",
+      "sha256": "32cc31354c9f7462cc75d926a724ac2cb55ed31afa45be4adb4dc10b91710ec2",
       "bytes": 3534
     },
     "src/data/generated/ejecuciones.json": {
@@ -38,8 +38,8 @@
       "bytes": 12182
     },
     "src/data/generated/gestion.json": {
-      "sha256": "f2bfe66b6fd3d485f238376bf0ce9bd8eec4a110176d86e832fa25223eb1057f",
-      "bytes": 84768
+      "sha256": "ec8aafc2c06c51aae0240ab52a21c1fe3dab26ced29ad0def27f8193053919b6",
+      "bytes": 88636
     },
     "src/data/generated/golden.json": {
       "sha256": "ba60a77828f219b61d00a9e30f535da951586e763de8c5a9fd7c014a37a1cc5d",
