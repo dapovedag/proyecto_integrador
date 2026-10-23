@@ -1,63 +1,48 @@
-# Reporte DEV: respuesta a la auditoría QA del 2026-10-16
+# Reporte DEV v2: respuesta a la auditoría QA (2026-10-23)
 
-> Responde, hallazgo por hallazgo, a la sección 7 de `report_qa.md`. Con la restricción de tiempo se priorizó lo que afecta al **modelo servido y su integridad**. Lo que requiere instalar dependencias pesadas (TensorFlow, BERT/GPT, PySpark) queda **declarado como pendiente**, sin presentarlo como cumplido.
+> Responde, hallazgo por hallazgo, a `report_qa.md` (sección 7) y a la revisión de punta a punta que motivó la v2.
+> La versión anterior de este reporte (MVP, 2026-10-16) quedó en el historial de git. Cada "Cerrado" va acompañado
+> de la evidencia que lo prueba y del comando para verificarlo. Ninguna cifra se afirma sin una salida que la respalde.
 
-## Resumen
+## Verificación en un comando
 
-| # | Hallazgo QA | Prioridad | Estado | Qué se hizo |
+```bash
+cd Back && .venv/Scripts/python scripts/check.py
+```
+
+El comando corre ruff, mypy, pytest (cobertura 91,5 %), `verificar_dod.py --estricto` (0 fallos en 10 notebooks) y el build y las pruebas del front (paridad golden).
+
+## Hallazgos
+
+| # | Hallazgo QA | Prioridad | Estado | Evidencia |
 |---|---|---|---|---|
-| 1 | La API sirve un modelo distinto al del nb08 | Bloqueante | **Corregido** | `Back/train.py` es la **única fuente de verdad**. Ahora aplica la misma política que el nb08 (calibración y umbral por costo), y la card declara `fuente_de_verdad`. Los `*_nb08.*` quedan como exploratorios y la API no los carga. |
-| 2 | Modelo y umbral elegidos con test | Bloqueante | **Corregido** | Modelo elegido por **ROC-AUC CV(5) en train**; **calibración sigmoid**; **umbral por costo FN:FP = 3:1** con probabilidades out-of-fold de train; **test se usa una sola vez**. Lo mismo para el umbral NLP. Importancia por permutación sobre una muestra de train. |
-| 3 | Redes (nb06) no ejecutadas; conclusiones contradictorias | Bloqueante | **Parcial** | Nota de **estado de ejecución** insertada antes de las conclusiones (deja explícito que se omitió por falta de TensorFlow). Dependencias declaradas en `requirements-extras.txt`. **Pendiente:** instalar y ejecutar. |
-| 4 | NLP avanzado (nb07) sin ejecutar | Bloqueante | **Pendiente (declarado)** | El TF-IDF + LR servido sigue disponible y documentado. BERT/GPT requieren `transformers`/`torch` (en `requirements-extras.txt`). No se presenta como cumplido. |
-| 5 | Spark (nb09) ejecutado con respaldo pandas | Bloqueante | **Parcial** | Nota en el nb09 que aclara que el respaldo **no acredita IA3.6**. **Pendiente:** Java 17 + PySpark y volver a ejecutar. |
-| 6 | Equidad incompleta (solo sexo y aprobación; DI por edad 0,74) | Alta | **Corregido (medición)** / Pendiente (mitigación) | La card ahora reporta **sexo y edad** (18-29 / 30-59 / 60+ / desconocida) con **aprobación, TPR, FPR, disparate impact y regla del 80 %**, medidos en test sin ajustar nada con test. La mitigación no se aplica automáticamente; queda en `limitaciones` para revisión humana. |
-| 7 | Comparación completa de modelos (nb05 sin salidas) | Alta | **Parcial** | Se intentó ejecutar el nb05 y supera los ~5 min en esta máquina. Nota de estado agregada. La comparación que respalda el modelo servido está en `model_card.json → comparacion_roc_auc_cv_train`. |
-| 8 | nb00 con flujo propio; falta el informe | Alta | **Parcial** | **Entregado `docs/06_informe_resultados.md`** con las métricas del modelo servido. El nb00 no se reescribió (su re-ejecución supera el presupuesto de tiempo); su umbral propio queda declarado como diferencia. |
-| 9 | Falta `validar_dataset()`; lógica duplicada | Media | **Corregido** / Parcial | `validar_dataset()` en `Back/src/credit_risk/data.py` (columnas, target, prevalencia, filas, texto, nulos, duplicados, atípicos, diccionario), invocado por `train.py`. La deduplicación de lógica en los notebooks queda pendiente. |
-| 10 | `/health` dice ok aunque falte un artefacto | Media | **Corregido** | Carga **atómica** en `api/service.py`: si falta el modelo, el NLP o la card, nada queda cargado. `/health` devuelve `status: "degradado"` y los endpoints responden 503. |
-| 11 | README incompleto; backlog y retros desactualizados | Media | **Corregido** | `Back/README.md` con venv, instalación, extras, pytest, Jupyter, uvicorn y Docker. `requirements-extras.txt` nuevo. Backlog con el estado real por HU y retrospectiva del sprint registrada. |
+| 1 | La API servía un modelo distinto al documentado (v1.0.0 elegido con test; 4 umbrales distintos) | Bloqueante | **Cerrado** | `train.py` es la única fuente de verdad y escribe un `ArtefactoModelo` (modelo, explicador, umbrales y versión). La API, nb00, nb08 y el front lo usan sin reimplementarlo. Hay un solo juego de umbrales: 0,1778 y 0,4667. nb08 §8 comprueba que el artefacto reproduce exactamente las predicciones de test y que sus métricas coinciden con la card. `tests/test_contratos.py` compara los casos golden con el artefacto servido. |
+| 2 | Modelo y umbral elegidos con test | Bloqueante | **Cerrado** | Selección por ROC-AUC CV(5) en train: LR 0,8582 frente a HGB 0,8525. Umbrales por la regla de Chow, en forma cerrada a partir de los costos (ADR-002). La variante de equidad se elige con predicciones OOF. Test se usa una sola vez (AUC 0,8456). Ver ADR-001 y `model_card.json → protocolo`. |
+| 3 | Redes no ejecutadas (nb06) | Bloqueante | **Cerrado** | TensorFlow 2.20 instalado. MLP 0,842, híbrido texto+tabular 0,840, CNN 1D 0,771 y GRU 0,647, con curvas de aprendizaje. `red_neuronal.keras` y `resultados_dl.json` generados. nb06 ✔ DoD (300 s). |
+| 4 | NLP avanzado sin ejecutar (nb07) | Bloqueante | **Cerrado** | BERT (nlptown), sentence-transformers (MiniLM) y GPT-2 en español sobre los 4.454 textos únicos, con caché firmada. ΔAUC del combinado +0,0012, IC 95 % [−0,0003; +0,0028]: no hay mejora demostrable, y queda declarado. nb07 ✔ DoD. |
+| 5 | Spark ejecutado con respaldo de pandas (nb09) | Bloqueante | **Cerrado** | PySpark 4.2 en Docker (ADR-005), con esquema explícito, Spark SQL, Parquet particionado con *pruning* y MLlib 0,8441 frente a scikit-learn 0,8459 en el mismo test. Scoring de 12.000 solicitudes en 1,9 s. nb09 ✔ DoD (189 s). |
+| 6 | Equidad incompleta (DI por edad 0,74 sin mitigar) | Alta | **Cerrado con vigilancia** | DI medido sobre la aprobación automática, con IC bootstrap. Se evaluaron tres variantes. El *reweighing* lleva el DI por edad de 0,72 a 0,89 (OOF) y a 0,896 en test (IC [0,78; 0,98]) con un costo de +0,6 %. Sexo: 0,970. Quitar la edad no ayudaba (0,71). Ver ADR-003, que explica además por qué no se usan umbrales por grupo. El límite inferior del IC queda en vigilancia. |
+| 7 | nb05 sin ejecutar | Alta | **Cerrado** | Línea base y 4 clásicos con CV(5), ROC/PR, matrices, coeficientes y permutación, más la replicación en German Credit con datos reales (AUC 0,786, DI por edad 0,55). nb05 ✔ DoD. |
+| 8 | nb00 con flujo propio; faltaba el informe | Alta | **Cerrado** | nb00 importa `credit_risk`, carga el artefacto servido, compara los modelos de todas las familias, predice los tres clientes demo y llama a la API en el mismo proceso. `docs/06_informe_resultados.md` reescrito con las cifras v2. nb00 ✔ DoD. |
+| 9 | Falta `validar_dataset()`; lógica duplicada | Media | **Cerrado** | Paquete único `credit_risk` instalable (`pyproject.toml`). Los 10 notebooks lo importan; `verificar_dod.py` lo comprueba con el criterio `importa_credit_risk`. `features.py` quedó unificado con nb03 (6 derivadas, ordinal y capping sin fuga). |
+| 10 | `/health` decía ok aunque faltaran artefactos | Media | **Cerrado** | Carga atómica en `lifespan`: si falta algo, `/health` responde "degradado" y los demás endpoints 503. Lo cubre `test_servicio_degradado_responde_503`. |
+| 11 | README incompleto; backlog y retros vacíos | Media | **Cerrado** | `Back/README.md` verificado desde un clon limpio. Scrum + CRISP-DM aplicados: `backlog.yaml` con 37 HU en Gherkin, DoD y DoR verificables, 8 ADR con resultados, riesgos y lecciones aprendidas. La trazabilidad y el checklist del enunciado se calculan con `generar_evidencia.py`. |
+| — | Docker sin probar | — | **Cerrado** | `docker compose up --build`: imagen `riesgo-credito-api:2.0.0` sin root y de solo lectura, healthcheck *healthy*, `/health` y `/predict` respondiendo. La transcripción real está en `Back/reports/docker_api.json`. |
+| — | Front con cifras escritas a mano y dependiente del back | — | **Cerrado** | El front es estático y autónomo (ADR-004). Todo sale del paquete de corrida (`exportar_front.py`), con SHA-256 en el manifest. Los motores en TS reproducen a Python con \|Δp\| < 1e-6 en 303 casos golden. El e2e verifica cero peticiones fuera del origen. |
 
-## Cambios de código
+## Problemas reales encontrados y resueltos durante la v2
 
-| Archivo | Cambio |
-|---|---|
-| `Back/train.py` | Protocolo sin fuga a test (CV, calibración, umbral por costo, evaluación única); equidad por sexo y edad con TPR/FPR; validación del contrato de datos; card con `fuente_de_verdad`, `protocolo`, `costos`. |
-| `Back/src/credit_risk/data.py` | Nueva función `validar_dataset()`. |
-| `Back/src/credit_risk/config.py` | `MODEL_VERSION = "1.1.0"` (el modelo servido cambió). |
-| `Back/api/service.py` | Carga atómica; `pipeline_base` para obtener factores del modelo calibrado. |
-| `Back/api/main.py` | `/health` devuelve `degradado` si el servicio no está completo. |
-| `Back/notebooks/05, 06, 09` | Celda "Estado de ejecución" antes de las conclusiones (no se borró contenido). |
-| `Back/README.md`, `Back/requirements-extras.txt` | Instalación reproducible. |
-| `docs/06_informe_resultados.md`, `docs/gestion/*` | Informe ejecutivo, backlog y retrospectiva. |
+1. **DLL en Windows.** Importar scikit-learn antes que PyTorch o TensorFlow rompe sus DLL (`WinError 1114`). Diagnosticado con pruebas en ambos órdenes y resuelto con `setup(torch_primero / tf_primero)` (ADR-006).
+2. **`None` en categorías.** `SimpleImputer` no trata `None` como faltante en columnas de texto, así que la API no imputaba "Desconocido". Se corrigió en `ArtefactoModelo.a_dataframe`.
+3. **Escritura de notebooks.** Papermill daba `Errno 22` al guardar en el mismo archivo en Windows. Ahora escribe en un temporal y lo reemplaza de forma atómica.
+4. **Lock de la cola.** Dos procesos podían tomar el lock a la vez. Ahora se crea de forma atómica (`O_CREAT | O_EXCL`).
+5. **Edades imposibles.** `grupo_edad` metía las edades imposibles en "60+". Ahora van a "desconocida", con su prueba.
+6. **Hashes y fin de línea.** Git en Windows convertía los fines de línea de los CSV y JSON con hash. `.gitattributes` lo evita, y se verificó que los blobs coinciden con el manifest (95 de 95).
+7. **Lentitud de Spark.** Escribir Parquet sobre el montaje de Windows tardaba unos 390 s. Ahora Spark escribe en el disco del contenedor (unos 3 s) y copia el resultado.
 
-## Métricas del modelo servido (v1.1.0)
+## Pendientes declarados
 
-**Situación honesta:** el código de `train.py` v1.1.0 ya implementa el protocolo corregido. Al ejecutarlo se validó el contrato de datos completo (`ok: True`) y la regresión logística obtuvo **ROC-AUC CV(5) en train = 0,8584**. Sin embargo, el reentrenamiento completo **superó el tiempo disponible** (la CV de HistGradientBoosting es lenta en esta máquina; además, `joblib/loky` se bloqueaba buscando `wmic`, lo que se resolvió con `LOKY_MAX_CPU_COUNT=4`). Por eso **los artefactos servidos siguen siendo los de la v1.0.0**:
-
-| Métrica (test, v1.0.0) | Valor |
-|---|---|
-| ROC-AUC | 0,8465 |
-| F1 / Recall / Precisión | 0,7083 / 0,8103 / 0,6291 |
-| KS / Brier | 0,5464 / 0,1573 |
-| Umbral | 0,4396 |
-| DI por sexo | 0,978 |
-
-Para publicar la v1.1.0: `cd Back; $env:LOKY_MAX_CPU_COUNT=4; python train.py` (sin límite de tiempo) y volver a hacer push.
-
-## Despliegue
-
-- **URL pública:** https://proyecto-integrador-five-eosin.vercel.app (API: `/api/health`, Swagger: `/api/docs`). El dominio `proyecto-integrador.vercel.app` **ya pertenece a otro sitio** y no está disponible.
-- Repositorio: `github.com/dapovedag/proyecto_integrador` (privado).
-- Vercel, desplegado automáticamente con cada push a `main`: el Front es estático (`outputDirectory: Front`) y la API es una función Python en `api/index.py`, que monta `Back/api` bajo `/api`.
-- El Front detecta el entorno: en local usa `http://127.0.0.1:8000` y desplegado usa `/api`.
-- El punto de entrada de Vercel se verificó en local con TestClient: `/api/health`, `/api/predict`, `/api/docs` y `/api/openapi.json` responden 200.
-
-## Pendientes declarados (no cumplidos todavía)
-
-1. Instalar `requirements-extras.txt` (y Java 17) y ejecutar los **nb06, nb07 y nb09** con salidas reales.
-2. Ejecutar el **nb05** completo para dejar `resultados_clasicos.json`.
-3. **Mitigación de equidad** si algún grupo tiene DI < 0,8 (ajustada en validación, no en test).
-4. Hacer que el **nb00** cargue `models/modelo_final.joblib` en lugar de entrenar su propio flujo.
-5. Probar **Docker** (`docker compose up --build`).
-6. Re-ejecutar `pytest` cuando la máquina esté libre (las corridas anteriores no llegaron a imprimir resultado por el límite de tiempo).
+- **Equidad por edad.** El IC 95 % del DI por edad llega a 0,78. Se vigila en producción (`docs/05_despliegue.md §6`).
+- **HU-36.** Evaluar en v2.1 si conviene retirar las variables de señal débil (estado civil, tasa y plazo).
+- **Datos reales.** Validar con una cartera real y cosechas maduras. El dataset del proyecto es sintético-realista.
+- **Publicación.** El push y el despliegue en Vercel requieren configurar el remoto y una confirmación explícita.

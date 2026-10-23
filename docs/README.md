@@ -1,46 +1,29 @@
-# Proyecto Integrador: Análisis predictivo de riesgo de crédito
-
-Documentación del proyecto (alcance actual: **back**). Fuente: `../ProyectoIntegrador.jpeg`.
+# Documentación · Proyecto Integrador de riesgo de crédito (v2.0.0)
 
 ## Orden de lectura
 
-| # | Documento | Para qué sirve |
+| # | Documento | Para qué |
 |---|---|---|
-| 1 | [01_enunciado.md](01_enunciado.md) | Transcripción fiel de la imagen con un ID por ítem y el **checklist global** |
-| 2 | [02_plan_paso_a_paso.md](02_plan_paso_a_paso.md) | **El plan a seguir estrictamente**: 13 pasos (0–12), cada uno con su entregable y criterio de hecho |
-| 3 | [03_contrato_datos.md](03_contrato_datos.md) | Requisitos del dataset (para quien consiga los datos) |
-| 4 | [04_arquitectura_backend.md](04_arquitectura_backend.md) | Estructura de carpetas, stack y contrato de la API |
-| 5 | [05_despliegue.md](05_despliegue.md) | Docker en local y guía de nube |
-| 6 | `06_informe_resultados.md` | *(Se crea en el paso 11)* |
-| 7 | [07_libreto_front.md](07_libreto_front.md) | **Libreto de integración para el Front**: cómo levantar el back, los endpoints, el mapeo al `index.html`, el JS y el guion de la demo |
-| 7 | `diccionario_datos.md` | *(Lo entrega el agente de datos)* |
-| — | [gestion/backlog.md](gestion/backlog.md) | Historias de usuario |
-| — | [gestion/sprints.md](gestion/sprints.md) | Plan de sprints y retrospectivas |
-| — | [gestion/definicion_de_hecho.md](gestion/definicion_de_hecho.md) | Definition of Done |
+| 1 | [01_enunciado.md](01_enunciado.md) | Requisitos con ID (PF1, E, F, R, P1, P2, IA1–IA3) y checklist **calculado** |
+| 2 | [02_plan_paso_a_paso.md](02_plan_paso_a_paso.md) | Pasos 0–12 con su criterio de hecho (los ADR priman) |
+| 3 | [03_contrato_datos.md](03_contrato_datos.md) · [diccionario_datos.md](diccionario_datos.md) | Contrato del dataset y diccionario de las 21 columnas |
+| 4 | [04_arquitectura_backend.md](04_arquitectura_backend.md) | Arquitectura real, pipeline del modelo y contrato de la API |
+| 5 | [05_despliegue.md](05_despliegue.md) | Docker, front estático, nube y operación del modelo |
+| 6 | [06_informe_resultados.md](06_informe_resultados.md) | Informe ejecutivo para un público no técnico |
+| 7 | [07_libreto_front.md](07_libreto_front.md) | Paquete de corrida, motores exactos y guion de demo del front |
+| — | [gestion/](gestion/) | Scrum + CRISP-DM: backlog, sprints, DoD, DoR, ADR, riesgos, lecciones aprendidas y trazabilidad |
+| — | [diseno/](diseno/) | Propuestas visuales anteriores y referencias (archivo) |
 
-## Convención de carpetas
+## Estado (verificado con comandos, no declarado)
 
-| Carpeta | Contenido | Responsable |
+| Pieza | Estado | Cómo se verifica |
 |---|---|---|
-| `docs/` | Documentación | Este plan |
-| `db/` | Datos (`credit_risk.csv` crudo y `processed/`) | Agente de datos (crudo); pasos 3, 7 y 9 (processed) |
-| `Back/` | Notebooks, `src/`, modelos, API, Docker y tests | Pasos 1–12 |
-| `Front/` | Interfaz | **Fuera del alcance actual** |
+| Modelo servido v2.0.0 | Regresión logística calibrada, reweighing, regla de Chow. AUC test 0,846 | `python Back/train.py` → `Back/models/model_card.json` |
+| Notebooks 00–09 | 10/10 ejecutados con salidas y **0 fallos de DoD** | `python Back/scripts/verificar_dod.py --estricto` |
+| Calidad del back | ruff y mypy limpios, pytest con cobertura del 91,5 % | `python Back/scripts/check.py --sin-front` |
+| API REST | v2 con pruebas de contrato (422, 503, bandas, clientes demo) y Docker *healthy* probado | `docker compose up --build` en `Back/` |
+| PySpark | Spark 4.2 en Docker, MLlib 0,844 | `python Back/scripts/ejecutar_notebooks.py 09` |
+| Front | Estático y autónomo, paridad golden \|Δp\| < 1e-6, e2e sin red | `npm --prefix Front test` · `npx playwright test` |
+| Trazabilidad | Checklist calculado a partir de las HU en Hecho y la evidencia existente | `python Back/scripts/generar_evidencia.py` |
 
-## Para el agente de Front: empiece aquí → [07_libreto_front.md](07_libreto_front.md)
-
-## Estado del back
-
-| Paso | Entregable | Estado |
-|---|---|---|
-| 0 | `docs/gestion/` | Hecho |
-| 1–4 | Notebooks 01–04 (ética, exploración, limpieza, EDA) y `db/processed/` | Hecho, ejecutados sin errores |
-| 6, 9 | Notebooks 06 (redes) y 09 (Spark) | Hecho, ejecutados sin errores |
-| 5 | Notebook 05 (clásicos) | Creado; ejecución en curso |
-| 7 | Notebook 07 (NLP con BERT/GPT) | Creado, sin ejecutar: requiere `pip install transformers torch sentence-transformers` y descargar los modelos (varios minutos) |
-| 8 | Notebook 08 + `Back/models/` | Hecho, ejecutado |
-| 10 | API FastAPI (`Back/api/`), Dockerfile, compose y tests | Hecho; API verificada en `http://localhost:8000` |
-| 11 | Notebook 00 final | Hecho, ejecutado |
-| 12 | Sistema en local | Hecho: `cd Back; $env:PYTHONPATH="src"; python -m uvicorn api.main:app --port 8000` |
-
-**Modelo servido:** regresión logística · ROC-AUC 0,8465 · F1 0,708 · Recall 0,810 · KS 0,546 · umbral 0,4396.
+La respuesta a la auditoría QA, hallazgo por hallazgo, está en [`report_dev.md`](../report_dev.md).
