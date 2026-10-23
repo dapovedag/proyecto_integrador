@@ -1,0 +1,24 @@
+# Generado por scripts/generar_lock_api.py — cierre exacto de la API para la imagen Docker (Linux).
+annotated-types==0.8.0
+anyio==4.15.1
+click==8.5.0
+exceptiongroup==1.3.1
+fastapi==0.115.12
+h11==0.16.0
+idna==3.20
+joblib==1.3.2
+numpy==1.26.4
+pandas==2.3.3
+pydantic==2.14.1
+pydantic-core==2.50.1
+python-dateutil==3.0.0
+pytz==2026.5
+scikit-learn==1.4.2
+scipy==1.15.3
+six==1.17.0
+starlette==0.46.2
+threadpoolctl==3.7.0
+typing-extensions==4.16.0
+typing-inspection==0.4.4
+tzdata==2026.5
+uvicorn==0.34.0

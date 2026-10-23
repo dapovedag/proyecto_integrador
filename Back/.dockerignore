@@ -1,0 +1,15 @@
+.venv/
+**/__pycache__/
+**/*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+notebooks/
+reports/
+tests/
+scripts/
+docker/
+models/*.parquet
+models/*.keras
+models/resultados_*.json
+.env
+.env.*
