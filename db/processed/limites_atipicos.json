@@ -1,5 +1,9 @@
 {
-  "metodo": "capping p1-p99 calculado en train",
+  "metodo": "capping p1-p99 con credit_risk.features.Winsorizer ajustado solo en train",
+  "cuantiles": [
+    0.01,
+    0.99
+  ],
   "limites": {
     "ingreso_mensual": [
       578000.0,
@@ -14,7 +18,7 @@
       11020996.4013205
     ],
     "ratio_cuota_ingreso": [
-      0.05467068188981392,
+      0.054670681889813964,
       3.5718212524645634
     ],
     "ratio_monto_ingreso": [
@@ -29,5 +33,6 @@
       0.0,
       1.5
     ]
-  }
+  },
+  "sha256_train": "1ce71f5f0123edb39b1d0120fd142e73c2a2c066bca40bcbd0ead523b4e92e28"
 }

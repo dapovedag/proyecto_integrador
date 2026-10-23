@@ -1,4 +1,5 @@
 {
+  "version": "2.0.0",
   "target": "default",
   "id": "id_cliente",
   "texto": "texto_solicitud",
@@ -20,8 +21,7 @@
     "cuota_estimada",
     "ratio_cuota_ingreso",
     "ratio_monto_ingreso",
-    "tiene_moras_previas",
-    "longitud_texto"
+    "tiene_moras_previas"
   ],
   "nominales_onehot": [
     "estado_civil",
@@ -62,7 +62,6 @@
     "ratio_cuota_ingreso",
     "ratio_monto_ingreso",
     "tiene_moras_previas",
-    "longitud_texto",
     "estado_civil",
     "situacion_laboral",
     "tipo_vivienda",
@@ -70,27 +69,26 @@
     "nivel_educativo",
     "rango_edad"
   ],
-  "descartadas_por_seleccion": [],
-  "excluidas": {
-    "id_cliente": "identificador",
-    "sexo": "variable sensible: solo auditoría de equidad",
-    "texto_solicitud": "se modela en el paso 7 (NLP)"
+  "columnas_transformadas": 38,
+  "derivadas": {
+    "cuota_estimada": "cuota mensual por amortización francesa (monto, tasa y plazo)",
+    "ratio_cuota_ingreso": "capacidad de pago: cuota / ingreso",
+    "ratio_monto_ingreso": "endeudamiento relativo: monto / ingreso",
+    "rango_edad": "ciclo de vida (ordinal); se audita en equidad",
+    "tiene_moras_previas": "historial de pago binario (moras_ultimos_12m > 0)",
+    "longitud_texto": "detalle de la solicitud; solo EDA (el texto se evalúa en el paso 7)"
   },
-  "variables_sensibles_auditoria": [
-    "sexo",
-    "edad",
-    "rango_edad",
-    "estado_civil"
-  ],
-  "nuevas_variables": [
-    "cuota_estimada",
-    "ratio_cuota_ingreso",
-    "ratio_monto_ingreso",
-    "rango_edad",
-    "tiene_moras_previas",
-    "longitud_texto"
-  ],
-  "escalador": "StandardScaler",
+  "excluidas": {
+    "id_cliente": "identificador (no es una característica del cliente)",
+    "sexo": "variable sensible: solo auditoría de equidad (ADR-003)",
+    "texto_solicitud": "texto libre: se modela aparte en el paso 7 (NLP)",
+    "longitud_texto": "derivada del texto: solo EDA, fuera del modelo tabular (paso 7)"
+  },
+  "sensibles_auditoria": {
+    "sexo": "excluida del modelo; se audita el disparate impact",
+    "edad": "entra al modelo; se audita y existe la variante sin edad (ADR-003)",
+    "rango_edad": "entra al modelo; se audita y existe la variante sin edad (ADR-003)"
+  },
   "imputacion": {
     "mediana": {
       "edad": 49.0,
@@ -115,12 +113,229 @@
     "desconocido": {
       "situacion_laboral": "Desconocido",
       "tipo_vivienda": "Desconocido"
-    }
+    },
+    "texto": "Sin texto",
+    "aprendida_en": "train"
+  },
+  "codificacion": {
+    "nominales": "OneHotEncoder(handle_unknown='ignore')",
+    "ordinales": "OrdinalEncoder con el orden de config.ORDINALES"
+  },
+  "escalador": "StandardScaler",
+  "capping": {
+    "columnas": [
+      "ingreso_mensual",
+      "monto_credito",
+      "cuota_estimada",
+      "ratio_cuota_ingreso",
+      "ratio_monto_ingreso",
+      "antiguedad_laboral_anios",
+      "relacion_deuda_ingreso"
+    ],
+    "cuantiles": [
+      0.01,
+      0.99
+    ],
+    "archivo": "db/processed/limites_atipicos.json"
+  },
+  "seleccion": {
+    "criterios": "abs_spearman >= 0.02 o info_mutua >= 0.001 o importancia_arbol >= 0.005",
+    "seleccionadas": [
+      "puntaje_buro",
+      "uso_cupo_tarjetas",
+      "moras_ultimos_12m",
+      "relacion_deuda_ingreso",
+      "tiene_moras_previas",
+      "situacion_laboral",
+      "antiguedad_laboral_anios",
+      "ingreso_mensual",
+      "nivel_educativo",
+      "tipo_vivienda",
+      "ratio_monto_ingreso",
+      "proposito",
+      "monto_credito",
+      "cuota_estimada",
+      "ratio_cuota_ingreso",
+      "rango_edad",
+      "edad",
+      "personas_a_cargo",
+      "num_creditos_activos"
+    ],
+    "senal_debil": [
+      "tasa_interes_anual",
+      "estado_civil",
+      "plazo_meses"
+    ],
+    "nota": "las de señal débil siguen en config.NUM_MODELO/CAT_NOMINALES; se revisan con la importancia por permutación del paso 5",
+    "tabla": [
+      {
+        "variable": "puntaje_buro",
+        "abs_spearman": 0.53347,
+        "info_mutua": 0.16571,
+        "importancia_arbol": 0.33598,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "uso_cupo_tarjetas",
+        "abs_spearman": 0.49884,
+        "info_mutua": 0.13247,
+        "importancia_arbol": 0.2634,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "moras_ultimos_12m",
+        "abs_spearman": 0.38734,
+        "info_mutua": 0.081,
+        "importancia_arbol": 0.09859,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "relacion_deuda_ingreso",
+        "abs_spearman": 0.34146,
+        "info_mutua": 0.06815,
+        "importancia_arbol": 0.09523,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "tiene_moras_previas",
+        "abs_spearman": 0.35878,
+        "info_mutua": 0.06354,
+        "importancia_arbol": 0.09464,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "situacion_laboral",
+        "abs_spearman": 0.14907,
+        "info_mutua": 0.01663,
+        "importancia_arbol": 0.01304,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "antiguedad_laboral_anios",
+        "abs_spearman": 0.108,
+        "info_mutua": 0.01033,
+        "importancia_arbol": 0.00965,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "ingreso_mensual",
+        "abs_spearman": 0.08431,
+        "info_mutua": 0.00329,
+        "importancia_arbol": 0.01003,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "nivel_educativo",
+        "abs_spearman": 0.10944,
+        "info_mutua": 0.00609,
+        "importancia_arbol": 0.00344,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "tipo_vivienda",
+        "abs_spearman": 0.0779,
+        "info_mutua": 0.00583,
+        "importancia_arbol": 0.00271,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "ratio_monto_ingreso",
+        "abs_spearman": 0.06222,
+        "info_mutua": 0.0011,
+        "importancia_arbol": 0.01033,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "proposito",
+        "abs_spearman": 0.05523,
+        "info_mutua": 0.00336,
+        "importancia_arbol": 0.00421,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "monto_credito",
+        "abs_spearman": 0.00621,
+        "info_mutua": 0.00138,
+        "importancia_arbol": 0.01481,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "cuota_estimada",
+        "abs_spearman": 0.00436,
+        "info_mutua": 0.00264,
+        "importancia_arbol": 0.01138,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "ratio_cuota_ingreso",
+        "abs_spearman": 0.04873,
+        "info_mutua": 0.00196,
+        "importancia_arbol": 0.00732,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "longitud_texto",
+        "abs_spearman": 0.06121,
+        "info_mutua": 0.00037,
+        "importancia_arbol": 0.00649,
+        "decision": "Fuera del tabular (texto → paso 7)"
+      },
+      {
+        "variable": "rango_edad",
+        "abs_spearman": 0.06677,
+        "info_mutua": 0.00239,
+        "importancia_arbol": 0.00209,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "edad",
+        "abs_spearman": 0.06904,
+        "info_mutua": 0.0,
+        "importancia_arbol": 0.00502,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "personas_a_cargo",
+        "abs_spearman": 0.07473,
+        "info_mutua": 0.00088,
+        "importancia_arbol": 0.00218,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "num_creditos_activos",
+        "abs_spearman": 0.04537,
+        "info_mutua": 0.00122,
+        "importancia_arbol": 0.00235,
+        "decision": "Seleccionada"
+      },
+      {
+        "variable": "tasa_interes_anual",
+        "abs_spearman": 0.00466,
+        "info_mutua": 0.0,
+        "importancia_arbol": 0.00419,
+        "decision": "Señal débil (sigue en config; revisar en paso 5)"
+      },
+      {
+        "variable": "estado_civil",
+        "abs_spearman": 0.01526,
+        "info_mutua": 0.00022,
+        "importancia_arbol": 0.00129,
+        "decision": "Señal débil (sigue en config; revisar en paso 5)"
+      },
+      {
+        "variable": "plazo_meses",
+        "abs_spearman": 0.00333,
+        "info_mutua": 0.0,
+        "importancia_arbol": 0.00163,
+        "decision": "Señal débil (sigue en config; revisar en paso 5)"
+      }
+    ]
   },
   "pca": {
     "usado": false,
-    "componentes_95pct": 23,
-    "componentes_totales": 39
+    "componentes_totales": 38,
+    "componentes_90pct": 16,
+    "componentes_95pct": 22
   },
   "filas": {
     "train": 9600,
@@ -129,5 +344,9 @@
   "tasa_default": {
     "train": 0.3556,
     "test": 0.3558
+  },
+  "sha256": {
+    "train": "1ce71f5f0123edb39b1d0120fd142e73c2a2c066bca40bcbd0ead523b4e92e28",
+    "test": "8c1cb6a3dd0c05526e80c822c8b8211a08e0c2acd28a0221a53ec02b69b2e4ee"
   }
 }

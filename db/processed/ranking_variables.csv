@@ -1,25 +1,25 @@
-,tipo,abs_spearman,v_cramer,info_mutua,asociacion,rank,decision
-puntaje_buro,numérica,0.53347,,0.1711,0.53347,1.0,Entra al modelo
-uso_cupo_tarjetas,numérica,0.49884,,0.13794,0.49884,2.0,Entra al modelo
-moras_ultimos_12m,numérica,0.38734,,0.08248,0.38734,3.0,Entra al modelo
-relacion_deuda_ingreso,numérica,0.34146,,0.06991,0.34146,4.5,Entra al modelo
-tiene_moras_previas,categórica,,0.35865,0.06354,0.35865,4.5,Entra al modelo
-situacion_laboral,categórica,,0.17086,0.01441,0.17086,6.0,Entra al modelo
-nivel_educativo,categórica,,0.10823,0.00609,0.10823,8.5,Entra al modelo
-personas_a_cargo,numérica,0.07473,,0.00896,0.07473,9.5,Entra al modelo
-antiguedad_laboral_anios,numérica,0.108,,0.00488,0.108,9.5,Entra al modelo
-ingreso_mensual,numérica,0.08431,,0.00464,0.08431,10.5,Entra al modelo
-longitud_texto,numérica,0.06121,,0.00925,0.06121,11.5,Entra al modelo
-tipo_vivienda,categórica,,0.08378,0.00369,0.08378,12.0,Entra al modelo
-edad,numérica,0.06904,,0.00345,0.06904,14.5,Entra al modelo
-proposito,categórica,,0.07003,0.0027,0.07003,14.5,Entra al modelo
-ratio_cuota_ingreso,numérica,0.04873,,0.00387,0.04873,15.0,Entra al modelo
-plazo_meses,numérica,0.00333,,0.0079,0.00333,15.5,Entra al modelo
-rango_edad,categórica,,0.06624,0.00239,0.06624,16.0,Entra al modelo
-tasa_interes_anual,numérica,0.00466,,0.00364,0.00466,17.5,Entra al modelo
-ratio_monto_ingreso,numérica,0.06222,,0.00098,0.06222,17.5,Entra al modelo
-cuota_estimada,numérica,0.00436,,0.00203,0.00436,20.0,Entra al modelo
-num_creditos_activos,numérica,0.04537,,0.0,0.04537,20.75,Entra al modelo
-monto_credito,numérica,0.00621,,0.0,0.00621,21.25,Entra al modelo
-estado_civil,categórica,,0.0,0.0002,0.0,22.25,Entra al modelo
-sexo,categórica,,0.0,1e-05,0.0,22.75,"Excluir (sensible, solo auditoría)"
+variable,tipo,abs_pearson,abs_spearman,v_cramer,info_mutua,asociacion,rank,decision
+puntaje_buro,numérica,0.5344,0.5335,,0.1654,0.5335,1.0,Entra al modelo
+uso_cupo_tarjetas,numérica,0.4995,0.4988,,0.1355,0.4988,2.0,Entra al modelo
+moras_ultimos_12m,numérica,0.3883,0.3873,,0.0802,0.3873,3.0,Entra al modelo
+tiene_moras_previas,binaria,0.3588,0.3588,0.3586,0.0635,0.3586,4.5,Entra al modelo
+relacion_deuda_ingreso,numérica,0.2987,0.3415,,0.0682,0.3415,4.5,Entra al modelo
+situacion_laboral,categórica,,,0.1709,0.0144,0.1709,6.0,Entra al modelo
+antiguedad_laboral_anios,numérica,0.1121,0.108,,0.0082,0.108,8.0,Entra al modelo
+nivel_educativo,categórica,,,0.1082,0.0061,0.1082,8.5,Entra al modelo
+personas_a_cargo,numérica,0.0774,0.0747,,0.0061,0.0747,10.0,Entra al modelo
+tipo_vivienda,categórica,,,0.0838,0.0037,0.0838,11.0,Entra al modelo
+ingreso_mensual,numérica,0.0708,0.0843,,0.0033,0.0843,11.5,Entra al modelo
+longitud_texto,numérica,0.0488,0.0612,,0.0101,0.0612,11.5,Fuera del tabular (texto → paso 7)
+edad,numérica,0.0689,0.069,,0.0037,0.069,13.0,Entra al modelo
+proposito,categórica,,,0.07,0.0027,0.07,14.0,Entra al modelo
+tasa_interes_anual,numérica,0.0046,0.0047,,0.0046,0.0047,15.5,Entra al modelo (señal débil)
+num_creditos_activos,numérica,0.0447,0.0454,,0.0028,0.0454,16.5,Entra al modelo
+rango_edad,categórica,,,0.0662,0.0024,0.0662,16.5,Entra al modelo
+ratio_monto_ingreso,numérica,0.0688,0.0622,,0.001,0.0622,18.0,Entra al modelo
+ratio_cuota_ingreso,numérica,0.0558,0.0487,,0.0014,0.0487,18.5,Entra al modelo
+monto_credito,numérica,0.038,0.0062,,0.0025,0.0062,18.5,Entra al modelo
+cuota_estimada,numérica,0.0333,0.0044,,0.0025,0.0044,19.0,Entra al modelo
+estado_civil,categórica,,,0.0,0.0002,0.0,22.75,Entra al modelo (señal débil)
+plazo_meses,numérica,0.0034,0.0033,,0.0,0.0033,23.0,Entra al modelo (señal débil)
+sexo,categórica,,,0.0,0.0,0.0,23.25,Excluida (sensible: solo auditoría)
