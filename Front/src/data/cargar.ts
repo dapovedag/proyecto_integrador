@@ -119,7 +119,8 @@ function useCarga<T>(clave: string | null, cargar: () => Promise<T | null>): Rec
     }
     const ya = resueltos.get(clave) as T | undefined;
     if (ya !== undefined) {
-      setR({ estado: "listo", datos: ya });
+      // Mismo dato ya en caché: se conserva el estado para no re-renderizar a todos los consumidores.
+      setR((p) => (p.estado === "listo" && p.datos === ya ? p : { estado: "listo", datos: ya }));
       return;
     }
     let vivo = true;

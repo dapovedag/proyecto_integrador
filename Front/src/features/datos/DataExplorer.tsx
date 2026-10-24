@@ -9,7 +9,7 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react"
 import agregados from "@/data/generated/agregados.json";
 import { Evidencia } from "@/charts/Evidencia";
 import { compacto, dec, num, pct } from "@/charts/formatos";
-import { Cargando, Faltante } from "@/components/base";
+import { Cargando, Diferido, Faltante } from "@/components/base";
 import { Segmentado } from "@/components/Tabs";
 import { cargarTextoRun } from "@/data/cargar";
 import { conteos, parsearCsv, perfilar, type Celda, type Perfil, type Tabla } from "./perfil";
@@ -66,7 +66,7 @@ function useTabla(c: Conjunto) {
   return r;
 }
 
-export function DataExplorer({ conjunto = "crudo" }: { conjunto?: Conjunto }) {
+function ExploradorDatos({ conjunto = "crudo" }: { conjunto?: Conjunto }) {
   const [c, setC] = useState<Conjunto>(conjunto);
   useEffect(() => setC(conjunto), [conjunto]);
   const r = useTabla(c);
@@ -171,7 +171,7 @@ function Explorador({ tabla, conjunto, ms }: { tabla: Tabla; conjunto: Conjunto;
   const anchoTotal = 56 + anchos.reduce((s, a) => s + a, 0);
   const cont = useRef<HTMLDivElement>(null);
   const v = useVirtualizer({ count: indices.length, getScrollElement: () => cont.current, estimateSize: () => 34, overscan: 14, initialRect: { width: 900, height: 520 } });
-  const control = conteos(tabla);
+  const control = useMemo(() => conteos(tabla), [tabla]);
   const totalNulos = Object.values(control.nulos).reduce((s, x) => s + x, 0);
 
   const ordenar = (j: number) => {
@@ -398,5 +398,14 @@ function PanelPerfil({
         )}
       </div>
     </aside>
+  );
+}
+
+/** El explorador descarga y parsea un CSV de varios MB: se monta solo cuando el lector se acerca a él. */
+export function DataExplorer({ conjunto = "crudo" }: { conjunto?: Conjunto }) {
+  return (
+    <Diferido alto={640}>
+      <ExploradorDatos conjunto={conjunto} />
+    </Diferido>
   );
 }

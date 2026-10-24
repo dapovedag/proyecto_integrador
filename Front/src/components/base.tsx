@@ -3,7 +3,7 @@
  * (Kpi, Tabs, Contador viven en sus propios archivos.)
  */
 import { motion, useReducedMotion } from "framer-motion";
-import { useId, type ComponentProps, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ComponentProps, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 /* ---------- Chip ---------- */
@@ -84,7 +84,7 @@ export const Kbd = ({ children }: { children: ReactNode }) => <kbd className="kb
 export function Revelar({
   children,
   retraso = 0,
-  y = 18,
+  y = 10,
   className,
   como = "div",
 }: {
@@ -106,11 +106,25 @@ export function Revelar({
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px 0px" }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: retraso }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1], delay: Math.min(retraso, 0.12) }}
     >
       {children}
     </M>
   );
+}
+
+/* ---------- Montaje diferido ---------- */
+/** Monta `children` solo cuando el bloque se acerca a la vista (800 px antes); mientras tanto reserva `alto`. */
+export function Diferido({ children, alto = 220 }: { children: ReactNode; alto?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [ver, setVer] = useState(typeof IntersectionObserver === "undefined");
+  useEffect(() => {
+    if (ver || !ref.current) return;
+    const io = new IntersectionObserver((es) => es.some((e) => e.isIntersecting) && (setVer(true), io.disconnect()), { rootMargin: "800px 0px" });
+    io.observe(ref.current);
+    return () => io.disconnect();
+  }, [ver]);
+  return ver ? <>{children}</> : <div ref={ref} className="nb-diferido" style={{ minHeight: alto }} aria-hidden="true" />;
 }
 
 /* ---------- Sección editorial ---------- */

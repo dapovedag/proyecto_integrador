@@ -3,6 +3,7 @@
  */
 import { NavLink, useLocation } from "react-router-dom";
 import { ESTADO_ETIQUETA, GRUPOS_RAIL, MODULOS, PASOS, numeroFantasma } from "@/content/pasos";
+import { alAcercarse } from "@/content/precarga";
 
 export function EstadoPunto({ estado }: { estado: keyof typeof ESTADO_ETIQUETA }) {
   return <span className={`estado-punto estado-punto--${estado}`} title={ESTADO_ETIQUETA[estado]} aria-label={ESTADO_ETIQUETA[estado]} role="img" />;
@@ -35,6 +36,7 @@ export function RailCapitulos({ onNavegar }: { onNavegar?: () => void }) {
                     className="rail__item"
                     aria-current={pathname === p.ruta ? "page" : undefined}
                     onClick={onNavegar}
+                    {...alAcercarse(p.n)}
                   >
                     <span className="rail__num">{numeroFantasma(p.n)}</span>
                     <span>{p.tituloCorto}</span>

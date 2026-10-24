@@ -2,7 +2,7 @@
  * Piezas editoriales de los capítulos: introducción con cifras, figura por clave, composición
  * (principal + secundarias), hallazgos numerados, sub-bloques y el entregable (reproductor + especial).
  */
-import type { CSSProperties, ReactNode } from "react";
+import { useMemo, type CSSProperties, type ReactNode } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Figura } from "@/charts/Figura";
 import { Cargando, Faltante, Revelar } from "@/components/base";
@@ -48,10 +48,12 @@ export function Fig({
 }) {
   const { estado, figuras } = useFiguras();
   const r = parseRef(f, nb);
+  const base = estado === "cargando" ? null : buscarFigura(figuras, r.nb, r.clave);
+  // Spec estable entre renders: evita re-aplicar la opción completa de ECharts sin cambios.
+  const spec = useMemo(() => (base ? conLectura(base, lectura, titulo) : null), [base, lectura, titulo]);
   if (estado === "cargando") return <Cargando etiqueta="Cargando figura" alto={alto ?? 260} />;
-  const spec = buscarFigura(figuras, r.nb, r.clave);
   if (!spec) return <Faltante titulo={`Figura ${r.clave} (nb${r.nb})`} />;
-  return <Figura spec={conLectura(spec, lectura, titulo)} alto={alto} className={className} sinPie={sinPie} />;
+  return <Figura spec={spec} alto={alto} className={className} sinPie={sinPie} />;
 }
 
 /* ---------- Composición: figura principal + columna lateral ---------- */
