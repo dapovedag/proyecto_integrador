@@ -204,15 +204,15 @@ export interface Riesgo {
 
 /** docs/gestion/riesgos.md — los de impacto alto y los que afectan al front. */
 export const RIESGOS: Riesgo[] = [
-  { id: "RG-01", riesgo: "Máquina lenta: la CV de HGB y los notebooks pesados no caben en el sprint.", prob: "Alta", impacto: "Alta", mitigacion: "Cola en serie, modo FAST y RandomizedSearchCV de 8 iteraciones.", estado: "Mitigando" },
-  { id: "RG-02", riesgo: "WinError 1114 al cargar torch junto a sklearn o TensorFlow.", prob: "Media", impacto: "Alta", mitigacion: "Importar torch primero; procesos separados para TF y torch.", estado: "Abierto" },
-  { id: "RG-03", riesgo: "Spark en Windows (winutils, ruta con tilde, Java).", prob: "Alta", impacto: "Alta", mitigacion: "PySpark en Docker (ADR-005).", estado: "Mitigando" },
-  { id: "RG-05", riesgo: "El port TS del modelo difiere de Python.", prob: "Media", impacto: "Alta", mitigacion: "Golden de ~300 clientes y 50 textos con |Δ| < 1e-6.", estado: "Abierto" },
-  { id: "RG-07", riesgo: "El DI por edad no llega a 0,8 sin un costo excesivo.", prob: "Media", impacto: "Alta", mitigacion: "Selección por costo sujeta a DI ≥ 0,8; sin umbrales por grupo.", estado: "Abierto" },
-  { id: "RG-09", riesgo: "Se declara Hecho algo que no lo está.", prob: "Media", impacto: "Alta", mitigacion: "DoD verificable y checklist calculado por generar_evidencia.py.", estado: "Mitigando" },
-  { id: "RG-13", riesgo: "Puerto ocupado por otro proyecto y se valida el servicio equivocado.", prob: "Alta", impacto: "Media", mitigacion: "Validar el <title> o la versión de /health, no solo el 200.", estado: "Mitigando" },
-  { id: "RG-15", riesgo: "El texto aporta un ΔAUC artificial por el generador sintético.", prob: "Alta", impacto: "Media", mitigacion: "ΔAUC con IC bootstrap; el texto no entra en la decisión.", estado: "Abierto" },
-  { id: "RG-16", riesgo: "S6 sobrecomprometido (57 puntos).", prob: "Media", impacto: "Media", mitigacion: "Escribir en paralelo y ejecutar en serie; HU-34 sale primero si se desvía.", estado: "Abierto" },
+  { id: "RG-01", riesgo: "Máquina lenta: la CV de HGB y los notebooks pesados no caben en el sprint.", prob: "Alta", impacto: "Alta", mitigacion: "Cola en serie, modo FAST y RandomizedSearchCV de 8 iteraciones.", estado: "Mitigado" },
+  { id: "RG-02", riesgo: "WinError 1114 al cargar torch junto a sklearn o TensorFlow.", prob: "Media", impacto: "Alta", mitigacion: "Importar torch primero; procesos separados para TF y torch.", estado: "Mitigado" },
+  { id: "RG-03", riesgo: "Spark en Windows (winutils, ruta con tilde, Java).", prob: "Alta", impacto: "Alta", mitigacion: "PySpark en Docker (ADR-005).", estado: "Mitigado" },
+  { id: "RG-05", riesgo: "El port TS del modelo difiere de Python.", prob: "Media", impacto: "Alta", mitigacion: "Golden de ~300 clientes y 50 textos con |Δ| < 1e-6.", estado: "Mitigado" },
+  { id: "RG-07", riesgo: "El DI por edad no llega a 0,8 sin un costo excesivo.", prob: "Media", impacto: "Alta", mitigacion: "Selección por costo sujeta a DI ≥ 0,8; sin umbrales por grupo.", estado: "Mitigado" },
+  { id: "RG-09", riesgo: "Se declara Hecho algo que no lo está.", prob: "Media", impacto: "Alta", mitigacion: "DoD verificable y checklist calculado por generar_evidencia.py.", estado: "Mitigado" },
+  { id: "RG-13", riesgo: "Puerto ocupado por otro proyecto y se valida el servicio equivocado.", prob: "Alta", impacto: "Media", mitigacion: "Validar el <title> o la versión de /health, no solo el 200.", estado: "Mitigado" },
+  { id: "RG-15", riesgo: "Sobrevalorar el aporte del texto de la solicitud.", prob: "Alta", impacto: "Media", mitigacion: "ΔAUC con IC bootstrap en el nb07; la decisión usa el modelo tabular y el texto queda como análisis complementario.", estado: "Mitigado" },
+  { id: "RG-16", riesgo: "S6 sobrecomprometido (57 puntos).", prob: "Media", impacto: "Media", mitigacion: "Escribir en paralelo y ejecutar en serie; el sprint cerró con 57/57 puntos.", estado: "Mitigado" },
 ];
 
 /** Cruce CRISP-DM ↔ fases del enunciado. */

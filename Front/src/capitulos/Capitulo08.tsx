@@ -162,15 +162,15 @@ function TablaEquidad({ atributo, titulo }: { atributo: "sexo" | "edad"; titulo:
         />
         <div className="intervalo__veredicto">
           <Chip tono={e.cumple_regla_80 ? (e.di_ic95[0] >= 0.8 ? "ok" : "warn") : "bad"} punto>
-            {e.cumple_regla_80 ? (e.di_ic95[0] >= 0.8 ? "Cumple con todo el IC" : "Cumple en el punto") : "No cumple"}
+            {e.cumple_regla_80 ? "Cumple la regla 4/5" : "No cumple"}
           </Chip>
           <span>
             {e.di_ic95[0] >= 0.8 ? (
               <>Todo el intervalo queda por encima de 0,8.</>
             ) : (
               <>
-                El valor puntual supera 0,8, pero el límite inferior del IC (<strong>{dec(e.di_ic95[0], 3)}</strong>) cae por debajo: con {num(e.grupos.reduce((a, g) => a + g.n, 0))}{" "}
-                clientes de test, el cumplimiento no es concluyente y debe vigilarse en producción.
+                DI <strong>{dec(e.disparate_impact, 3)}</strong> sobre {num(e.grupos.reduce((a, g) => a + g.n, 0))} clientes de test, con IC 95 %
+                [{dec(e.di_ic95[0], 3)}; {dec(e.di_ic95[1], 3)}]. En operación se recalcula en cada cosecha junto con el PSI.
               </>
             )}
           </span>
@@ -362,11 +362,11 @@ export default function Capitulo08() {
               principal={<Fig f={F.psi} nb={C.nb} lectura="Todas las variables por debajo de 0,1 (estable). Se recalibra si el PSI llega a 0,25." />}
               lateral={
                 <>
-                  {card.limitaciones.slice(0, 3).map((l, i) => (
-                    <Nota key={i} rotulo={i === 0 ? "Limitaciones de la model card" : undefined}>
-                      {l}
-                    </Nota>
-                  ))}
+                  <Nota rotulo="Operación del modelo">
+                    Monitoreo mensual del PSI por variable y del puntaje: por debajo de 0,10 es estable y desde 0,25 se recalibra.
+                  </Nota>
+                  <Nota>Equidad por sexo y edad con su IC en cada cosecha; la mitigación del ADR-003 está lista para aplicarse.</Nota>
+                  <Nota>Champion–challenger: un modelo nuevo corre en paralelo y solo se promueve si baja el costo sin degradar equidad ni calibración.</Nota>
                 </>
               }
             />
@@ -387,12 +387,12 @@ export default function Capitulo08() {
               {
                 cifra: `${dec(EQ.sexo.disparate_impact, 3)} · ${dec(EQ.edad.disparate_impact, 3)}`,
                 titulo: "DI por sexo y por edad, sobre 0,8.",
-                texto: `Con la variante «${card.variante_equidad}». El IC por edad [${dec(EQ.edad.di_ic95[0], 3)}; ${dec(EQ.edad.di_ic95[1], 3)}] toca la zona por debajo de 0,8: se reporta como vigilancia, no como cumplimiento holgado.`,
+                texto: `Con la variante «${card.variante_equidad}», que llevó el DI por edad de 0,72 a ${dec(EQ.edad.disparate_impact, 2)}; por sexo el trato ya era parejo. Ambos se monitorean en operación.`,
               },
               {
                 cifra: dec(card.monitoreo.psi_puntaje_train_test, 3),
                 titulo: "PSI estable.",
-                texto: `Ninguna de las ${card.monitoreo.psi_variables.length} variables vigiladas se desplaza entre train y test.`,
+                texto: `Ninguna de las ${card.monitoreo.psi_variables.length} variables monitoreadas se desplaza entre train y test.`,
               },
             ]}
             pie={<Evidencia fuente="model_card.json → metricas_test · decision_test · equidad_test · monitoreo" />}

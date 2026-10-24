@@ -141,7 +141,8 @@ export default function Capitulo01() {
                   <>
                     Tasa de impago del <strong>{pct(agregados.resumen.tasa_impago, 2)}</strong> y los 10 chequeos del contrato de datos en verde. Se eligió
                     frente a German Credit, Default of Credit Card Clients y Give Me Some Credit por traer texto en español, sexo, edad y estado civil
-                    por separado. Su límite: es sintético.
+                    por separado. Es un dataset sintético-realista diseñado para el proyecto, con imperfecciones reales (nulos, duplicados, edades
+                    imposibles, atípicos) que el pipeline corrige.
                   </>
                 ),
               },

@@ -426,7 +426,7 @@ function Riesgos() {
                 </td>
                 <td className="texto-2">{r.mitigacion}</td>
                 <td>
-                  <Chip s tono={r.estado === "Mitigando" ? "acento" : "neutro"} punto>
+                  <Chip s tono={r.estado === "Mitigado" ? "ok" : r.estado === "Mitigando" ? "acento" : "neutro"} punto>
                     {r.estado}
                   </Chip>
                 </td>

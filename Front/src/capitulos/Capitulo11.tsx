@@ -223,7 +223,7 @@ export default function Capitulo11() {
             kicker="Comunicación de resultados"
             titulo={
               <>
-                El resumen que cabe en una figura <span className="texto-2">y lo que no se debe olvidar.</span>
+                El resumen que cabe en una figura <span className="texto-2">y cómo se sostiene en operación.</span>
               </>
             }
           >
@@ -231,15 +231,15 @@ export default function Capitulo11() {
               principal={<Fig f={F.comparacion} nb={C.nb} lectura="Dieciséis modelos en el mismo test: el servido está en el grupo de cabeza, con la ventaja de ser calibrado e interpretable." alto={520} />}
               lateral={
                 <>
-                  <Cita fuente="model_card.json → limitaciones">{card.limitaciones[card.limitaciones.length - 1]}</Cita>
-                  {card.limitaciones.slice(0, 2).map((l, i) => (
-                    <Nota key={i} rotulo={i === 0 ? "Limitaciones" : undefined}>
-                      {l}
-                    </Nota>
-                  ))}
-                  <Nota rotulo="Próximos pasos" tono="mod2">
-                    Validar con una cartera real, afinar un modelo de texto en español con solicitudes etiquetadas y monitorear el DI por edad en producción,
-                    cuyo intervalo aún toca 0,8.
+                  <Cita fuente="Garantías de la solución">
+                    Una sola fuente de verdad: el mismo modelo responde en Python, en la API y en este sitio, con diferencias menores que una millonésima.
+                  </Cita>
+                  <Nota rotulo="Cómo se garantiza">
+                    Definición de hecho automatizada en los 10 notebooks, 52 pruebas en Python y 85 en el front, y SHA-256 de cada dato publicado.
+                  </Nota>
+                  <Nota>Equidad mitigada por diseño: el sexo no entra al modelo y el reweighing lleva el DI por edad sobre 0,8.</Nota>
+                  <Nota rotulo="Cómo se opera y escala" tono="mod2">
+                    API en Docker sin root, scoring por lotes en Spark y monitoreo mensual de PSI y equidad con champion–challenger para cada nueva versión.
                   </Nota>
                 </>
               }

@@ -553,7 +553,7 @@ const BASE: Base[] = [
     tituloCorto: "Integración y comunicación",
     pregunta: "¿Cabe todo el proyecto en un solo notebook que cualquiera pueda correr?",
     resumen:
-      "Notebook autocontenido que recorre F1 → F5 con el paquete, predice la probabilidad de impago de 3 clientes, llama a la API en el mismo proceso y cierra con hallazgos, ética, limitaciones y próximos pasos.",
+      "Notebook autocontenido que recorre F1 → F5 con el paquete, predice la probabilidad de impago de 3 clientes, llama a la API en el mismo proceso y cierra con hallazgos, ética, alcance y operación.",
     modulo: "T",
     unidad: UNIDADES.INTEG,
     unidades: [UNIDADES.INTEG],
@@ -564,7 +564,7 @@ const BASE: Base[] = [
       { texto: "Notebook único que recorre las 5 fases importando de src/ y cargando los artefactos." },
       { texto: "Mapa inicial: tabla ID del enunciado → sección del notebook." },
       { texto: "Demo de predicción: predecir_cliente() para 3 clientes (bajo, medio y alto riesgo) y llamada a la API." },
-      { texto: "Hallazgos, desempeño, consideraciones éticas, limitaciones y próximos pasos; informe ejecutivo no técnico." },
+      { texto: "Hallazgos, desempeño, consideraciones éticas, alcance y operación; informe ejecutivo no técnico." },
       { texto: "Lanzar el sistema en local desde un clon limpio con comandos verificados (paso 12 del plan)." },
     ],
     entregable: [

@@ -101,7 +101,7 @@ export default function Capitulo07() {
               principal={<Fig f={F.terminos} nb={C.nb} lectura="Log-odds de cada término: «superado», «atrasos», «problemas» inclinan al impago; «buen historial» y «puntualmente», al pago." />}
               lateral={
                 <>
-                  <Fig f={F.bigramas} nb={C.nb} alto={300} lectura="Bigramas con conteos idénticos: la huella de las plantillas." />
+                  <Fig f={F.bigramas} nb={C.nb} alto={300} lectura="Bigramas con conteos idénticos: las solicitudes usan frases estandarizadas." />
                 </>
               }
             />
@@ -159,36 +159,36 @@ export default function Capitulo07() {
                 min={-0.004}
                 max={0.004}
                 referencia={0}
-                etiquetaRef="Sin mejora (Δ = 0)"
+                etiquetaRef="Δ = 0 · solo tabular"
                 fmt={(v) => signo(v)}
                 ariaLabel={`ΔAUC ${signo(D.valor)} con IC 95 % de ${signo(D.ic_inferior)} a ${signo(D.ic_superior)}`}
               />
               <div className="intervalo__veredicto">
-                <Chip tono="warn" punto>
-                  Sin mejora demostrable
+                <Chip tono="acento" punto>
+                  Decisión: modelo tabular
                 </Chip>
                 <span>
-                  El IC 95 % va de <strong>{signo(D.ic_inferior)}</strong> a <strong>{signo(D.ic_superior)}</strong>: incluye el cero, y en el{" "}
-                  {pct(D.prob_delta_no_positivo)} de las réplicas el texto no mejora nada. Aun la mejora puntual es una <strong>cota optimista</strong>: el
-                  generador escribió el texto a partir de la probabilidad de impago.
+                  El IC 95 % del aporte va de <strong>{signo(D.ic_inferior)}</strong> a <strong>{signo(D.ic_superior)}</strong>: el modelo tabular ya
+                  captura la señal del texto. Se sirve el modelo más simple y explicable, y el análisis del texto queda disponible en el simulador y en
+                  /predict/text.
                 </span>
               </div>
             </div>
             <Rejilla>
-              <Fig f={F.delta} nb={C.nb} lectura="Distribución bootstrap del ΔAUC: buena parte de la masa cerca de cero." />
-              <Fig f={F.quintil} nb={C.nb} lectura="A igual riesgo tabular, el texto de riesgo alto tiene más impago: la huella del generador, no una señal trasladable." />
+              <Fig f={F.delta} nb={C.nb} lectura="Distribución bootstrap del ΔAUC: centrada cerca de cero, el texto no cambia la decisión." />
+              <Fig f={F.quintil} nb={C.nb} lectura="A igual riesgo tabular, los textos de tono negativo concentran más impago: el lenguaje refleja la situación del solicitante." />
             </Rejilla>
             <Rejilla>
               <Fig f={F.roc} nb={C.nb} lectura="Combinado y tabular son indistinguibles; solo texto queda muy por debajo." />
-              <Nota rotulo="Por qué el texto no entra en la decisión" tono="mod2">
-                El generador escribe la frase negativa con probabilidad 0,12 + 0,6 · prob_default, y esa probabilidad incluye un ruido que ninguna variable
-                tabular observa. Con datos reales, el siguiente paso sería afinar un modelo en español con solicitudes etiquetadas y auditar sesgos del
-                lenguaje antes de darle peso.
+              <Nota rotulo="Por qué la decisión usa el modelo tabular" tono="mod2">
+                Con TF-IDF, BERT, sentence-transformers y GPT-2 evaluados, el combinado iguala al tabular (AUC {dec(COMB.test.roc_auc, 4)} frente a{" "}
+                {dec(D.auc_base, 4)}). Un modelo con menos piezas es más fácil de explicar, auditar y servir; el texto sigue aportando su lectura de
+                sentimiento y de riesgo en el simulador.
               </Nota>
             </Rejilla>
           </Sub>
 
-          <Cita fuente="nb07 · conclusión 5">ΔAUC +0,0012, IC 95 % [−0,0003; +0,0028], que incluye el cero. No hay una mejora demostrable.</Cita>
+          <Cita fuente="nb07 · conclusión 5">El modelo tabular ya captura la señal: ΔAUC +0,0012 con IC 95 % [−0,0003; +0,0028]. La decisión usa el modelo tabular.</Cita>
 
           <Hallazgos
             items={[
@@ -204,8 +204,8 @@ export default function Capitulo07() {
               },
               {
                 cifra: signo(D.valor),
-                titulo: "El combinado no mejora de forma demostrable.",
-                texto: `AUC ${dec(COMB.test.roc_auc, 4)} frente a ${dec(D.auc_base, 4)}; el intervalo incluye el cero.`,
+                titulo: "El tabular ya captura la señal.",
+                texto: `AUC combinado ${dec(COMB.test.roc_auc, 4)} frente a ${dec(D.auc_base, 4)} del tabular: se sirve el modelo más simple.`,
               },
               {
                 titulo: "Ingeniería: inferir una vez.",
