@@ -14,7 +14,7 @@ Back/
 ├── tests/                pytest (núcleo, API, reglas del proyecto)
 ├── Dockerfile, docker-compose.yml          API
 ├── docker-compose.spark.yml, docker/spark  PySpark (notebook 09)
-└── requirements-api.lock (imagen Docker) · requirements-dev-win.lock (entorno de desarrollo congelado)
+└── requirements-api.lock  dependencias fijas de la imagen de la API
 ```
 
 ## 1. Entorno (desde un clon limpio)
@@ -26,13 +26,10 @@ python -m venv .venv
 .venv/Scripts/python -m ipykernel install --user --name credit-risk --display-name "credit-risk (Python 3.10)"
 ```
 
-> **Windows y PyTorch:** en un proceso que use torch, impórtelo **antes** que scikit-learn. Si se hace al revés,
-> falla con `WinError 1114` en `c10.dll` (diagnóstico en ADR-006). `credit_risk.notebook.setup(torch_primero=True)` ya lo hace.
-
 ## 2. Entrenar el modelo servido
 
 ```bash
-.venv/Scripts/python train.py --log reports/train_log.jsonl     # protocolo completo (unos 8 min en esta máquina)
+.venv/Scripts/python train.py --log reports/train_log.jsonl     # protocolo completo
 .venv/Scripts/python train.py --rapido --sin-escribir          # prueba de humo, sin tocar los artefactos
 ```
 
