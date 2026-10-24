@@ -703,21 +703,21 @@
 .nb-md > * + * {
   margin-top: 0.8em;
 }
-.nb-md h1 {
+.nb-md .nb-md__h1 {
   font-size: var(--fs-xl);
   letter-spacing: var(--track-tight);
   color: var(--text);
   line-height: 1.12;
 }
-.nb-md h2 {
+.nb-md .nb-md__h2 {
   font-size: var(--fs-lg);
   color: var(--text);
   margin-top: var(--space-5);
   padding-top: var(--space-5);
   border-top: 1px solid var(--line);
 }
-.nb-md h3,
-.nb-md h4 {
+.nb-md .nb-md__h3,
+.nb-md .nb-md__h4 {
   font-size: var(--fs-md);
   color: var(--text);
   margin-top: 1.2em;
@@ -737,10 +737,10 @@
   color: #cfd2ff;
   white-space: break-spaces;
 }
-.nb-md h1 code,
-.nb-md h2 code,
-.nb-md h3 code,
-.nb-md h4 code {
+.nb-md .nb-md__h1 code,
+.nb-md .nb-md__h2 code,
+.nb-md .nb-md__h3 code,
+.nb-md .nb-md__h4 code {
   font-size: 0.82em;
   padding: 0;
   background: none;
@@ -838,7 +838,7 @@
 .nbp--compacto .nbp__llamado {
   margin: var(--space-4) var(--space-4) 0;
 }
-.nbp--compacto .nb-md h1 {
+.nbp--compacto .nb-md .nb-md__h1 {
   font-size: var(--fs-lg);
 }
 
@@ -950,10 +950,10 @@
   .nb-md {
     font-size: var(--fs-sm);
   }
-  .nb-md h1 {
+  .nb-md .nb-md__h1 {
     font-size: var(--fs-lg);
   }
-  .nb-md h2 {
+  .nb-md .nb-md__h2 {
     font-size: var(--fs-md);
   }
   .nbp--compacto .nbp__cuerpo {

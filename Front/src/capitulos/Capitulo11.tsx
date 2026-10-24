@@ -78,7 +78,8 @@ function Clientes() {
         return (
           <article key={id} className="cliente" style={{ "--c": DECISION[d] } as React.CSSProperties}>
             <span className="cliente__perfil">{nombre} · predecir_cliente()</span>
-            <span className="cliente__p" aria-label={`Probabilidad de impago ${pct(p)}`}>
+            <span className="cliente__p">
+              <span className="sr-only">Probabilidad de impago </span>
               {pct(p)}
             </span>
             <span className="cliente__decision">

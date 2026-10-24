@@ -3,7 +3,7 @@
  * de capítulo, transición de ruta, pie con versión · git sha · fecha del manifest.
  */
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Suspense, useEffect, useState, type ReactNode } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import card from "@/data/generated/model_card.json";
 import manifest from "@/data/generated/manifest.json";
@@ -26,7 +26,7 @@ export function Logo({ className = "barra__logo" }: { className?: string }) {
   );
 }
 
-function BarraSuperior({ conRail, onAbrirRail }: { conRail: boolean; onAbrirRail: () => void }) {
+function BarraSuperior({ conRail, cajonAbierto, onAbrirRail }: { conRail: boolean; cajonAbierto: boolean; onAbrirRail: () => void }) {
   const { abrir } = usePaleta();
   const { pathname } = useLocation();
   const esMac = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
@@ -34,7 +34,14 @@ function BarraSuperior({ conRail, onAbrirRail }: { conRail: boolean; onAbrirRail
   return (
     <header className="barra">
       {(
-        <button type="button" className="barra__menu barra__menu--rail" onClick={onAbrirRail} aria-label={conRail ? "Abrir capítulos" : "Abrir menú"}>
+        <button
+          type="button"
+          className="barra__menu barra__menu--rail"
+          onClick={onAbrirRail}
+          aria-label={conRail ? "Abrir capítulos" : "Abrir menú"}
+          aria-expanded={cajonAbierto}
+          aria-controls="cajon-navegacion"
+        >
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
             <path d="M2.5 4h11M2.5 8h11M2.5 12h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
@@ -186,11 +193,14 @@ function TransicionRuta({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!window.location.hash) window.scrollTo({ top: 0, behavior: "auto" });
   }, [pathname]);
-  if (reducido) return <>{children}</>;
+  // .marco__ruta ocupa al menos la pantalla: el pie nunca entra al primer viewport mientras la página carga sus
+  // datos (evita el salto de layout cuando el contenido crece).
+  if (reducido) return <div className="marco__ruta">{children}</div>;
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={pathname}
+        className="marco__ruta"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -6 }}
@@ -202,53 +212,101 @@ function TransicionRuta({ children }: { children: ReactNode }) {
   );
 }
 
+/** Cajón de navegación móvil: modal real (foco dentro, Tab atrapado, Esc cierra, el foco vuelve al botón). */
+function Cajon({ onCerrar }: { onCerrar: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const previo = document.activeElement as HTMLElement | null;
+    const enfocables = () => [...(ref.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])') ?? [])];
+    enfocables()[0]?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onCerrar();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const el = enfocables();
+      if (!el.length) return;
+      const primero = el[0];
+      const ultimo = el[el.length - 1];
+      if (e.shiftKey && document.activeElement === primero) {
+        e.preventDefault();
+        ultimo.focus();
+      } else if (!e.shiftKey && document.activeElement === ultimo) {
+        e.preventDefault();
+        primero.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      previo?.focus?.();
+    };
+  }, [onCerrar]);
+  return (
+    <>
+      <motion.div className="cajon-fondo" onClick={onCerrar} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
+      <motion.div
+        ref={ref}
+        id="cajon-navegacion"
+        className="cajon"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navegación y capítulos"
+        initial={{ x: "-100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "-100%" }}
+        transition={{ type: "spring", stiffness: 380, damping: 40 }}
+      >
+        <nav className="cajon__nav" aria-label="Principal">
+          <NavLink to="/" end onClick={onCerrar}>
+            Portada
+          </NavLink>
+          <NavLink to="/simulador" onClick={onCerrar}>
+            Simulador
+          </NavLink>
+          <NavLink to="/trazabilidad" onClick={onCerrar}>
+            Trazabilidad
+          </NavLink>
+        </nav>
+        <RailCapitulos onNavegar={onCerrar} />
+      </motion.div>
+    </>
+  );
+}
+
 export function Shell() {
   const { pathname } = useLocation();
   const conRail = pathname.startsWith("/paso") || pathname === "/metodologia";
   const [cajon, setCajon] = useState(false);
+  const cerrarCajon = useCallback(() => setCajon(false), []);
   useEffect(() => setCajon(false), [pathname]);
   return (
     <ProveedorPaleta>
       <a href="#contenido" className="saltar">
         Saltar al contenido
       </a>
-      <BarraSuperior conRail={conRail} onAbrirRail={() => setCajon(true)} />
+      <BarraSuperior conRail={conRail} cajonAbierto={cajon} onAbrirRail={() => setCajon(true)} />
       <div className={`marco ${conRail ? "marco--con-rail" : ""}`}>
         {conRail && <RailCapitulos />}
         <main id="contenido" className="marco__principal" tabIndex={-1}>
           <TransicionRuta>
-            <Suspense fallback={<div className="contenedor" style={{ paddingBlock: 64 }}><Cargando etiqueta="Abriendo capítulo" /></div>}>
+            {/* El fallback ocupa la pantalla: el pie no aparece arriba mientras llega la ruta (sin salto de layout). */}
+            <Suspense
+              fallback={
+                <div className="contenedor" style={{ paddingBlock: 64 }}>
+                  <Cargando etiqueta="Abriendo capítulo" />
+                </div>
+              }
+            >
               <Outlet />
             </Suspense>
           </TransicionRuta>
           <Pie />
         </main>
       </div>
-      <AnimatePresence>
-        {cajon && (
-          <>
-            <motion.div className="cajon-fondo" onClick={() => setCajon(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
-            <motion.div
-              className="cajon"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Capítulos"
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "spring", stiffness: 380, damping: 40 }}
-              onKeyDown={(e) => e.key === "Escape" && setCajon(false)}
-            >
-              <nav className="cajon__nav" aria-label="Principal">
-                <NavLink to="/" end onClick={() => setCajon(false)}>Portada</NavLink>
-                <NavLink to="/simulador" onClick={() => setCajon(false)}>Simulador</NavLink>
-                <NavLink to="/trazabilidad" onClick={() => setCajon(false)}>Trazabilidad</NavLink>
-              </nav>
-              <RailCapitulos onNavegar={() => setCajon(false)} />
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      <AnimatePresence>{cajon && <Cajon key="cajon" onCerrar={cerrarCajon} />}</AnimatePresence>
     </ProveedorPaleta>
   );
 }

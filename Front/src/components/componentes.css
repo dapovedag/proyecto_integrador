@@ -367,6 +367,12 @@
   color: var(--text);
   font-weight: 600;
 }
+/* Enlaces dentro de una nota: subrayados, no se distinguen solo por el color (WCAG 1.4.1). */
+.nota a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
 
 .evidencia {
   display: inline-flex;
@@ -832,6 +838,9 @@
 }
 .marco__principal {
   min-width: 0;
+}
+.marco__ruta {
+  min-height: calc(100svh - var(--topbar-h));
 }
 
 /* ---------- Rail de capítulos ---------- */

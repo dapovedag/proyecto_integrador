@@ -10,6 +10,7 @@ export default function Simulador() {
   return (
     <Seccion
       borde={false}
+      nivel={1}
       className="pagina-simulador"
       kicker={`Simulador · modelo v${card.version}`}
       titulo="¿Aprobar, revisar o rechazar?"

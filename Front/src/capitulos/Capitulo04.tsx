@@ -129,7 +129,7 @@ export default function Capitulo04() {
             <Rejilla>
               <Fig f={F.ranking} nb={C.nb} lectura="Información mutua con default: el comportamiento crediticio arriba, las demográficas abajo." />
               <div className="cap-tabla" role="region" aria-label="Equivalencias dplyr y pandas" tabIndex={0}>
-                <div className="cap-tabla__scroll">
+                <div className="cap-tabla__scroll" tabIndex={0} role="region" aria-label="Tabla con desplazamiento horizontal">
                   <table>
                     <caption className="sr-only">Verbos de dplyr y su equivalente en pandas</caption>
                     <thead>

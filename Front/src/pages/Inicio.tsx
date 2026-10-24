@@ -83,6 +83,16 @@ function Hero() {
                 {num(card.datos.n_train)} / {num(card.datos.n_test)}
               </dd>
             </div>
+            <div>
+              <dt>Requisitos cumplidos</dt>
+              <dd>
+                <a href="#checklist" className="hero__requisitos">
+                  {RESUMEN_TRAZA.acreditadas}/{RESUMEN_TRAZA.filas}
+                  <span aria-hidden="true">↓</span>
+                  <span className="sr-only">: ver el checklist del enunciado</span>
+                </a>
+              </dd>
+            </div>
           </motion.dl>
         </div>
 
@@ -98,7 +108,11 @@ function Hero() {
                     <path d="M2.5 3.5h3v9h-3zM6.5 3.5h3v9h-3zM10.5 3.5h3v9h-3z" fill="none" stroke="currentColor" strokeWidth="1.3" />
                   )}
                 </svg>
-                {separado ? "Unir" : "Separar grupos"}
+                {separado ? "Unir" : (
+                  <>
+                    Separar<span className="hero__separar-extra"> grupos</span>
+                  </>
+                )}
               </button>
             </div>
             <NubePca modo={modo} separado={separado} alto={0} className="hero__lienzo" onResumen={onResumen} />
@@ -143,7 +157,7 @@ const COSTOS_ERROR = [
 ];
 
 const RETOS = [
-  { n: "1", t: "Una probabilidad, no una etiqueta", d: "Calibrada, para que un 30 % estimado signifique 30 de cada 100 clientes en impago." },
+  { n: "1", t: "Una probabilidad, no una etiqueta", d: "Calibrada, para que un 30 % estimado signifique 30 de cada 100 clientes en impago." },
   { n: "2", t: "Una regla que decida con costos", d: "Aprobar, revisar o rechazar según lo que cuesta cada error, no con un umbral de 0,5." },
   { n: "3", t: "Rendir cuentas", d: "Sin trato dispar por sexo o edad, y con cada cifra trazable hasta el notebook que la produjo." },
 ];
@@ -406,7 +420,7 @@ function Cifras() {
           <div className="cifras__fila">
             <Kpi etiqueta="Impago entre aprobados" valor={D.impago_en_aprobados} formato="pct" color="var(--ok)" nota={<>Frente al {pct(card.datos.tasa_default_test)} de impago sin modelo</>} />
             <Kpi etiqueta="Costo medio por solicitud" valor={D.costo_medio} formato="pct" color="var(--warn)" nota="Pérdida esperada por unidad de exposición, con la política de Chow" />
-            <Kpi etiqueta="Disparate impact · edad" valor={EQ.edad.disparate_impact} formato="dec3" color="var(--mod2)" nota={<>IC 95 % {dec(EQ.edad.di_ic95[0])}–{dec(EQ.edad.di_ic95[1])} · regla 4/5 ≥ 0,8</>} />
+            <Kpi etiqueta="Disparate impact · edad" valor={EQ.edad.disparate_impact} formato="dec3" color="var(--mod2)" nota={<>IC 95 % {dec(EQ.edad.di_ic95[0])}–{dec(EQ.edad.di_ic95[1])} · regla 4/5 ≥ 0,8</>} />
             <Kpi etiqueta="Disparate impact · sexo" valor={EQ.sexo.disparate_impact} formato="dec3" color="var(--mod2)" nota={<>«{card.variable_excluida_auditoria}» nunca entra al modelo: solo audita</>} />
           </div>
         </Revelar>
@@ -450,7 +464,7 @@ function Politica() {
             barato que acertar a ciegas.
           </Nota>
           <Nota rotulo="Sensibilidad">
-            Los umbrales se recalculan para LGD de 45 % a 75 % y varios márgenes ({card.sensibilidad_umbrales.length} escenarios en la model
+            Los umbrales se recalculan para LGD de 45 % a 75 % y varios márgenes ({card.sensibilidad_umbrales.length} escenarios en la model
             card). Las bandas Bajo, Medio y Alto equivalen a aprobar, revisar y rechazar por construcción.
           </Nota>
           <Evidencia fuente="model_card.json → costos · umbrales" notebook="08" />

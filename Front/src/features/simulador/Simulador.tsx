@@ -62,12 +62,13 @@ export function Simulador() {
     setCliente((c) => ({ ...c, [id]: v }));
   }, []);
 
-  // La barra flotante (móvil) se oculta mientras el panel de resultado está a la vista.
+  // La barra flotante (móvil) se oculta mientras la cifra del resultado está a la vista. Se observa la cifra y no
+  // todo el panel: el panel es alto y puede seguir visible en parte aunque la probabilidad ya no se vea.
   const [resVisible, setResVisible] = useState(true);
   useEffect(() => {
-    const el = document.getElementById("resultado");
+    const el = document.querySelector('[data-testid="sim-resultado"]');
     if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver((es) => setResVisible(es.some((e) => e.isIntersecting)), { threshold: 0.15 });
+    const io = new IntersectionObserver((es) => setResVisible(es.some((e) => e.isIntersecting)), { threshold: 0.6 });
     io.observe(el);
     return () => io.disconnect();
   }, []);

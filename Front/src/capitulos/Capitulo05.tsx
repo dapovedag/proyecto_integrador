@@ -102,7 +102,7 @@ function TablaComparativa() {
   const mejores = Object.fromEntries(cols.map((c) => [c.k, mejorDe(c.k, c.menor)]));
   return (
     <div className="cap-tabla" role="region" aria-label="Tabla comparativa de modelos clásicos" tabIndex={0}>
-      <div className="cap-tabla__scroll">
+      <div className="cap-tabla__scroll" tabIndex={0} role="region" aria-label="Tabla con desplazamiento horizontal">
         <table>
           <caption className="sr-only">Métricas en test de los modelos clásicos (umbral 0,25)</caption>
           <thead>

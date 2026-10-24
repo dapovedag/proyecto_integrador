@@ -36,7 +36,8 @@ export function Contador({ valor, formato, duracion }: { valor: number; formato?
   const visto = useInView(ref, { once: true, margin: "-40px" });
   const v = useContador(valor, visto, duracion);
   return (
-    <span ref={ref} aria-label={formatear(valor, formato)}>
+    <span ref={ref}>
+      <span className="sr-only">{formatear(valor, formato)}</span>
       <span aria-hidden="true">{formatear(v, formato)}</span>
     </span>
   );
@@ -64,7 +65,8 @@ export function Kpi({ etiqueta, valor, formato = "num", nota, color, evidencia, 
   return (
     <div ref={ref} className={`kpi ${compacto ? "kpi--compacto" : ""} ${className}`} style={color ? ({ "--kpi-c": color } as React.CSSProperties) : undefined}>
       <span className="kpi__etiqueta">{etiqueta}</span>
-      <span className="kpi__valor" aria-label={texto}>
+      <span className="kpi__valor">
+        <span className="sr-only">{texto}</span>
         <span aria-hidden="true">
           {partes ? (
             <>

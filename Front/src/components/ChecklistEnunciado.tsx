@@ -75,10 +75,15 @@ export function ChecklistEnunciado() {
   return (
     <div className="chk">
       <div className="chk__marcador">
-        <div className="chk__cifra" aria-label={`${R.acreditadas} de ${R.filas} requisitos acreditados`}>
-          <span className="chk__n display">{R.acreditadas}</span>
-          <span className="chk__de display">/{R.filas}</span>
-        </div>
+        <p className="chk__cifra">
+          <span className="sr-only">{`${R.acreditadas} de ${R.filas} requisitos acreditados`}</span>
+          <span className="chk__n display" aria-hidden="true">
+            {R.acreditadas}
+          </span>
+          <span className="chk__de display" aria-hidden="true">
+            /{R.filas}
+          </span>
+        </p>
         <div className="chk__resumen">
           <p className="chk__leyenda">
             {completo ? "Todos los requisitos del enunciado, acreditados con evidencia." : "Requisitos del enunciado acreditados con evidencia."}

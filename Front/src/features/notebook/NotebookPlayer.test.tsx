@@ -30,7 +30,7 @@ function montar(ruta = "/paso/5") {
     </MemoryRouter>,
   );
 }
-const prompts = (raiz: HTMLElement) => [...raiz.querySelectorAll(".nb-prompt")].map((e) => e.textContent);
+const prompts = (raiz: HTMLElement) => [...raiz.querySelectorAll(".nb-prompt > [aria-hidden]")].map((e) => e.textContent);
 
 describe("tiempos de reproducción", () => {
   it("comprime de forma monótona, acotada y con total ≤ 45 s", () => {
@@ -91,12 +91,12 @@ describe("<NotebookPlayer />", () => {
     act(() => {
       fireEvent.click(within(li).getByRole("button", { name: /Ejecutar celda/ }));
     });
-    expect(li.querySelector(".nb-prompt")!.textContent).toBe("[*]:");
+    expect(li.querySelector(".nb-prompt > [aria-hidden]")!.textContent).toBe("[*]:");
     expect(raiz).toHaveAttribute("data-kernel", "ocupado");
     act(() => {
       vi.advanceTimersByTime(3000);
     });
-    expect(li.querySelector(".nb-prompt")!.textContent).toBe(`[${celda.ejecucion}]:`);
+    expect(li.querySelector(".nb-prompt > [aria-hidden]")!.textContent).toBe(`[${celda.ejecucion}]:`);
     expect(li).toHaveAttribute("data-estado", "hecho");
     const stream = celda.salidas.find((s) => s.tipo === "stream") as { texto: string };
     expect(li.querySelector("[data-salida=stream]")!.textContent).toBe(stream.texto.replace(/\n$/, "") + "\n");

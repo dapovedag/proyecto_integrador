@@ -26,7 +26,7 @@ const signo = (v: number) => `${v >= 0 ? "+" : "−"}${dec(Math.abs(v), 4)}`;
 function TablaTexto() {
   return (
     <div className="cap-tabla" role="region" aria-label="Modelos de texto" tabIndex={0}>
-      <div className="cap-tabla__scroll">
+      <div className="cap-tabla__scroll" tabIndex={0} role="region" aria-label="Tabla con desplazamiento horizontal">
         <table>
           <caption className="sr-only">Modelos solo con texto: AUC de CV en train y en test, e inferencia</caption>
           <thead>

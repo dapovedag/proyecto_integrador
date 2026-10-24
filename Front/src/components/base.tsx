@@ -125,6 +125,7 @@ export function Seccion({
   apilada,
   className = "",
   contenedor = "contenedor",
+  nivel = 2,
 }: {
   id?: string;
   numero?: string;
@@ -136,8 +137,11 @@ export function Seccion({
   apilada?: boolean;
   className?: string;
   contenedor?: string;
+  /** Nivel del título: 1 cuando la sección es la cabecera de la página. */
+  nivel?: 1 | 2;
 }) {
   const idT = useId();
+  const Titulo = nivel === 1 ? "h1" : "h2";
   return (
     <section id={id} className={`seccion ${borde ? "seccion--borde" : ""} ${className}`} aria-labelledby={titulo ? idT : undefined}>
       <div className={contenedor}>
@@ -150,9 +154,9 @@ export function Seccion({
               </div>
             )}
             {titulo && (
-              <h2 id={idT} className="seccion__titulo">
+              <Titulo id={idT} className="seccion__titulo">
                 {titulo}
-              </h2>
+              </Titulo>
             )}
             {intro && <div className="seccion__intro">{intro}</div>}
           </Revelar>

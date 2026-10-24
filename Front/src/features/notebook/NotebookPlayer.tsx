@@ -502,8 +502,9 @@ const CeldaCodigo = memo(function CeldaCodigo({ j, celda, original, nbId, estado
       }}
     >
       <div className="nb-celda__margen">
-        <span className="nb-prompt mono" aria-label={estado === "hecho" ? `Ejecución ${celda.ejecucion}` : estado === "nada" ? "Sin ejecutar" : "En cola o ejecutando"}>
-          [{prompt}]:
+        <span className="nb-prompt mono">
+          <span className="sr-only">{estado === "hecho" ? `Ejecución ${celda.ejecucion}` : estado === "nada" ? "Sin ejecutar" : "En cola o ejecutando"}</span>
+          <span aria-hidden="true">[{prompt}]:</span>
         </span>
         <button
           type="button"

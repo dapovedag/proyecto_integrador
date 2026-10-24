@@ -11,7 +11,7 @@ export const COMO_SE_CUMPLE: Record<string, string> = {
   E2: "Las fases de CRISP-DM en 12 capítulos, del problema al despliegue.",
   E3: "Dataset sintético-realista del sector con contrato de datos validado; la metodología se replica sobre German Credit (UCI).",
   E4: "nb00 une Programación (pandas, DuckDB, pipeline) e IA (modelos, NLP, API) en un solo flujo.",
-  E5: "Decisión de crédito con costos explícitos: LGD 45 %, margen 15 % y revisión manual 8 %.",
+  E5: "Decisión de crédito con costos explícitos: LGD 45 %, margen 15 % y revisión manual 8 %.",
   F1: "nb01: problema, métricas de negocio, costo de cada error y riesgos éticos.",
   F2: "nb02 a nb04: carga, limpieza sin fuga, nuevas variables, EDA y atípicos.",
   F3: "nb05 a nb07: 5 modelos clásicos, 4 redes en Keras y 5 modelos de NLP comparados.",

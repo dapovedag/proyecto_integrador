@@ -96,7 +96,7 @@ export default function Capitulo01() {
             <Rejilla>
               <Fig f={F.civil} nb={C.nb} lectura="El estado civil varía poco: se vigila de forma descriptiva, fuera del criterio de DI." />
               <div className="cap-tabla" role="region" aria-label="Tabla de variables sensibles" tabIndex={0}>
-                <div className="cap-tabla__scroll">
+                <div className="cap-tabla__scroll" tabIndex={0} role="region" aria-label="Tabla con desplazamiento horizontal">
                   <table>
                     <caption className="sr-only">Variables sensibles y su uso en el modelo</caption>
                     <thead>

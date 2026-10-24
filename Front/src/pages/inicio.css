@@ -91,14 +91,33 @@
   flex-wrap: wrap;
   gap: 12px;
 }
+/* 2 × 2: ningún rótulo se parte en dos líneas y los valores largos (9.600 / 2.400) no chocan. */
 .hero__datos {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  row-gap: 4px;
   margin: 8px 0 0;
   border-top: 1px solid var(--line);
 }
 .hero__datos > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   padding: 14px 12px 0 0;
+}
+.hero__requisitos {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--ok);
+}
+.hero__requisitos:hover {
+  color: var(--ok);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.hero__requisitos span[aria-hidden] {
+  font-size: 0.75em;
 }
 .hero__datos dt {
   font-family: var(--font-mono);
@@ -161,7 +180,14 @@
   color: var(--text-2);
   font-size: 11.5px;
   font-weight: 550;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: all var(--dur-2) var(--ease-out);
+}
+@media (max-width: 400px) {
+  .hero__separar-extra {
+    display: none;
+  }
 }
 .hero__separar:hover,
 .hero__separar.activo {
@@ -416,8 +442,12 @@
   color: var(--text);
   white-space: nowrap;
 }
+/* El umbral de Bayes es una referencia: marca corta bajo la barra, sin cruzar los rótulos de la franja. */
 .politica__umbral--bayes {
-  background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0 3px, transparent 3px 6px);
+  top: 100%;
+  bottom: auto;
+  height: 9px;
+  background: rgba(255, 255, 255, 0.35);
 }
 .politica__umbral--bayes span {
   top: calc(100% + 2px);
@@ -607,10 +637,10 @@
 }
 .racimo__modulo {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--m-c);
+  color: color-mix(in srgb, var(--m-c) 72%, var(--text));
 }
 .racimo__unidad {
   font-size: var(--fs-sm);
@@ -739,8 +769,8 @@
   gap: 8px;
 }
 .tarjeta-paso__fase {
-  font-size: 10.5px;
-  color: var(--m-c);
+  font-size: 11px;
+  color: color-mix(in srgb, var(--m-c) 72%, var(--text));
   letter-spacing: 0.04em;
 }
 .tarjeta-paso__estado {
@@ -948,6 +978,9 @@
 }
 .reto__n {
   grid-row: span 2;
+  width: 1.3ch;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
   font-size: var(--fs-xl);
   font-weight: 500;
   line-height: 1;
@@ -1035,7 +1068,7 @@
 .fase-sol__id {
   font-size: 12px;
   font-weight: 600;
-  color: var(--m-c);
+  color: color-mix(in srgb, var(--m-c) 72%, var(--text));
 }
 .fase-sol__nombre {
   font-family: var(--font-display);
@@ -1129,6 +1162,7 @@
   }
 }
 .chk__cifra {
+  margin: 0;
   display: flex;
   align-items: baseline;
   line-height: 0.9;
@@ -1245,7 +1279,7 @@
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--m-c);
+  color: color-mix(in srgb, var(--m-c) 72%, var(--text));
 }
 .chk-col__sub {
   grid-column: 1;
@@ -1332,9 +1366,10 @@
   gap: 4px;
   min-width: 0;
 }
+/* ID | título | capítulo: el ID y el capítulo quedan en la primera línea aunque el título se parta. */
 .chk-item__cab {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: baseline;
   gap: 2px 8px;
 }
@@ -1342,7 +1377,7 @@
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--m-c);
+  color: color-mix(in srgb, var(--m-c) 72%, var(--text));
 }
 .chk-item__titulo {
   font-size: var(--fs-sm);
@@ -1356,7 +1391,6 @@
   overflow-wrap: anywhere;
 }
 .chk-item__ir {
-  margin-left: auto;
   white-space: nowrap;
   font-size: 11px;
   color: var(--text-3);

@@ -173,7 +173,8 @@ function markLineDe(spec: FiguraSpec, ext: { min: number; max: number }, compact
       ...base,
       label: {
         show: true,
-        formatter: r.etiqueta && !compacto ? `${r.etiqueta} · ${val}` : val,
+        // «aprobar si p <» + valor se lee de corrido; las demás etiquetas se separan con « · ».
+        formatter: r.etiqueta && !compacto ? `${r.etiqueta}${/[<>≤≥=]$/.test(r.etiqueta.trim()) ? " " : " · "}${val}` : val,
         position: r.eje === "x" ? "end" : "insideEndTop",
         distance: r.eje === "x" ? 4 : 2,
         color: T.text2,

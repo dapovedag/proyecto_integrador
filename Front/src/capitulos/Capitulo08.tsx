@@ -50,7 +50,7 @@ function TablaFinal() {
   const max = Math.max(...FILAS.map((f) => f.m.roc_auc));
   return (
     <div className="cap-tabla" role="region" aria-label="Comparación final de los 16 modelos" tabIndex={0}>
-      <div className="cap-tabla__scroll">
+      <div className="cap-tabla__scroll" tabIndex={0} role="region" aria-label="Tabla con desplazamiento horizontal">
         <table>
           <caption className="sr-only">Métricas en test de los {FILAS.length} modelos, agrupados por familia</caption>
           <thead>
@@ -108,7 +108,7 @@ function TablaEquidad({ atributo, titulo }: { atributo: "sexo" | "edad"; titulo:
   return (
     <div className="pila">
       <div className="cap-tabla" role="region" aria-label={`Equidad por ${atributo}`} tabIndex={0}>
-        <div className="cap-tabla__scroll">
+        <div className="cap-tabla__scroll" tabIndex={0} role="region" aria-label="Tabla con desplazamiento horizontal">
           <table>
             <caption className="sr-only">{titulo}: aprobación automática y calibración por grupo en test</caption>
             <thead>
@@ -183,7 +183,7 @@ function TablaEquidad({ atributo, titulo }: { atributo: "sexo" | "edad"; titulo:
 function TablaVariantes() {
   return (
     <div className="cap-tabla" role="region" aria-label="Variantes de equidad" tabIndex={0}>
-      <div className="cap-tabla__scroll">
+      <div className="cap-tabla__scroll" tabIndex={0} role="region" aria-label="Tabla con desplazamiento horizontal">
         <table>
           <caption className="sr-only">Variantes de equidad evaluadas con predicciones OOF de train</caption>
           <thead>

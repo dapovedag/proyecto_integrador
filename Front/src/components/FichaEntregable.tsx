@@ -142,8 +142,17 @@ export function FichaEntregable({ paso, entregable, visualizaciones, extra, intr
               <div>
                 <dt>Fase</dt>
                 <dd>
-                  <span className="mono">{paso.fase === "T" ? "Transversal" : paso.fase}</span> · {fase.nombre}
-                  <span className="ficha-meta__sub">CRISP-DM · {paso.crisp}</span>
+                  {paso.fase === "T" ? (
+                    <>
+                      Transversal
+                      <span className="ficha-meta__sub">{paso.crisp}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="mono">{paso.fase}</span> · {fase.nombre}
+                      <span className="ficha-meta__sub">CRISP-DM · {paso.crisp}</span>
+                    </>
+                  )}
                 </dd>
               </div>
               <div>

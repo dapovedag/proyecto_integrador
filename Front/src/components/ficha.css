@@ -46,6 +46,8 @@
   gap: 18px;
 }
 .ficha-cab__miga {
+  position: relative;
+  max-width: min(100%, 62ch); /* no pasa por debajo del número fantasma del capítulo */
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -354,7 +356,8 @@
 }
 .ficha-leccion__id {
   font-size: 11px;
-  color: var(--m-c);
+  /* El color del módulo se aclara para texto pequeño (contraste AA con el violeta). */
+  color: color-mix(in srgb, var(--m-c) 72%, var(--text));
 }
 .ficha-leccion__titulo {
   font-family: var(--font-display);

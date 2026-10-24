@@ -83,11 +83,12 @@ function Paleta({ onCerrar }: { onCerrar: () => void }) {
     input.current?.focus();
     const ov = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    cargarRun<IndiceFiguras>("figuras.json")
+    // figuras.json se publica como lista; se acepta también la forma { figuras: [...] }.
+    cargarRun<IndiceFiguras | IndiceFiguras["figuras"]>("figuras.json")
       .then((ix) =>
         setFiguras(
-          (ix.figuras ?? []).map((f, i) => ({
-            id: `f-${f.id ?? i}`,
+          (Array.isArray(ix) ? ix : (ix.figuras ?? [])).map((f, i) => ({
+            id: `f-${f.id ?? f.clave ?? i}-${i}`,
             grupo: "Figuras" as const,
             titulo: f.titulo,
             detalle: `${f.notebook ? `nb${/(\d{2})/.exec(f.notebook)?.[1] ?? f.notebook}` : ""}${f.celda != null ? ` · celda ${f.celda}` : ""} · ${f.tipo}`,

@@ -22,8 +22,13 @@ export const Markdown = memo(function Markdown({ fuente, className = "" }: { fue
       <ReactMarkdown
         remarkPlugins={plugins}
         components={{
+          // Los títulos del notebook bajan un nivel: el h1 de la página es el del capítulo.
+          h1: ({ children }) => <h2 className="nb-md__h1">{children}</h2>,
+          h2: ({ children }) => <h3 className="nb-md__h2">{children}</h3>,
+          h3: ({ children }) => <h4 className="nb-md__h3">{children}</h4>,
+          h4: ({ children }) => <h5 className="nb-md__h4">{children}</h5>,
           table: ({ children }) => (
-            <div className="nb-md__tabla">
+            <div className="nb-md__tabla" tabIndex={0} role="region" aria-label="Tabla del notebook">
               <table>{children}</table>
             </div>
           ),
@@ -55,7 +60,7 @@ export const Codigo = memo(function Codigo({ fuente, etiqueta }: { fuente: strin
     <div className={`nb-codigo ${plegado ? "nb-codigo--plegado" : ""}`}>
       <Highlight theme={temaCodigo} code={fuente.replace(/\n+$/, "")} language="python">
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
-          <pre className={`nb-codigo__pre ${className}`} style={style} aria-label={etiqueta} tabIndex={0}>
+          <pre className={`nb-codigo__pre ${className}`} style={style} role="group" aria-label={etiqueta} tabIndex={0}>
             <code>
               {(plegado ? tokens.slice(0, LINEAS_VISIBLES) : tokens).map((linea, i) => {
                 const { key: _k, ...props } = getLineProps({ line: linea }) as ReturnType<typeof getLineProps> & { key?: unknown };

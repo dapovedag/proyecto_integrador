@@ -32,7 +32,7 @@ const HIST = dl.historiales as Record<string, { auc: number[]; val_auc?: number[
 function Arquitectura({ texto }: { texto: string }) {
   const [cab, ...capas] = texto.split("\n");
   return (
-    <pre className="redes__arq" aria-label="Arquitectura de la red">
+    <pre className="redes__arq" role="img" aria-label="Arquitectura de la red">
       <b>{cab}</b>
       {"\n"}
       {capas.join("\n")}
