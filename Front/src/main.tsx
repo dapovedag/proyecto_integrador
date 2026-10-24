@@ -4,6 +4,7 @@ import "@fontsource-variable/jetbrains-mono";
 import "./styles/tokens.css";
 import "./styles/global.css";
 import "./components/componentes.css";
+import "./styles/movil.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";

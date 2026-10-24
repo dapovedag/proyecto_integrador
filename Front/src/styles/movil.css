@@ -1,0 +1,158 @@
+/*
+ * Ajustes para celular y pantallas táctiles (auditoría a 360 y 390 px).
+ * Se carga después del resto de hojas: solo corrige desbordes, legibilidad mínima y áreas de toque.
+ */
+
+/* Red de seguridad: nada provoca desplazamiento horizontal de la página (clip no rompe position: sticky). */
+html,
+body {
+  overflow-x: clip;
+}
+
+/* Tooltips: nunca más anchos que la pantalla. En la barra superior se abren hacia abajo y alineados a la
+   derecha (el chip de versión está pegado al borde), así no desbordan ni quedan fuera de la vista. */
+html .tip__burbuja {
+  max-width: min(260px, calc(100vw - 32px));
+}
+html .barra .tip__burbuja {
+  top: calc(100% + 10px);
+  bottom: auto;
+  left: auto;
+  right: 0;
+  transform: translateY(-4px);
+}
+html .barra .tip:hover .tip__burbuja,
+html .barra .tip:focus-within .tip__burbuja {
+  transform: translateY(0);
+}
+html .tip:not(:hover):not(:focus-within) .tip__burbuja {
+  visibility: hidden;
+}
+
+/* Filtros en fila flexible: cada lista de pestañas puede encogerse y desplazarse dentro de su ancho. */
+html .traza-filtros,
+html .traza-filtros > *,
+html .traza-filtros .tabs__lista {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Código en línea dentro del Markdown de los notebooks y de las tablas: parte palabras largas. */
+html .nb-md code,
+html .nb-md a,
+html .nbp td code,
+html .nbp th code {
+  overflow-wrap: anywhere;
+}
+
+/* Legibilidad mínima en pantallas estrechas: ningún rótulo por debajo de 11 px. Es un piso de accesibilidad,
+   por eso se impone sobre los tamaños propios de cada página (!important deliberado). */
+@media (max-width: 760px) {
+  html .barra__sub,
+  html .versalitas,
+  html .hero__datos dt,
+  html .ficha-meta dt,
+  html .nb-celda__tag,
+  html .figura__clave-rotulo,
+  html .reparto__etq,
+  html .racimo__modulo,
+  html .api-metodo,
+  html .sim-rango__extremos,
+  html .sim-rango__extremos span,
+  html .politica__ticks span,
+  html .politica__menor,
+  html .dexp__stats small,
+  html .dexp__hist-eje span,
+  html .cascada__eje span,
+  html .spark__etapa,
+  html .spark__auc-eje,
+  html .nbp th code,
+  html .nbp td code,
+  html .evidencia,
+  html .tarjeta-paso__fase,
+  html .chip,
+  html .hero__ejes,
+  html .politica__umbral span,
+  html .politica__costo-formula,
+  html .dexp__th span,
+  html .dexp__td--n,
+  html .dexp__tipo,
+  html .dexp__stats dt,
+  html .sim-deriv p,
+  html .sim-res__en-vivo,
+  html .apic__version,
+  html .apic__oas,
+  html .nb-md pre code {
+    font-size: 11px !important;
+  }
+}
+
+/* Áreas de toque (WCAG 2.2, 2.5.8): en pantallas táctiles los controles tienen al menos 40 px de alto. */
+@media (pointer: coarse) {
+  html .tabs__tab,
+  html .sim-pildora,
+  html .ver-datos,
+  html .copiar,
+  html .term__btn,
+  html .hero__separar,
+  html .nb-codigo__plegar,
+  html .barra__marca {
+    min-height: 40px;
+  }
+  html .nb-codigo__plegar {
+    padding-block: 10px;
+  }
+  html .nb-celda__ejecutar {
+    min-width: 36px;
+    min-height: 36px;
+  }
+  html .ficha-meta__hu {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding-inline: 8px;
+  }
+  html .sim-rango {
+    height: 36px;
+  }
+  html .sim-valor,
+  html .nbp__ir select {
+    min-height: 40px;
+  }
+  html .nbp__ref {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding-inline: 6px;
+    cursor: pointer;
+  }
+  html .nbp__ref input {
+    width: 20px;
+    height: 20px;
+  }
+  /* Enlaces cortos fuera de un párrafo (pie del sitio, pie de evidencia de las figuras, ID de las HU,
+     tablas): al menos 24 px de alto sin cambiar su tipografía. */
+  html .pie__col a,
+  html a.evidencia--enlace,
+  html .tarjeta-hu__id,
+  html th > a.mono,
+  html .nota > a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+  }
+  html .tarjeta-hu__id {
+    padding-inline: 6px;
+  }
+  html .dexp__check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+  }
+  html .dexp__check input {
+    width: 18px;
+    height: 18px;
+  }
+}
