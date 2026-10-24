@@ -1,8 +1,8 @@
 {
   "version": "2.0.0",
   "card_version": "2.0.0",
-  "git_sha": "bf46c14",
-  "generado": "2026-10-23T20:17:06",
+  "git_sha": "2eee3b9",
+  "generado": "2026-10-23T23:37:25",
   "datos": {
     "crudo_sha256": "63e1b695a1bae907a79d80b208ee665da6e6a41eaec7ed4fc493ed8e145dcc34",
     "train_sha256": "1ce71f5f0123edb39b1d0120fd142e73c2a2c066bca40bcbd0ead523b4e92e28",
@@ -14,8 +14,8 @@
       "bytes": 42582
     },
     "src/data/generated/api_capturas.json": {
-      "sha256": "8fcd0e01fbf3366f7bf9d44965e104d6d8b5c52948748c566e04fcd3f6363f4d",
-      "bytes": 58423
+      "sha256": "0a3379da36dd3b24bff4bb4e7256c4b3aeca533e489c1fed73ff3d7c8313004a",
+      "bytes": 58424
     },
     "src/data/generated/clientes_demo.json": {
       "sha256": "5cbf373e0878ffe48cab457c9714b23ddfaa77a9a8e980d62fdea36a982c2df1",
@@ -26,7 +26,7 @@
       "bytes": 2253
     },
     "src/data/generated/dod_status.json": {
-      "sha256": "b4082040930ba8f7a792288e4b5f876e8a18cc423702b1c38400c6d0a5b8bbbf",
+      "sha256": "26beadf35a4eaaaee69cc99268dcb8b35e8da82abbbe5646d2f7ca434ca78c47",
       "bytes": 3534
     },
     "src/data/generated/ejecuciones.json": {
@@ -38,8 +38,8 @@
       "bytes": 12182
     },
     "src/data/generated/gestion.json": {
-      "sha256": "9f06ad454bb92d3ec57433d89a9f90a84cb6f0878f743f56b325be9b523fa555",
-      "bytes": 89891
+      "sha256": "b98aeea5c726d9434ce590f3e1d67ab1ec1691d5768c1207cc3cf16263f1bdc0",
+      "bytes": 97450
     },
     "src/data/generated/golden.json": {
       "sha256": "ba60a77828f219b61d00a9e30f535da951586e763de8c5a9fd7c014a37a1cc5d",

@@ -2499,38 +2499,38 @@
           "restantes": 34
         },
         {
-          "fecha": "2026-10-23T20:19:01-05:00",
-          "hu": "HU-29",
-          "puntos": 5,
-          "restantes": 29
-        },
-        {
           "fecha": "2026-10-23T20:19:17-05:00",
           "hu": "HU-12",
           "puntos": 3,
-          "restantes": 26
+          "restantes": 31
         },
         {
           "fecha": "2026-10-23T21:36:09-05:00",
           "hu": "HU-24",
           "puntos": 8,
-          "restantes": 18
+          "restantes": 23
         },
         {
           "fecha": "2026-10-23T21:36:09-05:00",
           "hu": "HU-26",
           "puntos": 8,
-          "restantes": 10
+          "restantes": 15
         },
         {
           "fecha": "2026-10-23T21:46:13-05:00",
           "hu": "HU-28",
           "puntos": 5,
-          "restantes": 5
+          "restantes": 10
         },
         {
           "fecha": "2026-10-23T22:09:30-05:00",
           "hu": "HU-25",
+          "puntos": 5,
+          "restantes": 5
+        },
+        {
+          "fecha": "2026-10-23T23:25:21-05:00",
+          "hu": "HU-29",
           "puntos": 5,
           "restantes": 0
         }
@@ -2554,7 +2554,26 @@
       ],
       "puntos_comprometidos": 21,
       "puntos_hechos": 21,
-      "burndown": []
+      "burndown": [
+        {
+          "fecha": "2026-10-23T23:25:20-05:00",
+          "hu": "HU-37",
+          "puntos": 13,
+          "restantes": 8
+        },
+        {
+          "fecha": "2026-10-23T23:25:20-05:00",
+          "hu": "HU-38",
+          "puntos": 5,
+          "restantes": 3
+        },
+        {
+          "fecha": "2026-10-23T23:25:20-05:00",
+          "hu": "HU-39",
+          "puntos": 3,
+          "restantes": 0
+        }
+      ]
     }
   ],
   "trazabilidad": {
@@ -3204,8 +3223,8 @@
     ]
   },
   "dod": {
-    "verificado": "2026-10-23T19:27:32",
-    "commit": "bf46c14",
+    "verificado": "2026-10-23T23:33:09",
+    "commit": "2eee3b9",
     "version": "2.0.0",
     "notebooks": {
       "00_proyecto_integrador_final.ipynb": {
