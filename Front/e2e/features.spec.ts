@@ -29,15 +29,15 @@ test.describe("features sin red externa", () => {
     await expect(nb).toHaveAttribute("data-hechas", "0");
     const total = Number(await nb.getAttribute("data-total"));
     expect(total).toBeGreaterThan(5);
-    await expect(nb.locator(".nb-prompt").first()).toHaveText("[ ]:");
+    await expect(nb.locator(".nb-prompt > [aria-hidden]").first()).toHaveText("[ ]:");
 
     await nb.getByRole("button", { name: "Ejecutar todo", exact: true }).click();
     await expect(nb).toHaveAttribute("data-kernel", "ocupado");
-    await expect(nb.locator('.nb-prompt:text("[*]:")').first()).toBeVisible();
+    await expect(nb.locator('.nb-prompt > [aria-hidden]:text("[*]:")').first()).toBeVisible();
     await expect(nb).toHaveAttribute("data-hechas", String(total), { timeout: 70_000 });
     await expect(nb).toHaveAttribute("data-kernel", "inactivo");
     // contadores reales y salidas reveladas
-    const prompts = await nb.locator(".nb-prompt").allTextContents();
+    const prompts = await nb.locator(".nb-prompt > [aria-hidden]").allTextContents();
     expect(prompts.every((p) => /^\[\d+\]:$/.test(p))).toBe(true);
     await expect(nb.locator("[data-salida=html] table").first()).toBeVisible();
     await expect(nb.locator("[data-salida=figura]").first()).toBeAttached();
