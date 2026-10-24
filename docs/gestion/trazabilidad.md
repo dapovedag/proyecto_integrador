@@ -9,7 +9,7 @@
 
 - Filas del checklist acreditadas: **47/47**.
 - IDs individuales cubiertos por al menos una HU: **55/55**.
-- Historias acreditadas: **36/37**.
+- Historias acreditadas: **39/40**.
 - DoD de notebooks: `dod_status.json` del 2026-10-23T19:27:32, commit bf46c14, fallos 0.
 
 ## Matriz por fila del checklist
@@ -20,17 +20,17 @@
 | E1 | Metodología ágil | 0 | HU-00 (Hecho), HU-15 (Hecho), HU-16 (Hecho), HU-26 (Hecho), HU-30 (Hecho), HU-31 (Hecho) | 23/23 | [x] |
 | E2 | Todas las fases del proceso analítico | 1–12 | HU-11 (Hecho), HU-13 (Hecho), HU-17 (Hecho), HU-29 (Hecho) | 19/19 | [x] |
 | E3 | Datos reales o realistas del sector financiero | 2 (dato: [03_contrato_datos.md](03_contrato_datos.md)) | HU-02 (Hecho), HU-34 (Hecho) | 5/5 | [x] |
-| E4 | Integración de los dos módulos | 11 | HU-11 (Hecho), HU-23 (Hecho), HU-26 (Hecho), HU-30 (Hecho) | 11/11 | [x] |
+| E4 | Integración de los dos módulos | 11 | HU-11 (Hecho), HU-23 (Hecho), HU-26 (Hecho), HU-30 (Hecho), HU-37 (Hecho) | 21/21 | [x] |
 | E5 | Problema en contexto | 1 | HU-01 (Hecho) | 2/2 | [x] |
 | F1 | Definir el problema | 1 | HU-01 (Hecho) | 2/2 | [x] |
 | F2 | Explorar y preparar los datos | 2, 3, 4 | HU-03 (Hecho), HU-04 (Hecho) | 8/8 | [x] |
 | F3 | Analizar y modelar | 5, 6, 7 | HU-05 (Hecho), HU-06 (Hecho), HU-07 (Hecho) | 11/11 | [x] |
 | F4 | Evaluar y optimizar | 8 | HU-08 (Hecho), HU-18 (Hecho), HU-19 (Hecho), HU-20 (Hecho) | 17/17 | [x] |
-| F5 | Desplegar y comunicar | 10, 11, 12 | HU-10 (Hecho), HU-11 (Hecho), HU-23 (Hecho), HU-24 (Hecho), HU-25 (Hecho), HU-26 (Hecho), HU-27 (Hecho), HU-28 (Hecho), HU-29 (Hecho) | 30/30 | [x] |
+| F5 | Desplegar y comunicar | 10, 11, 12 | HU-10 (Hecho), HU-11 (Hecho), HU-23 (Hecho), HU-24 (Hecho), HU-25 (Hecho), HU-26 (Hecho), HU-27 (Hecho), HU-28 (Hecho), HU-29 (Hecho), HU-37 (Hecho), HU-38 (Hecho) | 43/43 | [x] |
 | R1 | Modelo funcional | 8, 12 | HU-08 (Hecho), HU-12 (Hecho), HU-13 (Hecho), HU-18 (Hecho), HU-19 (Hecho), HU-24 (Hecho), HU-32 (Hecho) | 28/28 | [x] |
 | R2 | Técnicas de análisis de datos, IA y NLP | 4–7 | HU-04 (Hecho), HU-05 (Hecho), HU-06 (Hecho), HU-07 (Hecho) | 13/13 | [x] |
 | R3 | Buenas prácticas de gestión | 0 | HU-00 (Hecho), HU-15 (Hecho), HU-16 (Hecho), HU-29 (Hecho), HU-30 (Hecho), HU-31 (Hecho), HU-32 (Hecho) | 28/28 | [x] |
-| R4 | Potencial de implementación real | 10, 12 | HU-10 (Hecho), HU-12 (Hecho), HU-18 (Hecho), HU-21 (Hecho), HU-22 (Hecho), HU-24 (Hecho), HU-28 (Hecho) | 25/25 | [x] |
+| R4 | Potencial de implementación real | 10, 12 | HU-10 (Hecho), HU-12 (Hecho), HU-18 (Hecho), HU-21 (Hecho), HU-22 (Hecho), HU-24 (Hecho), HU-28 (Hecho), HU-38 (Hecho), HU-39 (Hecho) | 31/31 | [x] |
 | P1.1 | Entorno Colab/Jupyter | 2 | HU-02 (Hecho), HU-14 (Hecho), HU-17 (Hecho) | 10/10 | [x] |
 | P1.2 | Pandas, NumPy, Matplotlib, Seaborn | 2 | HU-02 (Hecho), HU-14 (Hecho) | 8/8 | [x] |
 | P1.3 | Cargar y explorar los datos | 2 | HU-02 (Hecho) | 3/3 | [x] |
@@ -86,6 +86,7 @@
 | E4 | HU-23 | 11 | Hecho | [`Back/scripts/exportar_front.py`](../../Back/scripts/exportar_front.py) ✓<br>[`Back/tests/test_contratos.py`](../../Back/tests/test_contratos.py) ✓<br>[`Front/src/data/generated/manifest.json`](../../Front/src/data/generated/manifest.json) ✓ |
 | E4 | HU-26 | 11 | Hecho | [`Front/package.json`](../../Front/package.json) ✓<br>[`Front/src/main.tsx`](../../Front/src/main.tsx) ✓<br>[`Front/src/data/generated/gestion.json`](../../Front/src/data/generated/gestion.json) ✓ |
 | E4 | HU-30 | 0 | Hecho | [`docs/gestion/lecciones_aprendidas.md`](../../docs/gestion/lecciones_aprendidas.md) ✓<br>[`docs/gestion/sprints.md`](../../docs/gestion/sprints.md) ✓ |
+| E4 | HU-37 | 11 | Hecho | [`Front/src/content/pedagogia.ts`](../../Front/src/content/pedagogia.ts) ✓<br>[`Front/src/content/glosario/index.ts`](../../Front/src/content/glosario/index.ts) ✓<br>[`Front/src/content/comoLeer.ts`](../../Front/src/content/comoLeer.ts) ✓<br>[`Front/src/content/anotaciones/index.ts`](../../Front/src/content/anotaciones/index.ts) ✓<br>[`Front/src/content/recorridos/index.ts`](../../Front/src/content/recorridos/index.ts) ✓<br>[`Front/src/features/notebook/explicador.ts`](../../Front/src/features/notebook/explicador.ts) ✓<br>[`Front/src/components/Termino.tsx`](../../Front/src/components/Termino.tsx) ✓<br>[`Front/src/pages/Glosario.tsx`](../../Front/src/pages/Glosario.tsx) ✓<br>[`Front/src/content/pedagogia.test.ts`](../../Front/src/content/pedagogia.test.ts) ✓<br>[`Front/e2e/pedagogia.spec.ts`](../../Front/e2e/pedagogia.spec.ts) ✓ |
 | E5 | HU-01 | 1 | Hecho | [`Back/notebooks/01_definicion_problema_etica.ipynb`](../../Back/notebooks/01_definicion_problema_etica.ipynb) ✓<br>[`Back/reports/dod_status.json`](../../Back/reports/dod_status.json) ✓ |
 | F1 | HU-01 | 1 | Hecho | [`Back/notebooks/01_definicion_problema_etica.ipynb`](../../Back/notebooks/01_definicion_problema_etica.ipynb) ✓<br>[`Back/reports/dod_status.json`](../../Back/reports/dod_status.json) ✓ |
 | F2 | HU-03 | 3 | Hecho | [`Back/notebooks/03_limpieza_preparacion.ipynb`](../../Back/notebooks/03_limpieza_preparacion.ipynb) ✓<br>[`Back/src/credit_risk/features.py`](../../Back/src/credit_risk/features.py) ✓<br>[`Back/tests/test_features.py`](../../Back/tests/test_features.py) ✓<br>[`db/processed/train.csv`](../../db/processed/train.csv) ✓<br>[`db/processed/test.csv`](../../db/processed/test.csv) ✓<br>[`db/processed/feature_list.json`](../../db/processed/feature_list.json) ✓ |
@@ -106,6 +107,8 @@
 | F5 | HU-27 | 10 | Hecho | [`Front/src/features/api/ApiConsole.tsx`](../../Front/src/features/api/ApiConsole.tsx) ✓<br>[`Front/src/data/generated/api_capturas.json`](../../Front/src/data/generated/api_capturas.json) ✓ |
 | F5 | HU-28 | 12 | Hecho | [`Front/playwright.config.ts`](../../Front/playwright.config.ts) ✓<br>[`vercel.json`](../../vercel.json) ✓<br>[`.vercelignore`](../../.vercelignore) ✓<br>[`docs/gestion/adr/ADR-004-front-estatico-autonomo.md`](../../docs/gestion/adr/ADR-004-front-estatico-autonomo.md) ✓ |
 | F5 | HU-29 | 11 | Hecho | [`docs/README.md`](../../docs/README.md) ✓<br>[`docs/04_arquitectura_backend.md`](../../docs/04_arquitectura_backend.md) ✓<br>[`docs/05_despliegue.md`](../../docs/05_despliegue.md) ✓<br>[`docs/06_informe_resultados.md`](../../docs/06_informe_resultados.md) ✓<br>[`docs/07_libreto_front.md`](../../docs/07_libreto_front.md) ✓<br>[`report_dev.md`](../../report_dev.md) ✓ |
+| F5 | HU-37 | 11 | Hecho | [`Front/src/content/pedagogia.ts`](../../Front/src/content/pedagogia.ts) ✓<br>[`Front/src/content/glosario/index.ts`](../../Front/src/content/glosario/index.ts) ✓<br>[`Front/src/content/comoLeer.ts`](../../Front/src/content/comoLeer.ts) ✓<br>[`Front/src/content/anotaciones/index.ts`](../../Front/src/content/anotaciones/index.ts) ✓<br>[`Front/src/content/recorridos/index.ts`](../../Front/src/content/recorridos/index.ts) ✓<br>[`Front/src/features/notebook/explicador.ts`](../../Front/src/features/notebook/explicador.ts) ✓<br>[`Front/src/components/Termino.tsx`](../../Front/src/components/Termino.tsx) ✓<br>[`Front/src/pages/Glosario.tsx`](../../Front/src/pages/Glosario.tsx) ✓<br>[`Front/src/content/pedagogia.test.ts`](../../Front/src/content/pedagogia.test.ts) ✓<br>[`Front/e2e/pedagogia.spec.ts`](../../Front/e2e/pedagogia.spec.ts) ✓ |
+| F5 | HU-38 | 11 | Hecho | [`Front/src/pages/Negocio.tsx`](../../Front/src/pages/Negocio.tsx) ✓<br>[`Front/src/pages/negocio.css`](../../Front/src/pages/negocio.css) ✓<br>[`Front/e2e/pedagogia.spec.ts`](../../Front/e2e/pedagogia.spec.ts) ✓ |
 | R1 | HU-08 | 8 | Hecho | [`Back/notebooks/08_evaluacion_optimizacion.ipynb`](../../Back/notebooks/08_evaluacion_optimizacion.ipynb) ✓<br>[`Back/models/modelo_final.joblib`](../../Back/models/modelo_final.joblib) ✓<br>[`Back/models/model_card.json`](../../Back/models/model_card.json) ✓<br>[`Back/models/oof_predictions.parquet`](../../Back/models/oof_predictions.parquet) ✓<br>[`Back/models/test_predictions.parquet`](../../Back/models/test_predictions.parquet) ✓ |
 | R1 | HU-12 | 12 | Hecho | [`Back/README.md`](../../Back/README.md) ✓<br>[`Back/api/ejemplo_request.json`](../../Back/api/ejemplo_request.json) ✓ |
 | R1 | HU-13 | 3 | Hecho | [`Back/pyproject.toml`](../../Back/pyproject.toml) ✓<br>[`Back/src/credit_risk/__init__.py`](../../Back/src/credit_risk/__init__.py) ✓<br>[`Back/src/credit_risk/config.py`](../../Back/src/credit_risk/config.py) ✓<br>[`Back/src/credit_risk/data.py`](../../Back/src/credit_risk/data.py) ✓<br>[`Back/src/credit_risk/features.py`](../../Back/src/credit_risk/features.py) ✓<br>[`Back/src/credit_risk/models.py`](../../Back/src/credit_risk/models.py) ✓<br>[`Back/tests/test_data.py`](../../Back/tests/test_data.py) ✓<br>[`Back/tests/test_models.py`](../../Back/tests/test_models.py) ✓ |
@@ -131,6 +134,8 @@
 | R4 | HU-22 | 10 | Hecho | [`Back/Dockerfile`](../../Back/Dockerfile) ✓<br>[`Back/docker-compose.yml`](../../Back/docker-compose.yml) ✓<br>[`Back/.dockerignore`](../../Back/.dockerignore) ✓<br>[`Back/tests/test_api_slim.py`](../../Back/tests/test_api_slim.py) ✓<br>[`docs/05_despliegue.md`](../../docs/05_despliegue.md) ✓ |
 | R4 | HU-24 | 11 | Hecho | [`Front/src/engine/scoring.ts`](../../Front/src/engine/scoring.ts) ✓<br>[`Front/src/engine/texto.ts`](../../Front/src/engine/texto.ts) ✓<br>[`Front/src/data/generated/modelo_export.json`](../../Front/src/data/generated/modelo_export.json) ✓ |
 | R4 | HU-28 | 12 | Hecho | [`Front/playwright.config.ts`](../../Front/playwright.config.ts) ✓<br>[`vercel.json`](../../vercel.json) ✓<br>[`.vercelignore`](../../.vercelignore) ✓<br>[`docs/gestion/adr/ADR-004-front-estatico-autonomo.md`](../../docs/gestion/adr/ADR-004-front-estatico-autonomo.md) ✓ |
+| R4 | HU-38 | 11 | Hecho | [`Front/src/pages/Negocio.tsx`](../../Front/src/pages/Negocio.tsx) ✓<br>[`Front/src/pages/negocio.css`](../../Front/src/pages/negocio.css) ✓<br>[`Front/e2e/pedagogia.spec.ts`](../../Front/e2e/pedagogia.spec.ts) ✓ |
+| R4 | HU-39 | 11 | Hecho | [`Front/src/components/Shell.tsx`](../../Front/src/components/Shell.tsx) ✓<br>[`Front/src/content/precarga.ts`](../../Front/src/content/precarga.ts) ✓<br>[`Front/src/components/base.tsx`](../../Front/src/components/base.tsx) ✓ |
 | P1.1 | HU-02 | 2 | Hecho | [`Back/notebooks/02_exploracion_preliminar.ipynb`](../../Back/notebooks/02_exploracion_preliminar.ipynb) ✓<br>[`docs/03_contrato_datos.md`](../../docs/03_contrato_datos.md) ✓<br>[`Back/reports/dod_status.json`](../../Back/reports/dod_status.json) ✓ |
 | P1.1 | HU-14 | 2 | Hecho | [`docs/gestion/adr/ADR-005-pyspark-en-docker.md`](../../docs/gestion/adr/ADR-005-pyspark-en-docker.md) ✓<br>[`docs/gestion/adr/ADR-006-tensorflow-2-20-cpu.md`](../../docs/gestion/adr/ADR-006-tensorflow-2-20-cpu.md) ✓<br>[`docs/gestion/adr/ADR-008-python-3-10-sklearn-1-4-2.md`](../../docs/gestion/adr/ADR-008-python-3-10-sklearn-1-4-2.md) ✓<br>[`Back/requirements-api.lock`](../../Back/requirements-api.lock) ✓<br>[`Back/requirements-dev-win.lock`](../../Back/requirements-dev-win.lock) ✓ |
 | P1.1 | HU-17 | 2 | Hecho | [`Back/scripts/ejecutar_notebooks.py`](../../Back/scripts/ejecutar_notebooks.py) ✓<br>[`Back/src/credit_risk/notebook.py`](../../Back/src/credit_risk/notebook.py) ✓ |

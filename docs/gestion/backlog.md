@@ -12,8 +12,8 @@
 | Pendiente | 1 | 3 |
 | En progreso | 0 | 0 |
 | En revisión | 0 | 0 |
-| Hecho | 36 | 182 |
-| **Total** | **37** | **185** |
+| Hecho | 39 | 203 |
+| **Total** | **40** | **206** |
 
 ## Puntos por sprint
 
@@ -27,6 +27,7 @@
 | S6 · Datos y modelado | 2026-10-23 → 2026-10-23 | Notebooks 01–07 y 09 reescritos sobre credit_risk y ejecutados con papermill (kernel credit-risk), con sus artefactos y conclusiones redactadas después de ver las salidas. | HU-01, HU-02, HU-03, HU-04, HU-05, HU-06, HU-07, HU-09, HU-17, HU-33, HU-34, HU-35 | 57 | 57 |
 | S7 · Modelo v2.0.0 | 2026-10-23 → 2026-10-23 | Modelo v2.0.0 seleccionado sin fuga, calibrado, con política aprobar/revisar/rechazar, equidad evaluada y servido por la API v2 en Docker; paquete de corrida exportado. | HU-08, HU-10, HU-18, HU-19, HU-20, HU-21, HU-22, HU-23 | 48 | 48 |
 | S8 · Producto y comunicación | 2026-10-23 → 2026-10-23 | Front estático autónomo con un capítulo por entregable y motor exacto, documentación coherente con v2.0.0 y checklist del enunciado acreditado por cálculo. | HU-11, HU-12, HU-24, HU-25, HU-26, HU-27, HU-28, HU-29, HU-30 | 47 | 47 |
+| S9 · Pedagogía y negocio | 2026-10-24 → 2026-10-24 | Que un principiante entienda cada concepto y cada pieza de código (glosario, guía de gráficos, explicación de las 207 celdas y recorrido por capítulo), que un comité directivo entienda el proyecto sin el proceso técnico (Presentación Negocio) y que cambiar de capítulo sea inmediato. | HU-37, HU-38, HU-39 | 21 | 21 |
 
 S1–S4 son el MVP: sus historias se listan por `sprint_mvp` y no se estimaron. Al reabrirse en v2 se re-estimaron y se comprometieron en S5–S8.
 
@@ -41,9 +42,9 @@ S1–S4 son el MVP: sus historias se listan por `sprint_mvp` y no se estimaron. 
 | E-05 | Evaluación, política de decisión y equidad (F4) | Un modelo v2.0.0 seleccionado sin usar test, calibrado, con costos explícitos y auditado en equidad. | HU-08, HU-18, HU-19, HU-20, HU-21 | 32 |
 | E-06 | Big Data | Procesamiento y modelado con PySpark real. | HU-09 | 5 |
 | E-07 | Despliegue del modelo (F5) | API REST del modelo servido, en Docker, reproducible desde un clon limpio. | HU-10, HU-12, HU-22 | 11 |
-| E-08 | Integración y comunicación (F5) | Notebook integrador, informe y documentación coherentes con v2.0.0. | HU-11, HU-23, HU-29 | 18 |
+| E-08 | Integración y comunicación (F5) | Notebook integrador, informe y documentación coherentes con v2.0.0. | HU-11, HU-23, HU-29, HU-37, HU-38 | 36 |
 | E-09 | Plataforma y calidad | Paquete instalable como fuente única, tests, gate de calidad y ejecución reproducible. | HU-13, HU-14, HU-17, HU-32 | 19 |
-| E-10 | Front estático autónomo | Sitio estático que muestra los resultados reales y simula la corrida con fidelidad, sin back. | HU-24, HU-25, HU-26, HU-27, HU-28 | 31 |
+| E-10 | Front estático autónomo | Sitio estático que muestra los resultados reales y simula la corrida con fidelidad, sin back. | HU-24, HU-25, HU-26, HU-27, HU-28, HU-39 | 34 |
 
 ## Historias
 
@@ -86,6 +87,9 @@ S1–S4 son el MVP: sus historias se listan por `sprint_mvp` y no se estimaron. 
 | HU-34 | E-03 | Como docente evaluador, quiero la metodología replicada sobre un dataset real (German Credit, UCI), para comprobar que el enfoque no depende del dataset sintético. | 3 | S6 | Hecho | 5 | E3 | 2/2 |
 | HU-35 | E-03 | Como científico de datos, quiero los verbos de dplyr y la gramática de ggplot2 aplicados con equivalentes en Python, para cubrir IA2.1 e IA2.3 sin salir de Python. | 3 | S6 | Hecho | 4 | IA2.1, IA2.3 | 1/1 |
 | HU-36 | E-04 | Como científico de datos, quiero evaluar si retirar las variables de señal débil (estado_civil, tasa_interes_anual, plazo_meses) mejora la parsimonia sin perder desempeño, para un modelo más simple y explicable en la versión 2.1. | 3 | Backlog | Pendiente | — |  | 0/0 |
+| HU-37 | E-08 | Como estudiante que empieza desde cero, quiero que cada concepto, cada gráfico y cada celda de código se expliquen en lenguaje de principiante, para aprender el proceso completo (programación, datos, IA y despliegue) siguiendo el sitio, no solo ver resultados. | 13 | S9 | Hecho | 11 | F5, E4 | 10/10 |
+| HU-38 | E-08 | Como miembro del comité directivo de un banco, quiero una presentación del proyecto en lenguaje de negocio, sin el proceso técnico, para decidir si se pilotea el sistema en minutos, con cifras verificables. | 5 | S9 | Hecho | 11 | F5, R4 | 3/3 |
+| HU-39 | E-10 | Como lector del sitio, quiero que cambiar de capítulo sea inmediato, para seguir el recorrido sin esperas. | 3 | S9 | Hecho | 11 | R4 | 3/3 |
 
 ## Criterios de aceptación
 
@@ -443,3 +447,33 @@ Evidencia: `Back/notebooks/04_eda_transformacion_visualizacion.ipynb` ✓
 
 Evidencia: 
 Nota: Mejora opcional de v2.1, sin ID del enunciado propio (P2.E3 e IA2.E2 ya los acredita HU-03/HU-04). Detectado en nb03 (señal débil en Spearman, información mutua e importancia del bosque) y confirmado por la permutación de nb05 (~0). En v2.0.0 la regularización L2 las atenúa y no cambian la decisión. Se refinó en S8 y, al cierre del sprint, volvió al backlog del producto (sprint null) para planificarse en v2.1; no forma parte del incremento v2.0.0.
+
+### HU-37 · Que cada concepto, cada gráfico y cada celda de código se expliquen en lenguaje de principiante
+
+*Como estudiante que empieza desde cero, quiero que cada concepto, cada gráfico y cada celda de código se expliquen en lenguaje de principiante, para aprender el proceso completo (programación, datos, IA y despliegue) siguiendo el sitio, no solo ver resultados.*
+
+1. **Dado** el glosario del sitio, **cuando** se ejecutan las pruebas de la capa pedagógica, **entonces** cada id del catálogo tiene su entrada (qué es, para qué sirve, cómo se lee, en este proyecto) y todo id referenciado existe.
+2. **Dado** los 10 notebooks del reproductor, **cuando** se activa el modo aprendizaje, **entonces** las 207 celdas de código muestran qué hacen y por qué, y cualquier celda se explica línea a línea.
+3. **Dado** cualquier figura nativa, **cuando** se abre «¿Cómo leer este gráfico?», **entonces** hay una guía para su tipo (13 tipos y variantes por clave).
+4. **Dado** cada capítulo 1–11, **cuando** se abre, **entonces** muestra objetivos, conceptos del capítulo y tres preguntas de repaso con respuesta.
+
+Evidencia: `Front/src/content/pedagogia.ts` ✓, `Front/src/content/glosario/index.ts` ✓, `Front/src/content/comoLeer.ts` ✓, `Front/src/content/anotaciones/index.ts` ✓, `Front/src/content/recorridos/index.ts` ✓, `Front/src/features/notebook/explicador.ts` ✓, `Front/src/components/Termino.tsx` ✓, `Front/src/pages/Glosario.tsx` ✓, `Front/src/content/pedagogia.test.ts` ✓, `Front/e2e/pedagogia.spec.ts` ✓
+Nota: Decisión del usuario, la capa pedagógica vive solo en el front (los notebooks no se re-ejecutan ni se reindexan) y el lector objetivo es un principiante total.
+
+### HU-38 · Una presentación del proyecto en lenguaje de negocio, sin el proceso técnico
+
+*Como miembro del comité directivo de un banco, quiero una presentación del proyecto en lenguaje de negocio, sin el proceso técnico, para decidir si se pilotea el sistema en minutos, con cifras verificables.*
+
+1. **Dado** la ruta /negocio, **cuando** se abre, **entonces** muestra 10 diapositivas (problema, solución, resultados, dinero, cómo decide, equidad, operación, hoja de ruta y decisión) navegables con teclado, a pantalla completa e imprimibles a PDF.
+2. **Dado** las cifras de la presentación, **cuando** se ejecutan las pruebas, **entonces** salen de model_card.json y los escenarios de referencia usan la fórmula de credit_risk.models.costo_esperado.
+
+Evidencia: `Front/src/pages/Negocio.tsx` ✓, `Front/src/pages/negocio.css` ✓, `Front/e2e/pedagogia.spec.ts` ✓
+
+### HU-39 · Que cambiar de capítulo sea inmediato
+
+*Como lector del sitio, quiero que cambiar de capítulo sea inmediato, para seguir el recorrido sin esperas.*
+
+1. **Dado** un capítulo abierto, **cuando** se hace clic en otro capítulo del rail, **entonces** el título del capítulo nuevo se ve en menos de 250 ms con los chunks en caché, sin montar dos veces la página.
+2. **Dado** un notebook o un explorador de datos fuera de la vista, **cuando** se abre el capítulo, **entonces** se montan solo al acercarse a la vista, y los capítulos vecinos se precargan en tiempo libre.
+
+Evidencia: `Front/src/components/Shell.tsx` ✓, `Front/src/content/precarga.ts` ✓, `Front/src/components/base.tsx` ✓
