@@ -17,6 +17,7 @@ El front del MVP tenía cifras escritas a mano y dependía del back: llamaba a `
   - `RunTerminal` reproduce el log de entrenamiento.
 - **Motor exacto en TS.** `scoring.ts` y `texto.ts` portan el pipeline servido desde `modelo_export.json` y `texto_export.json`. Vitest compara contra `golden.json` con |Δ| < 1e-6, y el build falla si no coinciden.
 - **Despliegue.** Vercel sirve **solo** el estático (`Front/dist`). La API se despliega con **Docker** (IA3.5) y corre en local. Se eliminan `api/index.py` y el `requirements.txt` raíz.
+- **Disparador único.** Vercel despliega **solo de forma automática con el push a `main`** (integración con GitHub). `vercel.json` lo fija con `git.deploymentEnabled: {"main": true, "**": false}`: las demás ramas no despliegan ni generan vistas previas. Queda prohibido desplegar con la CLI, a mano, con deploy hooks o redesplegando desde la API.
 
 ## Alternativas consideradas
 
@@ -38,4 +39,5 @@ El front del MVP tenía cifras escritas a mano y dependía del back: llamaba a `
 
 - `npm --prefix Front run build` y `npm --prefix Front run test` (esquemas, golden y consistencia con el manifest).
 - `npx --prefix Front playwright test` con el back apagado: **falla si sale cualquier petición** fuera de los estáticos del sitio.
-- `vercel.json` (build solo de Vite) y `.vercelignore` (excluye `.env*`, `Back/`, `db/` y `docs/`).
+- `vercel.json` (build solo de Vite y despliegue solo desde `main`) y `.vercelignore` (excluye `.env*`, `Back/`, `db/` y `docs/`).
+- `PW_BASE_URL=<url de producción> npx --prefix Front playwright test`: las mismas pruebas e2e contra el sitio publicado.

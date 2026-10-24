@@ -48,7 +48,17 @@ notebook con papermill y el kernel `credit-risk`: `python scripts/ejecutar_noteb
 - **Cabeceras:** `Cache-Control: immutable` para `/run/*` y `/assets/*`, y una CSP con `connect-src 'self'` que impide cualquier llamada a otro origen.
 - **Exclusiones:** `.vercelignore` deja fuera `.env*` (contiene tokens), `Back/`, `db/` y `docs/`.
 - **Requisito previo:** el paquete de corrida (`Front/src/data/generated`, `Front/public/run`) debe estar commiteado. Se genera en local con `exportar_front.py` después de la corrida real.
-- **Publicación:** solo con confirmación explícita del responsable. Este clon no tiene remoto configurado.
+- **Publicación: solo automática, con el push a `main`.** El proyecto de Vercel está conectado a
+  `github.com/dapovedag/proyecto_integrador` y su rama de producción es `main`. `vercel.json` fija
+  `"git": { "deploymentEnabled": { "main": true, "**": false } }`: un push a `main` despliega producción y
+  cualquier otra rama (incluidas las que llevan `/`, como `feat/v2-senior`) no genera despliegues ni vistas
+  previas. No se usa la CLI de Vercel, ni despliegues manuales, ni deploy hooks, ni redespliegues desde la API.
+- **Flujo:** gate local en verde en la rama de trabajo → `git checkout main && git merge --ff-only <rama>` →
+  `git push origin main`. Los tags se empujan después y no despliegan (Vercel despliega por rama).
+- **Verificación (solo lectura):** el check de Vercel en el commit de GitHub, `GET /v6/deployments?target=production`
+  (estado `READY` y `meta.githubCommitSha` igual al commit empujado) y Playwright contra la URL pública:
+  `PW_BASE_URL=<url> npx --prefix Front playwright test`. Si el build falla, se corrige en la rama de trabajo y se
+  repite el flujo; nunca se redespliega a mano.
 
 ## 5. Nube para la API (opcional, con credenciales)
 
