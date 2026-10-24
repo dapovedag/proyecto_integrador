@@ -100,6 +100,8 @@ export interface ResumenTraza {
   idsTotal: number;
   idsCubiertos: number;
   historias: number;
+  /** Historias comprometidas en algún sprint (el incremento); las de backlog del producto no cuentan. */
+  historiasIncremento: number;
   historiasAcreditadas: number;
   evidenciaExiste: number;
   evidenciaTotal: number;
@@ -116,6 +118,7 @@ export function resumirMatriz(filas: FilaMatriz[], g: Gestion = G): ResumenTraza
     idsTotal: g.trazabilidad.ids_total,
     idsCubiertos: g.trazabilidad.ids_cubiertos,
     historias: g.historias.length,
+    historiasIncremento: g.historias.filter((h) => h.sprint !== null).length,
     historiasAcreditadas: g.historias.filter((h) => h.acreditada).length,
     evidenciaExiste: [...rutas.values()].filter(Boolean).length,
     evidenciaTotal: rutas.size,

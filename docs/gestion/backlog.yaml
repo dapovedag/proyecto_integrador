@@ -5,7 +5,8 @@
 # Convenciones
 # - estado: Pendiente | En progreso | En revisión | Hecho  (Hecho exige cumplir definicion_de_hecho.md)
 # - puntos: Fibonacci (1, 2, 3, 5, 8, 13). null = "no estimado" (solo para el trabajo del MVP, S1–S4).
-# - sprint: sprint en el que la historia está comprometida hoy. sprint_mvp: sprint del MVP donde se intentó.
+# - sprint: sprint en el que la historia está comprometida hoy; null = backlog del producto (sin sprint ni paso).
+#   sprint_mvp: sprint del MVP donde se intentó.
 # - evidencia: rutas relativas a la raíz del repositorio. Una historia solo cuenta como acreditada
 #   si está en "Hecho" Y todas sus rutas existen (y, si hay dod_status.json, sus notebooks cumplen la DoD).
 # - Las historias HU-00…HU-12 vienen del MVP. La auditoría QA (report_qa.md, 2026-10-16) mostró que
@@ -1001,9 +1002,9 @@ historias:
         cuando: se toma la decisión
         entonces: queda registrada en un ADR y en la model card de la versión 2.1
     puntos: 3
-    sprint: S8
+    sprint: null
     estado: Pendiente
-    paso: 8
+    paso: null
     ids_enunciado: []
     evidencia: []
-    nota: Mejora opcional de v2.1, sin ID del enunciado propio (P2.E3 e IA2.E2 ya los acredita HU-03/HU-04). Detectado en nb03 (señal débil en Spearman, información mutua e importancia del bosque) y confirmado por la permutación de nb05 (~0). Se mantiene en v2.0.0 porque la regularización L2 las atenúa y no cambian la decisión; candidata a salir del sprint si S8 se desvía.
+    nota: Mejora opcional de v2.1, sin ID del enunciado propio (P2.E3 e IA2.E2 ya los acredita HU-03/HU-04). Detectado en nb03 (señal débil en Spearman, información mutua e importancia del bosque) y confirmado por la permutación de nb05 (~0). En v2.0.0 la regularización L2 las atenúa y no cambian la decisión. Se refinó en S8 y, al cierre del sprint, volvió al backlog del producto (sprint null) para planificarse en v2.1; no forma parte del incremento v2.0.0.

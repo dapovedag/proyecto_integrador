@@ -47,9 +47,12 @@ function Contador() {
     <div className="traza-hero">
       <Revelar className="traza-hero__cifra">
         <span className="versalitas">Checklist del enunciado · calculado</span>
-        <p className="traza-hero__numero display" aria-label={`${R.acreditadas} de ${R.filas} ítems acreditados`}>
-          <span>{R.acreditadas}</span>
-          <span className="traza-hero__total">/ {R.filas}</span>
+        <p className="traza-hero__numero display">
+          <span className="sr-only">{`${R.acreditadas} de ${R.filas} ítems acreditados`}</span>
+          <span aria-hidden="true">{R.acreditadas}</span>
+          <span className="traza-hero__total" aria-hidden="true">
+            / {R.filas}
+          </span>
         </p>
         <p className="traza-hero__rotulo">ítems acreditados</p>
         <div className="traza-hero__barra" role="img" aria-label={seg.map((s) => `${s.e} ${s.v}`).join(", ")}>
@@ -69,8 +72,8 @@ function Contador() {
       </Revelar>
       <Revelar retraso={0.08} className="traza-hero__regla">
         <p className="traza-hero__lead">
-          El número no se escribe: lo calcula <span className="mono">generar_evidencia.py</span> desde el backlog. Hoy es {R.acreditadas} porque ninguna historia
-          está todavía en <strong>Hecho</strong>; subirá solo cuando cada una se cierre con su evidencia.
+          El número no se escribe: lo calcula <span className="mono">generar_evidencia.py</span> desde el backlog. Un ítem cuenta solo si cumple las tres
+          condiciones:
         </p>
         <ol className="traza-regla">
           <li>
@@ -98,9 +101,9 @@ function Contador() {
             </dd>
           </div>
           <div>
-            <dt>Historias acreditadas</dt>
+            <dt>Historias del incremento</dt>
             <dd className="mono">
-              {R.historiasAcreditadas}/{R.historias}
+              {R.historiasAcreditadas}/{R.historiasIncremento}
             </dd>
           </div>
           <div>
@@ -184,8 +187,8 @@ function FilaTraza({ f }: { f: FilaMatriz }) {
 
 function Historias() {
   return (
-    <div className="cap-tabla" role="region" aria-label="Historias de usuario" tabIndex={0}>
-      <div className="cap-tabla__scroll">
+    <div className="cap-tabla">
+      <div className="cap-tabla__scroll" role="region" aria-label="Historias de usuario" tabIndex={0}>
         <table className="traza-tabla traza-tabla--hu">
           <caption className="sr-only">Historias de usuario con su paso, sprint, puntos, IDs del enunciado y estado</caption>
           <thead>
@@ -211,11 +214,15 @@ function Historias() {
                     <span className="traza-fases mono">{h.ids_enunciado.join(" · ")}</span>
                   </td>
                   <td>
-                    <Link to={rutaCapitulo(paso)} className="traza-paso mono">
-                      {numeroFantasma(paso)}
-                    </Link>
+                    {paso === null ? (
+                      <span className="mono texto-3">—</span>
+                    ) : (
+                      <Link to={rutaCapitulo(paso)} className="traza-paso mono">
+                        {numeroFantasma(paso)}
+                      </Link>
+                    )}
                   </td>
-                  <td className="mono texto-2">{h.sprint}</td>
+                  <td className="mono texto-2">{h.sprint ?? "Backlog"}</td>
                   <td className="mono texto-2">{h.puntos}</td>
                   <td>
                     <Chip s tono={TONO_HU[h.estado]} punto>
@@ -264,7 +271,7 @@ export default function Trazabilidad() {
         <Revelar>
           <span className="versalitas traza-cab__kicker">Trazabilidad · enunciado → historia → capítulo → evidencia</span>
           <h1 className="traza-cab__titulo">
-            Cada requisito, <span className="texto-2">con su prueba o sin ella.</span>
+            Cada requisito, <span className="texto-2">con su evidencia.</span>
           </h1>
         </Revelar>
         <Contador />
@@ -311,7 +318,7 @@ export default function Trazabilidad() {
         </div>
 
         <div className="cap-tabla">
-          <div className="cap-tabla__scroll">
+          <div className="cap-tabla__scroll" role="region" aria-label="Matriz de trazabilidad" tabIndex={0}>
             <table className="traza-tabla">
               <caption className="sr-only">Matriz de trazabilidad del enunciado agrupada por bloque</caption>
               <thead>

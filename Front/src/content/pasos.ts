@@ -601,7 +601,7 @@ function estadoDe(hs: Historia[]): EstadoPaso {
 
 export const PASOS: PasoMeta[] = BASE.map((b) => {
   const hs = historiasDePaso(b.n);
-  const sprints = [...new Set(hs.map((h) => h.sprint))].sort();
+  const sprints = [...new Set(hs.map((h) => h.sprint).filter((s): s is string => s !== null))].sort();
   return {
     ...b,
     ruta: b.n === 0 ? "/metodologia" : `/paso/${b.n}`,

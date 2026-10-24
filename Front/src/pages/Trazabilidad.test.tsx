@@ -62,7 +62,7 @@ describe("trazabilidad calculada", () => {
         <Trazabilidad />
       </MemoryRouter>,
     );
-    expect(screen.getByLabelText(`${T.filas_acreditadas} de ${T.filas_total} ítems acreditados`)).toBeInTheDocument();
+    expect(screen.getByText(`${T.filas_acreditadas} de ${T.filas_total} ítems acreditados`)).toBeInTheDocument();
     const tabla = screen.getByRole("table", { name: /Matriz de trazabilidad/ });
     const filas = within(tabla).getAllByRole("row").filter((r) => r.classList.contains("traza-fila"));
     expect(filas.length).toBe(T.filas_total);

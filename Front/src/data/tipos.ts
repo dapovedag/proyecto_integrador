@@ -179,10 +179,11 @@ export interface Historia {
   para: string;
   criterios_aceptacion: { dado: string; cuando: string; entonces: string }[];
   puntos: number;
-  sprint: string;
+  /** null = backlog del producto: todavía sin sprint (y sin paso). */
+  sprint: string | null;
   sprint_mvp?: string;
   estado: EstadoHistoria;
-  paso: number;
+  paso: number | null;
   ids_enunciado: string[];
   nota?: string;
   historia: string;

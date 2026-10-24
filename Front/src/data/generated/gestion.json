@@ -1,7 +1,7 @@
 {
   "fuente": {
     "backlog": "docs/gestion/backlog.yaml",
-    "backlog_sha256": "409ae4460322db080c175e2fbdf05ba582ef9d4ba51b688efe7ce1a8023fb6ab",
+    "backlog_sha256": "7b6f43d3c4f308233c081e92868394c37030cd2076d7d018c1afb978c0db81e9",
     "dod_status": "Back/reports/dod_status.json"
   },
   "proyecto": "Análisis predictivo de riesgo de crédito",
@@ -1940,11 +1940,11 @@
         }
       ],
       "puntos": 3,
-      "sprint": "S8",
+      "sprint": null,
       "estado": "Pendiente",
-      "paso": 8,
+      "paso": null,
       "ids_enunciado": [],
-      "nota": "Mejora opcional de v2.1, sin ID del enunciado propio (P2.E3 e IA2.E2 ya los acredita HU-03/HU-04). Detectado en nb03 (señal débil en Spearman, información mutua e importancia del bosque) y confirmado por la permutación de nb05 (~0). Se mantiene en v2.0.0 porque la regularización L2 las atenúa y no cambian la decisión; candidata a salir del sprint si S8 se desvía.",
+      "nota": "Mejora opcional de v2.1, sin ID del enunciado propio (P2.E3 e IA2.E2 ya los acredita HU-03/HU-04). Detectado en nb03 (señal débil en Spearman, información mutua e importancia del bosque) y confirmado por la permutación de nb05 (~0). En v2.0.0 la regularización L2 las atenúa y no cambian la decisión. Se refinó en S8 y, al cierre del sprint, volvió al backlog del producto (sprint null) para planificarse en v2.1; no forma parte del incremento v2.0.0.",
       "historia": "Como científico de datos, quiero evaluar si retirar las variables de señal débil (estado_civil, tasa_interes_anual, plazo_meses) mejora la parsimonia sin perder desempeño, para un modelo más simple y explicable en la versión 2.1.",
       "evidencia": [],
       "notebooks_dod_fallidos": [],
@@ -2061,44 +2061,44 @@
       "burndown": [
         {
           "fecha": "2026-10-23T16:55:25-05:00",
-          "hu": "HU-00",
-          "puntos": 5,
-          "restantes": 25
-        },
-        {
-          "fecha": "2026-10-23T16:55:25-05:00",
-          "hu": "HU-16",
-          "puntos": 3,
-          "restantes": 22
-        },
-        {
-          "fecha": "2026-10-23T16:55:25-05:00",
           "hu": "HU-31",
           "puntos": 3,
-          "restantes": 19
+          "restantes": 27
         },
         {
           "fecha": "2026-10-23T16:55:46-05:00",
           "hu": "HU-13",
           "puntos": 8,
-          "restantes": 11
+          "restantes": 19
         },
         {
           "fecha": "2026-10-23T16:55:46-05:00",
           "hu": "HU-14",
           "puntos": 3,
-          "restantes": 8
+          "restantes": 16
         },
         {
           "fecha": "2026-10-23T16:56:30-05:00",
           "hu": "HU-15",
           "puntos": 3,
-          "restantes": 5
+          "restantes": 13
         },
         {
-          "fecha": "2026-10-23T18:08:03-05:00",
+          "fecha": "2026-10-23T19:01:52-05:00",
+          "hu": "HU-00",
+          "puntos": 5,
+          "restantes": 8
+        },
+        {
+          "fecha": "2026-10-23T19:01:52-05:00",
           "hu": "HU-32",
           "puntos": 5,
+          "restantes": 3
+        },
+        {
+          "fecha": "2026-10-23T20:19:09-05:00",
+          "hu": "HU-16",
+          "puntos": 3,
           "restantes": 0
         }
       ]
@@ -2269,14 +2269,14 @@
           "restantes": 16
         },
         {
-          "fecha": "2026-10-23T16:57:16-05:00",
-          "hu": "HU-23",
+          "fecha": "2026-10-23T17:45:09-05:00",
+          "hu": "HU-08",
           "puntos": 8,
           "restantes": 8
         },
         {
-          "fecha": "2026-10-23T17:45:09-05:00",
-          "hu": "HU-08",
+          "fecha": "2026-10-23T20:19:01-05:00",
+          "hu": "HU-23",
           "puntos": 8,
           "restantes": 0
         }
@@ -2302,18 +2302,11 @@
         "HU-27",
         "HU-28",
         "HU-29",
-        "HU-30",
-        "HU-36"
+        "HU-30"
       ],
-      "puntos_comprometidos": 50,
+      "puntos_comprometidos": 47,
       "puntos_hechos": 47,
       "burndown": [
-        {
-          "fecha": "2026-10-23T16:55:25-05:00",
-          "hu": "HU-30",
-          "puntos": 3,
-          "restantes": 47
-        },
         {
           "fecha": "2026-10-23T18:00:47-05:00",
           "hu": "HU-11",
@@ -2321,46 +2314,52 @@
           "restantes": 42
         },
         {
-          "fecha": "2026-10-23T18:14:01-05:00",
-          "hu": "HU-12",
-          "puntos": 3,
-          "restantes": 39
-        },
-        {
-          "fecha": "2026-10-23T18:14:01-05:00",
-          "hu": "HU-29",
-          "puntos": 5,
-          "restantes": 34
-        },
-        {
           "fecha": "2026-10-23T18:57:45-05:00",
           "hu": "HU-24",
           "puntos": 8,
-          "restantes": 26
+          "restantes": 34
         },
         {
           "fecha": "2026-10-23T18:57:45-05:00",
           "hu": "HU-25",
           "puntos": 5,
-          "restantes": 21
-        },
-        {
-          "fecha": "2026-10-23T18:57:45-05:00",
-          "hu": "HU-26",
-          "puntos": 8,
-          "restantes": 13
+          "restantes": 29
         },
         {
           "fecha": "2026-10-23T18:57:45-05:00",
           "hu": "HU-27",
           "puntos": 5,
+          "restantes": 24
+        },
+        {
+          "fecha": "2026-10-23T19:01:52-05:00",
+          "hu": "HU-30",
+          "puntos": 3,
+          "restantes": 21
+        },
+        {
+          "fecha": "2026-10-23T20:19:01-05:00",
+          "hu": "HU-29",
+          "puntos": 5,
+          "restantes": 16
+        },
+        {
+          "fecha": "2026-10-23T20:19:09-05:00",
+          "hu": "HU-26",
+          "puntos": 8,
           "restantes": 8
         },
         {
-          "fecha": "2026-10-23T18:57:45-05:00",
+          "fecha": "2026-10-23T20:19:13-05:00",
           "hu": "HU-28",
           "puntos": 5,
           "restantes": 3
+        },
+        {
+          "fecha": "2026-10-23T20:19:17-05:00",
+          "hu": "HU-12",
+          "puntos": 3,
+          "restantes": 0
         }
       ]
     }
@@ -3007,8 +3006,8 @@
     ]
   },
   "dod": {
-    "verificado": "2026-10-23T18:59:22",
-    "commit": "46e429a",
+    "verificado": "2026-10-23T19:27:32",
+    "commit": "bf46c14",
     "version": "2.0.0",
     "notebooks": {
       "00_proyecto_integrador_final.ipynb": {

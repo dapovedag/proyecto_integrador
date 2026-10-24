@@ -25,7 +25,7 @@ const G = gestion as unknown as Gestion;
 const ESTADOS: EstadoHistoria[] = ["Pendiente", "En progreso", "En revisión", "Hecho"];
 const COLOR_ESTADO: Record<EstadoHistoria, string> = { Pendiente: T.text3, "En progreso": T.warn, "En revisión": T.accent2, Hecho: T.ok };
 const PUNTOS_TOTAL = G.historias.reduce((a, h) => a + (h.puntos ?? 0), 0);
-const faseDeHistoria = (h: Historia) => (h.paso === 12 ? "F5" : pasoPorNumero(h.paso)?.fase ?? "T");
+const faseDeHistoria = (h: Historia) => (h.paso === 12 ? "F5" : (h.paso !== null && pasoPorNumero(h.paso)?.fase) || "T");
 /** Fecha de calendario (AAAA-MM-DD) sin desplazamiento por zona horaria. */
 const fechaDia = (iso: string) => fecha(`${iso}T12:00:00`);
 const epica = (id: string) => G.epicas.find((e) => e.id === id);
@@ -79,7 +79,7 @@ function Tablero() {
                       <span className="tarjeta-hu__epica" title={epica(h.epica)?.nombre}>
                         {h.epica}
                       </span>
-                      <span className="mono texto-3">{h.sprint}</span>
+                      <span className="mono texto-3">{h.sprint ?? "Backlog"}</span>
                       <span className="tarjeta-hu__ids">
                         {h.ids_enunciado.slice(0, 3).map((i) => (
                           <span key={i} className="mono">
@@ -252,8 +252,8 @@ function TablaDod() {
   const nbs = Object.entries(dodStatus.notebooks as Record<string, Record<string, boolean>>);
   const fallos = nbs.reduce((a, [, c]) => a + CRITERIOS_NB.filter((k) => c[k] === false).length, 0);
   return (
-    <div className="cap-tabla" role="region" aria-label="Estado de la DoD automatizada por notebook" tabIndex={0}>
-      <div className="cap-tabla__scroll">
+    <div className="cap-tabla">
+      <div className="cap-tabla__scroll" role="region" aria-label="Estado de la DoD automatizada por notebook" tabIndex={0}>
         <table className="dod-tabla">
           <caption className="sr-only">Criterios de verificar_dod.py por notebook (✔ cumple, ✘ no cumple)</caption>
           <thead>
@@ -399,8 +399,8 @@ function Lecciones() {
 const TONO_NIVEL: Record<string, "bad" | "warn" | "neutro"> = { Alta: "bad", Media: "warn", Baja: "neutro" };
 function Riesgos() {
   return (
-    <div className="cap-tabla" role="region" aria-label="Riesgos principales" tabIndex={0}>
-      <div className="cap-tabla__scroll">
+    <div className="cap-tabla">
+      <div className="cap-tabla__scroll" role="region" aria-label="Riesgos principales" tabIndex={0}>
         <table className="riesgos-tabla">
           <caption className="sr-only">Registro de riesgos: probabilidad, impacto, mitigación y estado</caption>
           <thead>

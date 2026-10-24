@@ -26,7 +26,7 @@
 | S5 · Fundaciones | 2026-10-23 → 2026-10-23 | Entorno probado y un único paquete credit_risk con tests, DoD automatizada y gestión verificable (backlog único, DoR, DoD multinivel, ADRs, trazabilidad calculada). | HU-00, HU-13, HU-14, HU-15, HU-16, HU-31, HU-32 | 30 | 30 |
 | S6 · Datos y modelado | 2026-10-23 → 2026-10-23 | Notebooks 01–07 y 09 reescritos sobre credit_risk y ejecutados con papermill (kernel credit-risk), con sus artefactos y conclusiones redactadas después de ver las salidas. | HU-01, HU-02, HU-03, HU-04, HU-05, HU-06, HU-07, HU-09, HU-17, HU-33, HU-34, HU-35 | 57 | 57 |
 | S7 · Modelo v2.0.0 | 2026-10-23 → 2026-10-23 | Modelo v2.0.0 seleccionado sin fuga, calibrado, con política aprobar/revisar/rechazar, equidad evaluada y servido por la API v2 en Docker; paquete de corrida exportado. | HU-08, HU-10, HU-18, HU-19, HU-20, HU-21, HU-22, HU-23 | 48 | 48 |
-| S8 · Producto y comunicación | 2026-10-23 → 2026-10-23 | Front estático autónomo con un capítulo por entregable y motor exacto, documentación coherente con v2.0.0 y checklist del enunciado acreditado por cálculo. | HU-11, HU-12, HU-24, HU-25, HU-26, HU-27, HU-28, HU-29, HU-30, HU-36 | 50 | 47 |
+| S8 · Producto y comunicación | 2026-10-23 → 2026-10-23 | Front estático autónomo con un capítulo por entregable y motor exacto, documentación coherente con v2.0.0 y checklist del enunciado acreditado por cálculo. | HU-11, HU-12, HU-24, HU-25, HU-26, HU-27, HU-28, HU-29, HU-30 | 47 | 47 |
 
 S1–S4 son el MVP: sus historias se listan por `sprint_mvp` y no se estimaron. Al reabrirse en v2 se re-estimaron y se comprometieron en S5–S8.
 
@@ -85,7 +85,7 @@ S1–S4 son el MVP: sus historias se listan por `sprint_mvp` y no se estimaron. 
 | HU-33 | E-03 | Como científico de datos, quiero consultas analíticas con DuckDB sobre el CSV de registro, para hacer filtrado, selección y agregaciones en SQL, reproducibles y rápidas. | 3 | S6 | Hecho | 4 | P1.4, IA2.2 | 3/3 |
 | HU-34 | E-03 | Como docente evaluador, quiero la metodología replicada sobre un dataset real (German Credit, UCI), para comprobar que el enfoque no depende del dataset sintético. | 3 | S6 | Hecho | 5 | E3 | 2/2 |
 | HU-35 | E-03 | Como científico de datos, quiero los verbos de dplyr y la gramática de ggplot2 aplicados con equivalentes en Python, para cubrir IA2.1 e IA2.3 sin salir de Python. | 3 | S6 | Hecho | 4 | IA2.1, IA2.3 | 1/1 |
-| HU-36 | E-04 | Como científico de datos, quiero evaluar si retirar las variables de señal débil (estado_civil, tasa_interes_anual, plazo_meses) mejora la parsimonia sin perder desempeño, para un modelo más simple y explicable en la versión 2.1. | 3 | S8 | Pendiente | 8 |  | 0/0 |
+| HU-36 | E-04 | Como científico de datos, quiero evaluar si retirar las variables de señal débil (estado_civil, tasa_interes_anual, plazo_meses) mejora la parsimonia sin perder desempeño, para un modelo más simple y explicable en la versión 2.1. | 3 | Backlog | Pendiente | — |  | 0/0 |
 
 ## Criterios de aceptación
 
@@ -442,4 +442,4 @@ Evidencia: `Back/notebooks/04_eda_transformacion_visualizacion.ipynb` ✓
 2. **Dado** el resultado de la comparación, **cuando** se toma la decisión, **entonces** queda registrada en un ADR y en la model card de la versión 2.1.
 
 Evidencia: 
-Nota: Mejora opcional de v2.1, sin ID del enunciado propio (P2.E3 e IA2.E2 ya los acredita HU-03/HU-04). Detectado en nb03 (señal débil en Spearman, información mutua e importancia del bosque) y confirmado por la permutación de nb05 (~0). Se mantiene en v2.0.0 porque la regularización L2 las atenúa y no cambian la decisión; candidata a salir del sprint si S8 se desvía.
+Nota: Mejora opcional de v2.1, sin ID del enunciado propio (P2.E3 e IA2.E2 ya los acredita HU-03/HU-04). Detectado en nb03 (señal débil en Spearman, información mutua e importancia del bosque) y confirmado por la permutación de nb05 (~0). En v2.0.0 la regularización L2 las atenúa y no cambian la decisión. Se refinó en S8 y, al cierre del sprint, volvió al backlog del producto (sprint null) para planificarse en v2.1; no forma parte del incremento v2.0.0.

@@ -174,7 +174,7 @@ def validar_backlog(backlog: dict[str, Any]) -> list[str]:
         vistos.add(hid)
         if h["epica"] not in epicas:
             errores.append(f"{hid}: épica desconocida {h['epica']}")
-        if h["sprint"] not in sprints:
+        if h["sprint"] is not None and h["sprint"] not in sprints:  # null = backlog del producto
             errores.append(f"{hid}: sprint desconocido {h['sprint']}")
         if h.get("sprint_mvp") is not None and h["sprint_mvp"] not in sprints:
             errores.append(f"{hid}: sprint_mvp desconocido {h['sprint_mvp']}")
@@ -367,8 +367,10 @@ def generar_backlog_md(backlog: dict[str, Any], historias: list[Historia],
         d = h.datos
         mvp = f" ({d['sprint_mvp']})" if d.get("sprint_mvp") else ""
         ok = sum(x for _, x in h.evidencia)
+        sprint = d["sprint"] or "Backlog"  # null = backlog del producto, sin sprint ni paso todavía
+        paso = d["paso"] if d["paso"] is not None else "—"
         o.append(f"| {h.id} | {d['epica']} | {celda(h.frase())} | {d['puntos'] if d['puntos'] is not None else '—'} "
-                 f"| {d['sprint']}{mvp} | {d['estado']} | {d['paso']} | {', '.join(d['ids_enunciado'])} "
+                 f"| {sprint}{mvp} | {d['estado']} | {paso} | {', '.join(d['ids_enunciado'])} "
                  f"| {ok}/{len(h.evidencia)} |")
     o += ["", "## Criterios de aceptación", ""]
     for h in historias:

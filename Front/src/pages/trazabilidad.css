@@ -181,6 +181,12 @@
 .traza-tabla td {
   white-space: normal !important;
 }
+/* La columna del ID se ajusta a su contenido: el espacio sobrante va al texto del ítem. */
+.traza-tabla thead th:first-child,
+.traza-tabla tbody th[scope="row"] {
+  width: 1%;
+  white-space: nowrap;
+}
 .traza-id {
   display: inline-block;
   padding: 2px 7px;
