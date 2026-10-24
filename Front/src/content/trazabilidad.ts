@@ -124,3 +124,7 @@ export function resumirMatriz(filas: FilaMatriz[], g: Gestion = G): ResumenTraza
 
 export const MATRIZ = construirMatriz();
 export const RESUMEN_TRAZA = resumirMatriz(MATRIZ);
+
+/** Notebooks que pasan todas las comprobaciones de la DoD (verificar_dod.py → gestion.json → dod). */
+const CHEQUEOS_DOD = Object.values((G.dod as { notebooks?: Record<string, Record<string, boolean>> }).notebooks ?? {});
+export const DOD_NOTEBOOKS = { ok: CHEQUEOS_DOD.filter((c) => Object.values(c).every(Boolean)).length, total: CHEQUEOS_DOD.length };

@@ -1,6 +1,7 @@
 /**
- * Portada: hero editorial "¿Pagará?" con la nube PCA real, KPIs del modelo v2, política de decisión
- * (regla de Chow) y mapa del recorrido 2 módulos → 5 unidades → 12 capítulos. Todo con datos del paquete.
+ * Portada: hero editorial "¿Pagará?" con la nube PCA real; el problema que se resuelve, qué se hizo en las
+ * cinco fases y el checklist del enunciado (calculado); después los KPIs del modelo v2, la política de decisión
+ * (regla de Chow) y el mapa del recorrido 2 módulos → 5 unidades → 12 capítulos. Todo con datos del paquete.
  */
 import { motion, useReducedMotion } from "framer-motion";
 import { useCallback, useState } from "react";
@@ -11,12 +12,15 @@ import gestion from "@/data/generated/gestion.json";
 import { Evidencia } from "@/charts/Evidencia";
 import { dec, num, pct } from "@/charts/formatos";
 import { Boton, Chip, Nota, Revelar, Seccion } from "@/components/base";
+import { ChecklistEnunciado } from "@/components/ChecklistEnunciado";
 import { Kpi } from "@/components/Kpi";
 import { NubePca, type ModoNube, type ResumenNube } from "@/components/NubePca";
 import { PoliticaDecision } from "@/components/PoliticaDecision";
 import { EstadoPunto } from "@/components/RailCapitulos";
 import { Segmentado } from "@/components/Tabs";
-import { ESTADO_ETIQUETA, GRUPOS_RAIL, MODULOS, PASOS, numeroFantasma } from "@/content/pasos";
+import { ESTADO_ETIQUETA, GRUPOS_RAIL, MODULOS, PASOS, numeroFantasma, pasoPorNumero } from "@/content/pasos";
+import { MODELOS_EVALUADOS, TOTAL_MODELOS } from "@/content/portada";
+import { DOD_NOTEBOOKS, RESUMEN_TRAZA } from "@/content/trazabilidad";
 import "./inicio.css";
 
 const M = card.metricas_test;
@@ -117,11 +121,242 @@ function Hero() {
   );
 }
 
+const COSTOS_ERROR = [
+  {
+    k: "bad",
+    accion: "Aprobar a quien no paga",
+    valor: card.costos.lgd_fn,
+    texto: "de lo prestado se pierde: es la pérdida dada el impago (LGD).",
+  },
+  {
+    k: "warn",
+    accion: "Rechazar a quien sí paga",
+    valor: card.costos.margen_fp,
+    texto: "del monto es el margen que se deja de ganar con un buen cliente.",
+  },
+  {
+    k: "rev",
+    accion: "Enviar a revisión manual",
+    valor: card.costos.revision,
+    texto: `cuesta el análisis de un analista, con capacidad para el ${pct(card.costos.capacidad_revision, 0)} de las solicitudes.`,
+  },
+];
+
+const RETOS = [
+  { n: "1", t: "Una probabilidad, no una etiqueta", d: "Calibrada, para que un 30 % estimado signifique 30 de cada 100 clientes en impago." },
+  { n: "2", t: "Una regla que decida con costos", d: "Aprobar, revisar o rechazar según lo que cuesta cada error, no con un umbral de 0,5." },
+  { n: "3", t: "Rendir cuentas", d: "Sin trato dispar por sexo o edad, y con cada cifra trazable hasta el notebook que la produjo." },
+];
+
+function Problema() {
+  return (
+    <Seccion
+      id="problema"
+      numero="01"
+      kicker="El problema"
+      titulo={
+        <>
+          Prestar es decidir hoy <span className="texto-2">lo que solo se sabrá después.</span>
+        </>
+      }
+      intro={
+        <>
+          Una institución financiera recibe solicitudes de crédito y debe responder a cada una antes de saber si el cliente pagará. Equivocarse
+          en cualquiera de las dos direcciones cuesta dinero, y una regla opaca o injusta cuesta además la confianza del cliente y del regulador.
+        </>
+      }
+    >
+      <div className="problema">
+        <Revelar className="problema__objetivo">
+          <span className="versalitas">Objetivo del proyecto integrador</span>
+          <blockquote className="problema__cita">
+            «Desarrollar una solución de análisis predictivo que permita <strong>estimar la probabilidad de impago de clientes</strong> en una
+            institución financiera, integrando técnicas de análisis exploratorio, programación e inteligencia artificial, a partir de información
+            financiera y demográfica».
+          </blockquote>
+          <div className="problema__dato">
+            <span className="problema__dato-v display">{pct(agregados.resumen.tasa_impago)}</span>
+            <span className="problema__dato-t">
+              de los {num(agregados.resumen.ids_unicos)} solicitantes del histórico no pagó. Sin un modelo, cada aprobación es una apuesta con
+              esa probabilidad.
+            </span>
+          </div>
+        </Revelar>
+        <div className="problema__errores">
+          <span className="versalitas">Lo que cuesta cada decisión</span>
+          {COSTOS_ERROR.map((e, i) => (
+            <Revelar key={e.k} className={`costo-error costo-error--${e.k}`} retraso={0.06 * (i + 1)}>
+              <span className="costo-error__accion">{e.accion}</span>
+              <span className="costo-error__valor display">{pct(e.valor, 0)}</span>
+              <span className="costo-error__texto">{e.texto}</span>
+            </Revelar>
+          ))}
+        </div>
+      </div>
+      <Revelar className="retos">
+        <span className="versalitas retos__rotulo">Por eso la solución necesita</span>
+        <ol className="retos__lista">
+          {RETOS.map((r) => (
+            <li key={r.n} className="reto">
+              <span className="reto__n display" aria-hidden="true">
+                {r.n}
+              </span>
+              <span className="reto__t">{r.t}</span>
+              <span className="reto__d">{r.d}</span>
+            </li>
+          ))}
+        </ol>
+      </Revelar>
+    </Seccion>
+  );
+}
+
+const colorPaso = (n: number) => MODULOS[pasoPorNumero(n)?.modulo ?? "T"].color;
+
+function Solucion() {
+  const R = RESUMEN_TRAZA;
+  const fases = [
+    {
+      id: "F1",
+      nombre: "Definir el problema",
+      cifra: "3",
+      cifraEtq: "costos de error explícitos",
+      texto: "Problema de negocio, métricas, costo de cada error y análisis ético de las variables sensibles.",
+      ruta: "/paso/1",
+      caps: "Cap. 1",
+      color: colorPaso(1),
+    },
+    {
+      id: "F2",
+      nombre: "Explorar y preparar",
+      cifra: num(agregados.resumen.ids_unicos),
+      cifraEtq: `clientes únicos de ${num(agregados.resumen.filas)} filas`,
+      texto: "Consultas con pandas y DuckDB, limpieza sin fuga de información, dos ratios de capacidad de pago, atípicos tratados y PCA.",
+      ruta: "/paso/2",
+      caps: "Caps. 2–4",
+      color: colorPaso(2),
+    },
+    {
+      id: "F3",
+      nombre: "Analizar y modelar",
+      cifra: String(TOTAL_MODELOS),
+      cifraEtq: "modelos entrenados y comparados",
+      texto: `${MODELOS_EVALUADOS.clasicos} clásicos con validación cruzada, ${MODELOS_EVALUADOS.redes} redes en Keras, ${MODELOS_EVALUADOS.nlp} de NLP con BERT y GPT-2 y una regresión logística en Spark MLlib.`,
+      ruta: "/paso/5",
+      caps: "Caps. 5–7 y 9",
+      color: colorPaso(5),
+    },
+    {
+      id: "F4",
+      nombre: "Evaluar y optimizar",
+      cifra: dec(M.roc_auc),
+      cifraEtq: "AUC en test, con calibración",
+      texto: `Aprueba el ${pct(D.tasa_aprobacion)} de los clientes con ${pct(D.impago_en_aprobados)} de impago, frente al ${pct(card.datos.tasa_default_test)} sin modelo, y cumple la regla 4/5 de equidad.`,
+      ruta: "/paso/8",
+      caps: "Cap. 8",
+      color: colorPaso(8),
+    },
+    {
+      id: "F5",
+      nombre: "Desplegar y comunicar",
+      cifra: "API",
+      cifraEtq: "REST en Docker, más este sitio",
+      texto: "FastAPI en una imagen Docker, notebook integrador, informe ejecutivo y un sitio que reproduce la corrida real.",
+      ruta: "/paso/10",
+      caps: "Caps. 10–11",
+      color: colorPaso(10),
+    },
+  ];
+  const garantias = [
+    { v: "< 10⁻⁶", e: "de diferencia entre el simulador y Python, en 303 clientes y 50 textos" },
+    { v: `${DOD_NOTEBOOKS.ok}/${DOD_NOTEBOOKS.total}`, e: "notebooks ejecutados que cumplen la DoD, comprobada por script" },
+    { v: `${R.acreditadas}/${R.filas}`, e: "ítems del enunciado acreditados con evidencia" },
+    { v: "1 vez", e: "se usa el test: la selección se hizo con validación cruzada en train" },
+    { v: "SHA-256", e: "sella train, test y cada archivo del paquete de corrida" },
+  ];
+  return (
+    <Seccion
+      id="solucion"
+      numero="02"
+      kicker="Qué hicimos para resolverlo"
+      titulo={
+        <>
+          Del CSV a una decisión servida, <span className="texto-2">en cinco fases.</span>
+        </>
+      }
+      intro={
+        <>
+          Scrum y CRISP-DM: cada fase es un entregable con su notebook ejecutado, sus visualizaciones y un criterio de hecho que comprueba un
+          script. El resultado es un modelo que estima la probabilidad de impago y una política que la convierte en{" "}
+          <span className="hero__d hero__d--ok">aprobar</span>, <span className="hero__d hero__d--warn">revisar</span> o{" "}
+          <span className="hero__d hero__d--bad">rechazar</span>.
+        </>
+      }
+    >
+      <ol className="fases-sol">
+        {fases.map((f, i) => (
+          <Revelar key={f.id} como="li" className="fase-sol" retraso={Math.min(i * 0.06, 0.24)}>
+            <Link to={f.ruta} className="fase-sol__enlace" style={{ "--m-c": f.color } as React.CSSProperties}>
+              <span className="fase-sol__cab">
+                <span className="fase-sol__id mono">{f.id}</span>
+                <span className="fase-sol__nombre">{f.nombre}</span>
+              </span>
+              <span className="fase-sol__cifra display">{f.cifra}</span>
+              <span className="fase-sol__cifra-etq">{f.cifraEtq}</span>
+              <span className="fase-sol__texto">{f.texto}</span>
+              <span className="fase-sol__ir mono">
+                {f.caps}
+                <span aria-hidden="true"> →</span>
+              </span>
+            </Link>
+          </Revelar>
+        ))}
+      </ol>
+      <Revelar className="garantias">
+        <span className="versalitas garantias__rotulo">Cómo se garantiza</span>
+        <ul className="garantias__lista">
+          {garantias.map((g) => (
+            <li key={g.e} className="garantia">
+              <span className="garantia__v display">{g.v}</span>
+              <span className="garantia__e">{g.e}</span>
+            </li>
+          ))}
+        </ul>
+      </Revelar>
+    </Seccion>
+  );
+}
+
+function Checklist() {
+  const R = RESUMEN_TRAZA;
+  return (
+    <Seccion
+      id="checklist"
+      numero="03"
+      kicker="Lo que pidió el proyecto integrador"
+      titulo={
+        <>
+          {R.acreditadas} de {R.filas} requisitos, <span className="texto-2">cumplidos con evidencia.</span>
+        </>
+      }
+      intro={
+        <>
+          El enunciado pide un producto final, cinco elementos, cinco fases, cuatro resultados y los entregables de cinco unidades. Un ítem queda
+          marcado solo si todas sus historias están en <em>Hecho</em>, su evidencia existe en el repositorio y sus notebooks cumplen la DoD:{" "}
+          <strong>el estado se calcula</strong>, ninguna casilla se marca a mano.
+        </>
+      }
+    >
+      <ChecklistEnunciado />
+    </Seccion>
+  );
+}
+
 function Cifras() {
   return (
     <Seccion
       id="cifras"
-      numero="01"
+      numero="04"
       kicker="El modelo v2.0.0 en cifras"
       titulo={
         <>
@@ -190,7 +425,7 @@ function Politica() {
   return (
     <Seccion
       id="politica"
-      numero="02"
+      numero="05"
       kicker="Política de decisión · regla de Chow"
       titulo={
         <>
@@ -236,7 +471,7 @@ function Mapa() {
   return (
     <Seccion
       id="recorrido"
-      numero="03"
+      numero="06"
       kicker="El recorrido"
       titulo={
         <>
@@ -362,6 +597,9 @@ export default function Inicio() {
   return (
     <>
       <Hero />
+      <Problema />
+      <Solucion />
+      <Checklist />
       <Cifras />
       <Politica />
       <Mapa />
