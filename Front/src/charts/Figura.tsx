@@ -9,6 +9,7 @@
  */
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { FiguraSpec } from "@/data/tipos";
+import { comoLeerFigura } from "@/content/comoLeer";
 import { echarts } from "./echarts";
 import { Evidencia } from "./Evidencia";
 import { formatear } from "./formatos";
@@ -172,9 +173,10 @@ export function Figura({ spec, alto, sinTitulo, sinPie, superficie = "panel", cl
         </figcaption>
       )}
       {spec.tipo === "kpi" ? <Kpis spec={spec} /> : spec.tipo === "tabla" ? <TablaDatos spec={spec} /> : <Lienzo spec={spec} alto={alto} />}
+      <ComoLeerBloque spec={spec} />
       {spec.lectura && (
         <p className="figura__clave">
-          <span className="figura__clave-rotulo">Lectura</span>
+          <span className="figura__clave-rotulo">Qué nos dice</span>
           {spec.lectura}
         </p>
       )}
@@ -198,6 +200,36 @@ export function Figura({ spec, alto, sinTitulo, sinPie, superficie = "panel", cl
         </div>
       )}
     </figure>
+  );
+}
+
+/** Desplegable pedagógico: cómo se lee este tipo de gráfico (para quien lo ve por primera vez). */
+function ComoLeerBloque({ spec }: { spec: FiguraSpec }) {
+  const guia = comoLeerFigura(spec);
+  if (!guia) return null;
+  return (
+    <details className="figura__guia">
+      <summary>
+        <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
+          <circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.3" />
+          <path d="M6.3 6.2a1.8 1.8 0 1 1 2.4 1.7c-.5.2-.7.6-.7 1.1v.4M8 11.3v.2" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+        </svg>
+        ¿Cómo leer este gráfico? <span className="figura__guia-tipo">{guia.nombre}</span>
+      </summary>
+      <div className="figura__guia-cuerpo">
+        <p>{guia.queEs}</p>
+        <ol>
+          {guia.pasos.map((p) => (
+            <li key={p}>{p}</li>
+          ))}
+        </ol>
+        {guia.ojo && (
+          <p className="figura__guia-ojo">
+            <strong>Ojo:</strong> {guia.ojo}
+          </p>
+        )}
+      </div>
+    </details>
   );
 }
 

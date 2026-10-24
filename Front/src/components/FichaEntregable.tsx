@@ -5,7 +5,7 @@
  * → 01 Actividades ✓ → 02 Entregable → 03 Visualizaciones → 04 Lo que aprendimos → 05 Criterio de hecho
  * → navegación anterior/siguiente. Los slots `entregable`, `visualizaciones` y `extra` los llenan los capítulos.
  */
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { fecha } from "@/charts/formatos";
 import {
@@ -20,8 +20,11 @@ import {
   type PasoMeta,
 } from "@/content/pasos";
 import { useGenerado } from "@/data/cargar";
+import { alAcercarse, precargarEnReposo } from "@/content/precarga";
 import type { DodStatus } from "@/data/tipos";
 import { Chip, Revelar, type TonoChip } from "./base";
+import { AntesDeEmpezar, Repaso } from "./Pedagogia";
+import { RECORRIDOS } from "@/content/recorridos";
 import "./ficha.css";
 
 const tonoModulo = (m: PasoMeta["modulo"]): TonoChip => (m === "M1" ? "mod1" : m === "M2" ? "mod2" : "trans");
@@ -95,6 +98,10 @@ export function FichaEntregable({ paso, entregable, visualizaciones, extra, intr
   const idx = PASOS.findIndex((p) => p.n === paso.n);
   const ant = PASOS[idx - 1];
   const sig = PASOS[idx + 1];
+  const rec = RECORRIDOS[paso.n];
+  const aprendizaje = rec ? { ...paso.aprendizaje, ...rec.aprendizaje } : paso.aprendizaje;
+  // Con el capítulo ya abierto, en tiempo libre se adelantan los vecinos (lo más probable es seguir leyendo).
+  useEffect(() => precargarEnReposo(...[sig?.n, ant?.n].filter((n): n is number => n != null && n > 0)), [ant?.n, sig?.n]);
 
   return (
     <article className="ficha" style={{ "--m-c": mod.color } as React.CSSProperties}>
@@ -105,7 +112,7 @@ export function FichaEntregable({ paso, entregable, visualizaciones, extra, intr
           {numeroFantasma(paso.n)}
         </div>
         <div className="ficha-cab__contenido">
-          <Revelar>
+          <div>
             <nav className="ficha-cab__miga" aria-label="Ubicación en el enunciado">
               <span className="ficha-cab__modulo">
                 <span className="ficha-cab__punto" aria-hidden="true" />
@@ -116,18 +123,18 @@ export function FichaEntregable({ paso, entregable, visualizaciones, extra, intr
               </span>
               <span>{paso.unidades.map((u) => (u.unidad ? `Unidad ${u.unidad}: ${u.nombre}` : u.nombre)).join(" · ")}</span>
             </nav>
-          </Revelar>
-          <Revelar retraso={0.05}>
+          </div>
+          <div>
             <p className="ficha-cab__contador">
               Capítulo {numeroFantasma(paso.n)} <span>/ {numeroFantasma(TOTAL_PASOS - 1)}</span>
             </p>
             <h1 className="ficha-cab__titulo">{paso.titulo}</h1>
-          </Revelar>
-          <Revelar retraso={0.1}>
+          </div>
+          <div>
             <p className="ficha-cab__pregunta">{paso.pregunta}</p>
             <p className="ficha-cab__resumen">{paso.resumen}</p>
-          </Revelar>
-          <Revelar retraso={0.15}>
+          </div>
+          <div>
             <dl className="ficha-meta">
               <div>
                 <dt>IDs del enunciado</dt>
@@ -179,13 +186,20 @@ export function FichaEntregable({ paso, entregable, visualizaciones, extra, intr
                 </dd>
               </div>
             </dl>
-          </Revelar>
+          </div>
         </div>
       </header>
 
       {intro && <div className="ficha-intro">{intro}</div>}
 
       <div className="ficha-cuerpo">
+        {/* ---------- 00 Antes de empezar (capa pedagógica) ---------- */}
+        {rec && (
+          <Bloque n="00" titulo="Antes de empezar" id="antes-de-empezar">
+            <AntesDeEmpezar recorrido={rec} />
+          </Bloque>
+        )}
+
         {/* ---------- 01 Actividades ---------- */}
         <Bloque n="01" titulo="Actividades">
           <ol className="ficha-actividades">
@@ -250,15 +264,15 @@ export function FichaEntregable({ paso, entregable, visualizaciones, extra, intr
           <div className="ficha-aprendizaje">
             <Revelar className="ficha-aprendizaje__col">
               <span className="versalitas">Conceptual</span>
-              <p>{paso.aprendizaje.conceptual}</p>
+              <p>{aprendizaje.conceptual}</p>
             </Revelar>
             <Revelar className="ficha-aprendizaje__col" retraso={0.06}>
               <span className="versalitas">Práctico</span>
-              <p>{paso.aprendizaje.practico}</p>
+              <p>{aprendizaje.practico}</p>
             </Revelar>
             <Revelar className="ficha-aprendizaje__col ficha-aprendizaje__col--evidencia" retraso={0.12}>
               <span className="versalitas">Evidencia</span>
-              <p className="mono">{paso.aprendizaje.evidencia}</p>
+              <p className="mono">{aprendizaje.evidencia}</p>
             </Revelar>
           </div>
           {paso.lecciones.length > 0 && (
@@ -280,6 +294,7 @@ export function FichaEntregable({ paso, entregable, visualizaciones, extra, intr
               })}
             </div>
           )}
+          {rec && <Repaso preguntas={rec.repaso} />}
         </Bloque>
 
         {/* ---------- 05 Criterio de hecho ---------- */}
@@ -322,7 +337,7 @@ export function FichaEntregable({ paso, entregable, visualizaciones, extra, intr
         {/* ---------- Navegación ---------- */}
         <nav className="ficha-nav" aria-label="Capítulos vecinos">
           {ant ? (
-            <Link to={ant.ruta} className="ficha-nav__enlace">
+            <Link to={ant.ruta} className="ficha-nav__enlace" {...alAcercarse(ant.n)}>
               <span className="versalitas">← Anterior · {numeroFantasma(ant.n)}</span>
               <span className="ficha-nav__titulo">{ant.titulo}</span>
             </Link>
@@ -330,7 +345,7 @@ export function FichaEntregable({ paso, entregable, visualizaciones, extra, intr
             <span />
           )}
           {sig ? (
-            <Link to={sig.ruta} className="ficha-nav__enlace ficha-nav__enlace--sig">
+            <Link to={sig.ruta} className="ficha-nav__enlace ficha-nav__enlace--sig" {...alAcercarse(sig.n)}>
               <span className="versalitas">Siguiente · {numeroFantasma(sig.n)} →</span>
               <span className="ficha-nav__titulo">{sig.titulo}</span>
             </Link>

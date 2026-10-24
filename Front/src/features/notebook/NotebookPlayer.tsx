@@ -17,7 +17,11 @@ import { duracion, num } from "@/charts/formatos";
 import { Cargando, Faltante } from "@/components/base";
 import { useRecurso } from "@/data/cargar";
 import type { Celda, NotebookEjecutado } from "@/data/tipos";
-import { Codigo, Markdown, Salidas } from "./celdas";
+import { Codigo, Diferido, Markdown, Salidas } from "./celdas";
+import { explicarCelda } from "./explicador";
+import { Termino } from "@/components/Termino";
+import { cargarAnotaciones, type Anotaciones } from "@/content/anotaciones";
+import type { Anotacion } from "@/content/pedagogia";
 import { comprimirDuraciones } from "./tiempos";
 import "./notebook.css";
 
@@ -129,6 +133,78 @@ export function indicesOriginales(celdas: Celda[]): number[] {
   return celdas.map((_, j) => (p >= 0 && j > p ? j + off : j));
 }
 
+/** Alto de reserva de una celda diferida (evita saltos al montarse): aproximado por líneas visibles. */
+const altoCodigo = (lineas: number) => 28 + Math.min(lineas, 18) * 20;
+const altoMarkdown = (fuente: string) => 24 + Math.min(40, fuente.split("\n").length) * 22;
+
+/** «Modo aprendizaje» del reproductor: activo por defecto; la preferencia se recuerda en este navegador. */
+const CLAVE_APRENDIZAJE = "nbp:aprendizaje";
+function useModoAprendizaje(): [boolean, (v: boolean) => void] {
+  const [v, setV] = useState(() => {
+    try {
+      return localStorage.getItem(CLAVE_APRENDIZAJE) !== "0";
+    } catch {
+      return true;
+    }
+  });
+  const cambiar = useCallback((x: boolean) => {
+    setV(x);
+    try {
+      localStorage.setItem(CLAVE_APRENDIZAJE, x ? "1" : "0");
+    } catch {
+      /* sin almacenamiento: solo dura la sesión */
+    }
+  }, []);
+  return [v, cambiar];
+}
+
+/** Explicación pedagógica de una celda de código: qué hace, por qué, conceptos y, a pedido, línea a línea. */
+function Explicacion({ fuente, anotacion }: { fuente: string; anotacion: Anotacion | null }) {
+  const [lineas, setLineas] = useState(false);
+  const explicadas = useMemo(() => (lineas ? explicarCelda(fuente, anotacion?.lineas).filter((l) => l.texto) : []), [lineas, fuente, anotacion]);
+  return (
+    <div className="nb-explica">
+      {anotacion && (
+        <>
+          <p className="nb-explica__que">
+            <span className="nb-explica__rotulo">Qué hace</span>
+            {anotacion.que}
+          </p>
+          <p className="nb-explica__porque">
+            <span className="nb-explica__rotulo">Por qué</span>
+            {anotacion.porque}
+          </p>
+          {anotacion.conceptos.length > 0 && (
+            <p className="nb-explica__conceptos">
+              <span className="nb-explica__rotulo">Conceptos</span>
+              {anotacion.conceptos.map((c, i) => (
+                <span key={c}>
+                  {i > 0 && <span aria-hidden="true"> · </span>}
+                  <Termino id={c} />
+                </span>
+              ))}
+            </p>
+          )}
+        </>
+      )}
+      <button type="button" className="nb-explica__btn" aria-expanded={lineas} onClick={() => setLineas((x) => !x)}>
+        {lineas ? "Ocultar la explicación línea a línea" : "Explicar el código línea a línea"}
+      </button>
+      {lineas && (
+        <ol className="nb-explica__lineas">
+          {explicadas.map((l) => (
+            <li key={l.n}>
+              <span className="nb-explica__n mono">{l.n}</span>
+              <code className="nb-explica__codigo">{l.codigo.trim()}</code>
+              <span className="nb-explica__texto">{l.texto}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  );
+}
+
 function tituloSeccion(fuente: string): string | null {
   const m = /^##\s+(.+?)\s*#*\s*$/m.exec(fuente);
   return m ? m[1].replace(/[*_`]/g, "").trim() : null;
@@ -158,6 +234,15 @@ function Reproductor({ id, datos, celdaInicial, compacto }: { id: string; datos:
 
   const [s, despachar] = useReducer(reductor, celdas.length, (n) => ({ estados: Array.from({ length: n }, () => "nada" as EstadoCelda), cola: [], actual: null }));
   const [verReferencia, setVerReferencia] = useState(false);
+  const [aprendizaje, setAprendizaje] = useModoAprendizaje();
+  const [anotaciones, setAnotaciones] = useState<Anotaciones>({});
+  useEffect(() => {
+    let vivo = true;
+    cargarAnotaciones(id).then((a) => vivo && setAnotaciones(a));
+    return () => {
+      vivo = false;
+    };
+  }, [id]);
   const [destino, setDestino] = useState<number | null>(null);
   const [activa, setActiva] = useState<number | null>(secciones[0]?.j ?? null);
   const raiz = useRef<HTMLDivElement>(null);
@@ -358,6 +443,10 @@ function Reproductor({ id, datos, celdaInicial, compacto }: { id: string; datos:
               </select>
             </label>
           )}
+          <label className="nbp__ref nbp__aprender">
+            <input type="checkbox" checked={aprendizaje} onChange={(e) => setAprendizaje(e.target.checked)} />
+            <span>Modo aprendizaje</span>
+          </label>
           <label className="nbp__ref">
             <input type="checkbox" checked={verReferencia} onChange={(e) => setVerReferencia(e.target.checked)} />
             <span>Ver referencia de matplotlib</span>
@@ -387,7 +476,8 @@ function Reproductor({ id, datos, celdaInicial, compacto }: { id: string; datos:
           {celdas.map((c, j) =>
             c.tipo === "markdown" ? (
               <li key={j} className="nb-celda nb-celda--md" data-j={j} data-celda={origen[j]} id={`nb${id}-c${origen[j]}`}>
-                <Markdown fuente={c.fuente} />
+                {/* Markdown y resaltado se montan al acercarse a la vista: el capítulo abre sin procesar las ~80 celdas. */}
+                {destino === j ? <Markdown fuente={c.fuente} /> : <Diferido alto={altoMarkdown(c.fuente)}>{<Markdown fuente={c.fuente} />}</Diferido>}
               </li>
             ) : (
               <CeldaCodigo
@@ -399,6 +489,7 @@ function Reproductor({ id, datos, celdaInicial, compacto }: { id: string; datos:
                 estado={s.estados[j]}
                 duracionMs={duracionesMs.get(j) ?? 250}
                 verReferencia={verReferencia}
+                anotacion={aprendizaje ? (anotaciones[j] ?? null) : undefined}
                 reducido={reducido}
                 destino={destino === j}
                 onEjecutar={ejecutarCelda}
@@ -446,12 +537,14 @@ interface CeldaCodigoProps {
   estado: EstadoCelda;
   duracionMs: number;
   verReferencia: boolean;
+  /** Modo aprendizaje: la anotación de la celda (null si no tiene); undefined = modo apagado. */
+  anotacion?: Anotacion | null;
   reducido: boolean;
   destino: boolean;
   onEjecutar: (j: number) => void;
 }
 
-const CeldaCodigo = memo(function CeldaCodigo({ j, celda, original, nbId, estado, duracionMs, verReferencia, reducido, destino, onEjecutar }: CeldaCodigoProps) {
+const CeldaCodigo = memo(function CeldaCodigo({ j, celda, original, nbId, estado, duracionMs, verReferencia, anotacion, reducido, destino, onEjecutar }: CeldaCodigoProps) {
   const [progreso, setProgreso] = useState(estado === "hecho" ? 1 : 0);
   const [animar, setAnimar] = useState(false);
 
@@ -523,7 +616,14 @@ const CeldaCodigo = memo(function CeldaCodigo({ j, celda, original, nbId, estado
       <div className="nb-celda__contenido">
         <div className="nb-celda__entrada">
           {celda.parametros && <span className="nb-celda__tag mono">parameters</span>}
-          <Codigo fuente={celda.fuente} etiqueta={etiqueta} />
+          {anotacion !== undefined && <Explicacion fuente={celda.fuente} anotacion={anotacion} />}
+          {destino ? (
+            <Codigo fuente={celda.fuente} etiqueta={etiqueta} />
+          ) : (
+            <Diferido alto={altoCodigo(lineas)}>
+              <Codigo fuente={celda.fuente} etiqueta={etiqueta} />
+            </Diferido>
+          )}
           {estado === "corriendo" && <span className="nb-celda__pulso" aria-hidden="true" style={{ transform: `scaleX(${progreso})` }} />}
         </div>
         {mostrarSalidas && <Salidas salidas={celda.salidas} progreso={progreso} verReferencia={verReferencia} animar={animar} />}

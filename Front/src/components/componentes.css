@@ -483,6 +483,61 @@
   font-size: var(--fs-xs);
   color: var(--text-3);
 }
+/* «¿Cómo leer este gráfico?»: guía pedagógica por tipo de figura. */
+.figura__guia {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+.figura__guia > summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  min-height: 40px;
+  padding: 8px 12px;
+  cursor: pointer;
+  list-style: none;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--accent-2);
+}
+.figura__guia > summary::-webkit-details-marker {
+  display: none;
+}
+.figura__guia > summary::after {
+  content: "+";
+  margin-left: auto;
+  font-family: var(--font-mono);
+  color: var(--text-3);
+}
+.figura__guia[open] > summary::after {
+  content: "−";
+}
+.figura__guia-tipo {
+  font-weight: 400;
+  color: var(--text-3);
+}
+.figura__guia-cuerpo {
+  display: grid;
+  gap: 8px;
+  padding: 0 14px 12px;
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+  color: var(--text-2);
+}
+.figura__guia-cuerpo p,
+.figura__guia-cuerpo ol {
+  margin: 0;
+}
+.figura__guia-cuerpo ol {
+  padding-left: 20px;
+  display: grid;
+  gap: 4px;
+}
+.figura__guia-ojo strong {
+  color: var(--warn);
+}
 .figura__pie {
   display: flex;
   align-items: center;
@@ -1227,4 +1282,97 @@
 .cajon__nav a.active {
   color: var(--text);
   background: rgba(255, 255, 255, 0.05);
+}
+
+/* ---------- Término del glosario (capa pedagógica) ---------- */
+.termino {
+  position: relative;
+  display: inline;
+}
+.termino__btn {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: help;
+  text-decoration: underline dotted;
+  text-decoration-color: color-mix(in srgb, var(--accent-2) 70%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+.termino__btn:hover,
+.termino__btn[aria-expanded="true"] {
+  color: var(--accent-2);
+}
+.termino__pop {
+  position: absolute;
+  z-index: 40;
+  left: 0;
+  top: calc(100% + 6px);
+  display: grid;
+  gap: 6px;
+  width: max-content;
+  max-width: min(320px, calc(100vw - 24px));
+  padding: 12px 14px;
+  border-radius: var(--radius-m);
+  border: 1px solid var(--line-2);
+  background: var(--panel-2);
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.7);
+  font-family: var(--font-text);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-2);
+  white-space: normal;
+  text-align: left;
+}
+.termino__nombre {
+  font-weight: 600;
+  color: var(--text);
+}
+.termino__ir {
+  font-size: var(--fs-xs);
+  color: var(--accent-2);
+}
+.terminos {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+/* Barra con seis enlaces: «Presentación Negocio» destacado; en anchos medios se compacta la derecha. */
+.barra__enlace--negocio {
+  margin-left: 6px;
+  color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  background: var(--accent-soft);
+}
+.barra__enlace--negocio:hover,
+.barra__enlace--negocio[aria-current="page"] {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+@media (min-width: 1080px) and (max-width: 1399px) {
+  .barra__version {
+    display: none;
+  }
+  .barra__buscar-texto,
+  .barra__buscar kbd,
+  .barra__buscar .kbd {
+    display: none;
+  }
+  .barra__buscar {
+    min-width: 0;
+    padding-right: 12px;
+  }
+  .barra__nav {
+    margin-left: var(--space-3);
+  }
+  .barra__enlace {
+    padding: 0 9px;
+  }
 }

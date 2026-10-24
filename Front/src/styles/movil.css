@@ -155,4 +155,18 @@ html .nbp th code {
     width: 18px;
     height: 18px;
   }
+  /* Capa pedagógica: términos en listas de conceptos y enlaces al glosario con área de toque suficiente
+     (los términos dentro de un párrafo quedan cubiertos por la excepción de texto en línea de WCAG 2.5.8). */
+  html .nb-explica__conceptos .termino__btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+  }
+  html .concepto__ir,
+  html .termino__ir,
+  html .glo-entrada__cap {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+  }
 }

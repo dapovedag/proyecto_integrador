@@ -1,7 +1,7 @@
 /**
  * Figura: cada tipo de spec nativo se construye y se renderiza sin errores (ECharts SVG en jsdom).
  */
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 import agregados from "@/data/generated/agregados.json";
@@ -109,7 +109,9 @@ describe("<Figura>", () => {
         <Figura spec={spec} />
       </MemoryRouter>,
     );
-    expect(screen.getByText(spec.titulo)).toBeInTheDocument();
+    // El título va en la cabecera (el nombre del tipo también aparece en «¿Cómo leer este gráfico?»).
+    expect(container.querySelector(".figura__titulo")).toHaveTextContent(spec.titulo);
+    expect(container.querySelector(".figura__guia")).not.toBeNull();
     if (spec.tipo !== "kpi" && spec.tipo !== "tabla") {
       const lienzo = container.querySelector(".figura__lienzo");
       expect(lienzo).not.toBeNull();

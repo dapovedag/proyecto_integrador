@@ -473,3 +473,178 @@
     text-align: left;
   }
 }
+
+/* ---------- 00 Antes de empezar (capa pedagógica) ---------- */
+.antes {
+  display: grid;
+  gap: 28px;
+}
+.antes__objetivos {
+  display: grid;
+  gap: 12px;
+  padding: 18px 20px;
+  border-radius: var(--radius-l);
+  border: 1px solid color-mix(in srgb, var(--m-c) 35%, var(--line));
+  background: linear-gradient(160deg, color-mix(in srgb, var(--m-c) 8%, transparent), transparent 60%), var(--panel);
+}
+.antes__objetivos ol {
+  margin: 0;
+  padding-left: 22px;
+  display: grid;
+  gap: 6px;
+  color: var(--text);
+  line-height: 1.5;
+}
+.antes__objetivos li::marker {
+  color: color-mix(in srgb, var(--m-c) 72%, var(--text));
+  font-weight: 600;
+}
+.antes__conceptos {
+  display: grid;
+  gap: 14px;
+}
+.antes__conceptos-cab {
+  display: grid;
+  gap: 4px;
+}
+.antes__conceptos-cab p {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  max-width: 70ch;
+}
+.conceptos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 900px) {
+  .conceptos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.concepto {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-width: 0;
+  padding: 16px 18px;
+  border-radius: var(--radius-l);
+  border: 1px solid var(--line);
+  background: var(--panel);
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+  color: var(--text-2);
+  scroll-margin-top: calc(var(--topbar-h) + 24px);
+}
+.concepto p {
+  margin: 0;
+}
+.concepto__nombre {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.concepto__que {
+  color: var(--text);
+}
+.concepto__rotulo {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--m-c) 72%, var(--text));
+  margin-right: 4px;
+}
+.concepto__mas {
+  display: grid;
+  gap: 8px;
+}
+.concepto__mas > summary {
+  cursor: pointer;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--accent-2);
+}
+.concepto__mas[open] > summary {
+  margin-bottom: 4px;
+}
+.concepto__ir {
+  font-size: var(--fs-xs);
+  color: var(--accent-2);
+}
+
+/* ---------- Comprueba lo aprendido ---------- */
+.repaso {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
+}
+.repaso__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.repaso__item details {
+  border-radius: var(--radius-m);
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+.repaso__item summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 4px 12px;
+  align-items: baseline;
+  padding: 12px 14px;
+  cursor: pointer;
+  list-style: none;
+}
+.repaso__item summary::-webkit-details-marker {
+  display: none;
+}
+.repaso__n {
+  font-size: 11px;
+  color: color-mix(in srgb, var(--m-c) 72%, var(--text));
+}
+.repaso__pregunta {
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.45;
+}
+.repaso__ver {
+  font-size: var(--fs-xs);
+  color: var(--accent-2);
+  white-space: nowrap;
+}
+.repaso__item details[open] .repaso__ver {
+  visibility: hidden;
+}
+.repaso__respuesta {
+  margin: 0;
+  padding: 0 14px 14px calc(14px + 2.2ch + 12px);
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+  color: var(--text-2);
+}
+@media (max-width: 560px) {
+  .repaso__item summary {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .repaso__ver {
+    grid-column: 2;
+  }
+  .repaso__respuesta {
+    padding-left: 14px;
+  }
+}

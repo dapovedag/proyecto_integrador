@@ -3,10 +3,13 @@
  * texto, markdown, figura nativa, imagen, error) con revelado progresivo.
  */
 import { Highlight } from "prism-react-renderer";
-import { memo, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { memo, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Figura } from "@/charts/Figura";
+import { Diferido } from "@/components/base";
+import { Termino } from "@/components/Termino";
+import { entradaPorAlias } from "@/content/glosario";
 import type { SalidaCelda } from "@/data/tipos";
 import { temaCodigo } from "../comun/temaCodigo";
 import { planRevelado } from "./tiempos";
@@ -37,6 +40,19 @@ export const Markdown = memo(function Markdown({ fuente, className = "" }: { fue
             return externo ? <span className="nb-md__enlace" title={href}>{children}</span> : <a href={href}>{children}</a>;
           },
           img: () => null,
+          // Código en línea que coincide con un término del glosario (pandas, StandardScaler…) muestra su definición.
+          code: ({ className, children }) => {
+            const texto = String(children ?? "");
+            if (className || texto.includes("\n")) return <code className={className}>{children}</code>;
+            const e = entradaPorAlias(texto);
+            return e ? (
+              <Termino id={e.id}>
+                <code>{children}</code>
+              </Termino>
+            ) : (
+              <code>{children}</code>
+            );
+          },
         }}
       >
         {fuente}
@@ -58,7 +74,8 @@ export const Codigo = memo(function Codigo({ fuente, etiqueta }: { fuente: strin
   const plegado = plegable && !abierto;
   return (
     <div className={`nb-codigo ${plegado ? "nb-codigo--plegado" : ""}`}>
-      <Highlight theme={temaCodigo} code={fuente.replace(/\n+$/, "")} language="python">
+      {/* Plegada, solo se resaltan las líneas visibles (el resto se tokeniza al desplegar). */}
+      <Highlight theme={temaCodigo} code={plegado ? fuente.split("\n").slice(0, LINEAS_VISIBLES).join("\n") : fuente.replace(/\n+$/, "")} language="python">
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
           <pre className={`nb-codigo__pre ${className}`} style={style} role="group" aria-label={etiqueta} tabIndex={0}>
             <code>
@@ -152,17 +169,7 @@ function ImagenSalida({ s }: { s: Extract<SalidaCelda, { tipo: "imagen" }> }) {
 }
 
 /** Difiere el montaje de salidas pesadas hasta que la celda se acerca al viewport. */
-function Diferido({ children, alto = 220 }: { children: ReactNode; alto?: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [ver, setVer] = useState(typeof IntersectionObserver === "undefined");
-  useEffect(() => {
-    if (ver || !ref.current) return;
-    const io = new IntersectionObserver((es) => es.some((e) => e.isIntersecting) && (setVer(true), io.disconnect()), { rootMargin: "800px 0px" });
-    io.observe(ref.current);
-    return () => io.disconnect();
-  }, [ver]);
-  return ver ? <>{children}</> : <div ref={ref} className="nb-diferido" style={{ minHeight: alto }} aria-hidden="true" />;
-}
+export { Diferido };
 
 export interface SalidasProps {
   salidas: SalidaCelda[];
