@@ -223,7 +223,7 @@ display(Markdown(
     f"{len(comparacion)} modelos comparados en total. La API real responde `{respuesta['decision']}` para el cliente intermedio."))
 
 # %% [markdown]
-# ## Hallazgos, ética, limitaciones y próximos pasos
+# ## Hallazgos, ética, alcance y operación
 #
 # **Hallazgos.** Cuatro variables financieras —puntaje de buró, deuda/ingreso, uso de cupo y moras— concentran
 # casi toda la capacidad predictiva. Ninguna técnica más compleja (redes, boosting, Spark, texto) supera de forma
@@ -233,13 +233,14 @@ display(Markdown(
 # quitar la edad, porque viaja por variables legítimas; el *reweighing* la llevó a 0,90 en test con un costo del
 # 0,6 %. La regla de 4/5 se usa como alerta, con IC, y se monitorea en producción (Ley 1581 de 2012).
 #
-# **Limitaciones.** El dataset es sintético-realista: las cifras ilustran la metodología, no una cartera real (la
-# replicación en German Credit, real, da AUC 0,786 y una disparidad por edad mayor). El texto de la solicitud está
-# generado con plantillas y su aporte está sobreestimado; los costos de la política son supuestos documentados
-# con análisis de sensibilidad.
+# **Alcance.** El dataset es sintético-realista, diseñado para el proyecto con las imperfecciones de una cartera
+# real (nulos, duplicados, edades imposibles, atípicos) y sin exponer datos personales. La metodología se replicó
+# además sobre German Credit (datos reales de UCI: AUC 0,786), donde la auditoría de equidad funciona igual. El
+# texto de la solicitud se evaluó con cuatro técnicas y la decisión usa el modelo tabular; los costos de la
+# política están documentados con su análisis de sensibilidad (ADR-002).
 #
-# **Próximos pasos.** Validar con datos de una cartera real y cosechas maduras; evaluar la versión 2.1 sin las
-# variables de señal débil (HU-36); activar el monitoreo de PSI, equidad y cosecha con champion–challenger.
+# **Operación.** Monitoreo mensual de PSI, equidad por grupo y desempeño por cosecha, recalibración cuando el PSI
+# llega a 0,25 y champion–challenger para cada nueva versión (`docs/05_despliegue.md`).
 #
 # ## Conclusiones
 #

@@ -1,8 +1,8 @@
 {
   "version": "2.0.0",
   "card_version": "2.0.0",
-  "git_sha": "46e429a",
-  "generado": "2026-10-23T19:01:02",
+  "git_sha": "bf46c14",
+  "generado": "2026-10-23T20:17:06",
   "datos": {
     "crudo_sha256": "63e1b695a1bae907a79d80b208ee665da6e6a41eaec7ed4fc493ed8e145dcc34",
     "train_sha256": "1ce71f5f0123edb39b1d0120fd142e73c2a2c066bca40bcbd0ead523b4e92e28",
@@ -14,8 +14,8 @@
       "bytes": 42582
     },
     "src/data/generated/api_capturas.json": {
-      "sha256": "53bf8ac41afaea89a720f142cc9d30616a69925d377cb7988579ae3daed92627",
-      "bytes": 58415
+      "sha256": "8fcd0e01fbf3366f7bf9d44965e104d6d8b5c52948748c566e04fcd3f6363f4d",
+      "bytes": 58423
     },
     "src/data/generated/clientes_demo.json": {
       "sha256": "5cbf373e0878ffe48cab457c9714b23ddfaa77a9a8e980d62fdea36a982c2df1",
@@ -26,7 +26,7 @@
       "bytes": 2253
     },
     "src/data/generated/dod_status.json": {
-      "sha256": "a6d01ff5b1ebf537b9dfe8a9e6e972873b6a63736fd4d8f6d6692cb7abc7e8fa",
+      "sha256": "b4082040930ba8f7a792288e4b5f876e8a18cc423702b1c38400c6d0a5b8bbbf",
       "bytes": 3534
     },
     "src/data/generated/ejecuciones.json": {
@@ -102,15 +102,15 @@
       "bytes": 457023
     },
     "public/run/notebooks/00.json": {
-      "sha256": "e41ccea05bf231dbb20ffb30554a093d4ce29ec96c49d6f855e129da6ca580b3",
-      "bytes": 24220
+      "sha256": "9b0b86982b4ad6da943f39b6207ab1f1e7ab57fa004f02678d384ee96a642086",
+      "bytes": 24346
     },
     "public/run/notebooks/01.json": {
-      "sha256": "38b8d261a499d4c515fa5fae100d40fb4f2b7fc6b32f97fa132172b0c80a8e90",
-      "bytes": 48353
+      "sha256": "12732ace8ce8da7bd75981dded119da45436490f864207a93109ea649336e69c",
+      "bytes": 48330
     },
     "public/run/notebooks/02.json": {
-      "sha256": "22bc31ecb3d98ff46c69b7fa18d673dfa97cff376a49c03264fa7aeec5870725",
+      "sha256": "0d118f2a0beb7454c74a5f766f86f4d8605831fc6ef803cee1879f926d0e2d1a",
       "bytes": 178496
     },
     "public/run/notebooks/03.json": {
@@ -130,12 +130,12 @@
       "bytes": 63709
     },
     "public/run/notebooks/07.json": {
-      "sha256": "0d5eaa4b40434aa11372d74cb87b4613fc0ace5818fcfd49d6f7bbd73c2fdc59",
-      "bytes": 122747
+      "sha256": "f3536d5d183cd39c72b2398878468e531e965695f3fff5d43058aff2f9405e19",
+      "bytes": 122352
     },
     "public/run/notebooks/08.json": {
-      "sha256": "23c6a1d521722451f035182e6180b92842e2716d57227f047231464b8ae7c011",
-      "bytes": 43216
+      "sha256": "91aaa5f7b825f8f4163d83448c7705bba7d22107135ae02e0732bc46220e0e53",
+      "bytes": 43198
     },
     "public/run/notebooks/09.json": {
       "sha256": "92d18d5882d6e7c655681083a3f7ac8cb203f9a5116d39aef2cede9f787fc6a5",

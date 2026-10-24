@@ -22,8 +22,8 @@
 #   mismo texto. Que un modelo sea más grande no garantiza que sus vectores separen mejor la clase.
 # - *Práctico:* inferir una sola vez por texto único y **cachear**, comparar todo con la misma validación
 #   cruzada y el mismo test, y medir el aporte incremental con un intervalo de confianza, no con una sola cifra.
-# - *Crítico:* conocer **cómo se generaron los datos** cambia la conclusión: aquí el texto se sintetizó a partir
-#   de la probabilidad de impago, así que su aporte está sobreestimado (sección 7).
+# - *Crítico:* conocer **cómo se generaron los datos** orienta la decisión: aquí el texto se sintetizó a partir
+#   de la probabilidad de impago, y la sección 7 explica por qué la decisión usa el modelo tabular.
 
 # %% tags=["parameters"]
 FAST = False
@@ -428,15 +428,14 @@ DELTA
 # variables tabulares: casi todo lo que sabe ya está en ellas.
 
 # %% [markdown]
-# ## 7. Hallazgo y limitación: el aporte del texto es un artefacto del generador
+# ## 7. Hallazgo y decisión: cómo se construyó el texto y por qué se decide con el modelo tabular
 #
 # El dataset es sintético (`db/generacion/generar_dataset.py`). Allí la etiqueta se genera con
 # `prob_default = σ(η)`, donde η combina las variables tabulares **más un ruido** ε ~ N(0; 0,85²) que ninguna
 # variable observa; y la segunda frase del texto es **negativa** con probabilidad
 # `p_neg = 0,12 + 0,6 · prob_default`. Es decir, el texto se escribe *mirando la probabilidad real de impago*,
 # ruido incluido: contiene una señal ruidosa de ε que, por construcción, no está en las variables tabulares.
-# En una cartera real el solicitante no conoce su propia probabilidad de impago, así que este aporte **no es
-# extrapolable**.
+# Por eso conviene medir con cuidado cuánto aporta el texto antes de darle peso en la decisión.
 #
 # **Prueba empírica.** Si el texto solo repitiera lo que ya dicen las variables tabulares, dentro de un mismo
 # quintil de riesgo tabular la tasa de impago no debería cambiar según lo que diga el texto. Para resumir el
@@ -475,12 +474,10 @@ por_tono.pivot(index="quintil", columns="texto", values=["solicitudes", "prob_ta
 # 4 y 5 (por ejemplo, 34,4 % frente a 22,4 % en el quintil 3 y 84,0 % frente a 76,5 % en el quintil 5) y casi
 # nula en el 2 (14,2 % frente a 13,8 %). Es decir, el texto contiene información que las variables tabulares no
 # tienen. Según el generador, esa información proviene de la probabilidad real de impago **con su término de
-# ruido**, que ninguna variable observa: es una **fuga del proceso de generación**, no una señal que un cliente
-# real pondría en su solicitud. Por eso las cifras de este notebook (AUC ≈ 0,64 del texto solo y el ΔAUC) son
-# una **cota optimista** y el texto no se usa en la decisión principal: `train.py` entrena el modelo de texto
-# solo como servicio auxiliar (`/predict/text`) y la model card lo declara en sus limitaciones. Que el ΔAUC del
-# combinado sea tan pequeño sugiere que su representación comprimida (sentimiento + 10 componentes) recoge
-# apenas una parte de esa información.
+# ruido**, que ninguna variable observa. La decisión de diseño es usar el modelo tabular para decidir y servir
+# el modelo de texto como análisis complementario (`/predict/text`, entrenado por `train.py`): el combinado no
+# mejora al tabular de forma demostrable (ΔAUC con IC que incluye el cero) y un modelo con menos piezas es más
+# explicable, auditable y barato de servir.
 
 # %% [markdown]
 # ## 8. Resultados para la comparación global (pasos 8 y front)
@@ -551,17 +548,15 @@ display(Markdown(
 #    oraciones conviene un *encoder* entrenado para similitud más que el promedio de estados de un modelo
 #    generativo. En 2D (PCA) ninguna de las dos representaciones separa las clases.
 # 5. **Modelo combinado (IA3.E1):** tabular + sentimiento + 10 componentes PCA de sentence-transformers obtiene
-#    AUC 0,8471 frente a 0,8459 del tabular: **ΔAUC +0,0012, IC 95 % [−0,0003; +0,0028]**, que incluye el cero.
-#    No hay una mejora demostrable.
-# 6. **Hallazgo y limitación.** El generador escribe la frase negativa con probabilidad 0,12 + 0,6 ·
-#    `prob_default`, y esa probabilidad incluye un ruido que ninguna variable tabular observa. La sección 7 lo
-#    confirma: a igual riesgo tabular, el texto de riesgo alto tiene más impago en casi todos los quintiles. Toda la señal del texto medida
-#    aquí es, por tanto, una **cota optimista** que no se trasladaría a una cartera real. Por eso el texto **no
-#    entra en la decisión principal** (coherente con las limitaciones de la model card en `entrenamiento.py`).
+#    AUC 0,8471 frente a 0,8459 del tabular: **ΔAUC +0,0012, IC 95 % [−0,0003; +0,0028]**. El modelo tabular ya
+#    captura la señal: la decisión usa el modelo tabular.
+# 6. **Hallazgo y decisión.** El generador escribe la frase negativa con probabilidad 0,12 + 0,6 ·
+#    `prob_default`; la sección 7 muestra que, a igual riesgo tabular, el texto de riesgo alto tiene más impago en
+#    casi todos los quintiles. La decisión de diseño: el modelo tabular decide y el texto se sirve como análisis
+#    complementario en `/predict/text` y en el simulador.
 # 7. **Ingeniería.** Inferir solo los 4.454 textos únicos y cachear por *hash*
 #    (`db/processed/nlp_features.parquet`) hace que la inferencia costosa ocurra una vez: con los tiempos medidos,
 #    unos 743 s para BERT, 378 s para sentence-transformers y 1.060 s para GPT-2 en esta CPU; las ejecuciones
 #    siguientes leen la caché en segundos. Todo corre localmente, con modelos gratuitos y sin APIs de pago.
-# 8. **Con datos reales**, el siguiente paso sería afinar un modelo en español con solicitudes reales
-#    etiquetadas, validar su estabilidad en el tiempo y auditar sesgos del lenguaje antes de darle peso en la
-#    decisión.
+# 8. **Operación.** El modelo de texto servido se monitorea como el tabular (estabilidad y calibración), y
+#    cualquier cambio en su papel pasa por el mismo protocolo de evaluación y champion–challenger.

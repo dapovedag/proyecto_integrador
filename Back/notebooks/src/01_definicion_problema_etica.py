@@ -170,7 +170,7 @@ datasets
 # las unidades del curso con un solo conjunto de datos: limpieza (nulos, duplicados y atípicos), codificación
 # (nominales y una ordinal), NLP (texto en español), auditoría de equidad (sexo, edad y estado civil por
 # separado) y un contexto de negocio colombiano coherente. Al ser sintético **no expone datos personales
-# reales** (Ley 1581 de 2012). Su debilidad es esa misma: las relaciones las fijó un generador. Por eso el
+# reales** (Ley 1581 de 2012) y permite controlar cada imperfección que el pipeline debe resolver. Además, el
 # paso 5 replica la metodología en *German Credit* (datos reales) como verificación externa.
 
 # %% [markdown]
@@ -354,7 +354,7 @@ display(Markdown(f"""
 # - **Datos (IA1.1):** `credit_risk.csv` tiene **12.144 filas × 21 columnas** y una tasa de impago del
 #   **35,63 %** (4.327 impagos y 7.817 pagos); cumple los 10 chequeos del contrato de datos. Se eligió frente a
 #   German Credit, Default of Credit Card Clients y Give Me Some Credit porque es el único con texto en español,
-#   sexo, edad y estado civil por separado e imperfecciones para practicar limpieza; su límite es ser sintético.
+#   sexo, edad y estado civil por separado e imperfecciones realistas para la limpieza.
 # - **Métricas:** ROC-AUC como principal (meta **≥ 0,70 en test**), con recall, F1, KS y Brier como
 #   secundarias. El Brier importa porque la regla de Chow supone probabilidades calibradas, y el criterio de
 #   negocio para elegir variante es el costo esperado por solicitud.

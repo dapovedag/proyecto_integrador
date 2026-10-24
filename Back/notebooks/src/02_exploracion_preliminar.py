@@ -624,4 +624,4 @@ display(Markdown(f"""
 # - **Variables más prometedoras:** `puntaje_buro`, `uso_cupo_tarjetas`, `moras_ultimos_12m`,
 #   `relacion_deuda_ingreso`, `situacion_laboral` y `nivel_educativo`. Ingreso y monto discriminan poco por sí
 #   solos y se combinarán en ratios. `sexo` no muestra diferencias relevantes y queda fuera del modelo; la edad
-#   sí difiere entre clases y se vigila por equidad.
+#   sí difiere entre clases y se audita por equidad.

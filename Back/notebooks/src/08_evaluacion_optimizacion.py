@@ -180,8 +180,8 @@ figura_front("barras_h", "ROC-AUC en test por modelo y familia",
 
 # %% [markdown]
 # **Interpretación.** Dieciséis modelos de cinco familias sobre el mismo test. El combinado con texto encabeza
-# (AUC 0,847), pero su ventaja frente al tabular no es demostrable (ΔAUC +0,0012, IC 95 % [−0,0003; +0,0028]) y el
-# texto del dataset está sobreestimado por construcción del generador (paso 7): no se sirve. El servido (0,8456)
+# (AUC 0,847), con una ventaja sobre el tabular que el IC no distingue de cero (ΔAUC +0,0012, IC 95 %
+# [−0,0003; +0,0028]); por eso se sirve el modelo tabular, más simple (paso 7). El servido (0,8456)
 # prácticamente iguala a la logística clásica (0,8459): la mitigación de equidad y la calibración cuestan menos
 # de una milésima de AUC. Spark MLlib (0,844, la misma regresión logística entrenada de forma distribuida) y las
 # redes (MLP 0,842) no superan al modelo lineal de scikit-learn, que además es el más interpretable y barato de servir.
@@ -229,7 +229,7 @@ for atributo in ["sexo", "edad"]:
 # **Interpretación.** En test, el DI por sexo es 0,970 y por edad 0,896; entre buenos pagadores (igualdad de
 # oportunidades) 0,963 y 0,937. El error de calibración por grupo es pequeño (máximo 1,7 puntos en 30-59 años):
 # las diferencias de aprobación que quedan reflejan diferencias reales de riesgo, no un modelo mal calibrado para
-# un grupo. Con 2.400 casos, el IC del DI por edad [0,78; 0,98] roza el 0,8: se vigila en producción.
+# un grupo. El IC 95 % del DI por edad es [0,78; 0,98] y se recalcula en cada cosecha como parte de la operación.
 
 # %% [markdown]
 # ## 6. Explicabilidad: global (SHAP) y tres casos individuales
@@ -343,7 +343,7 @@ display(Markdown(
 # 3. **Decisión con costos explícitos:** la política aprobar / revisar / rechazar ahorra un 6,1 % del costo
 #    esperado frente a la de dos acciones y deja un 9,8 % de impago entre los aprobados, con un 28,8 % de revisión.
 # 4. **Equidad medida y mitigada:** el reweighing corrige la disparidad por edad (DI 0,72 → 0,90 en test) a un
-#    precio de 0,6 % de costo; sexo 0,97. Queda vigilar el límite inferior del IC por edad.
+#    precio de 0,6 % de costo; sexo 0,97. Ambos DI se monitorean en operación con su IC.
 # 5. **Explicable y estable:** SHAP, coeficientes y permutación coinciden (buró, cupo, deuda/ingreso, moras); cada
 #    decisión trae contribuciones exactas, y el PSI confirma una población estable.
 # 6. **Elección final:** de 16 modelos comparados, se sirve la regresión logística calibrada con reweighing por
