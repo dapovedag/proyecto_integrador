@@ -26,3 +26,5 @@ Front/playwright-report/
 *.egg-info/
 Front/tsconfig.tsbuildinfo
 Front/*.tsbuildinfo
+.coverage
+**/.coverage
