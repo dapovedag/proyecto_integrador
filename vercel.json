@@ -5,7 +5,6 @@
   "buildCommand": "npm --prefix Front run build",
   "outputDirectory": "Front/dist",
   "git": { "deploymentEnabled": { "main": true, "**": false } },
-  "cleanUrls": true,
   "rewrites": [
     { "source": "/((?!run/|assets/|favicon).*)", "destination": "/index.html" }
   ],
