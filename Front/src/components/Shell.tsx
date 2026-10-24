@@ -61,11 +61,17 @@ function BarraSuperior({ conRail, cajonAbierto, onAbrirRail }: { conRail: boolea
         <NavLink to="/paso/1" className={`barra__enlace ${enCapitulo ? "activo" : ""}`}>
           Capítulos
         </NavLink>
+        <NavLink to="/glosario" className="barra__enlace">
+          Glosario
+        </NavLink>
         <NavLink to="/simulador" className="barra__enlace">
           Simulador
         </NavLink>
         <NavLink to="/trazabilidad" className="barra__enlace">
           Trazabilidad
+        </NavLink>
+        <NavLink to="/negocio" className="barra__enlace barra__enlace--negocio">
+          Presentación Negocio
         </NavLink>
       </nav>
       <div className="barra__derecha">
@@ -146,6 +152,12 @@ function Pie() {
               <li>
                 <Link to="/paso/10">Consola de la API</Link>
               </li>
+              <li>
+                <Link to="/glosario">Glosario de conceptos</Link>
+              </li>
+              <li>
+                <Link to="/negocio">Presentación Negocio</Link>
+              </li>
             </ul>
           </div>
           <div className="pie__col">
@@ -195,20 +207,19 @@ function TransicionRuta({ children }: { children: ReactNode }) {
   }, [pathname]);
   // .marco__ruta ocupa al menos la pantalla: el pie nunca entra al primer viewport mientras la página carga sus
   // datos (evita el salto de layout cuando el contenido crece).
+  // Solo un fundido de entrada corto: sin animación de salida ni AnimatePresence «wait», que retrasaba el montaje
+  // y montaba dos veces la página nueva (la copia saliente también pintaba el <Outlet/> de la ruta nueva).
   if (reducido) return <div className="marco__ruta">{children}</div>;
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={pathname}
-        className="marco__ruta"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -6 }}
-        transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <motion.div
+      key={pathname}
+      className="marco__ruta"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.15, ease: "easeOut" }}
+    >
+      {children}
+    </motion.div>
   );
 }
 
@@ -262,6 +273,12 @@ function Cajon({ onCerrar }: { onCerrar: () => void }) {
         <nav className="cajon__nav" aria-label="Principal">
           <NavLink to="/" end onClick={onCerrar}>
             Portada
+          </NavLink>
+          <NavLink to="/negocio" onClick={onCerrar}>
+            Presentación Negocio
+          </NavLink>
+          <NavLink to="/glosario" onClick={onCerrar}>
+            Glosario
           </NavLink>
           <NavLink to="/simulador" onClick={onCerrar}>
             Simulador

@@ -14,7 +14,7 @@ import { Kbd } from "./base";
 
 interface Opcion {
   id: string;
-  grupo: "Rutas" | "Capítulos" | "Figuras";
+  grupo: "Rutas" | "Capítulos" | "Glosario" | "Figuras";
   titulo: string;
   detalle: string;
   icono: string;
@@ -32,6 +32,8 @@ const RUTAS: Opcion[] = [
   { id: "r-inicio", grupo: "Rutas", titulo: "Portada", detalle: "El problema, el modelo v2 y el recorrido", icono: "↖", ruta: "/", buscar: "" },
   { id: "r-sim", grupo: "Rutas", titulo: "Simulador de decisión", detalle: "Calcula la probabilidad de impago en el navegador", icono: "∿", ruta: "/simulador", buscar: "" },
   { id: "r-traz", grupo: "Rutas", titulo: "Trazabilidad", detalle: "Checklist del enunciado calculado", icono: "≡", ruta: "/trazabilidad", buscar: "" },
+  { id: "r-glo", grupo: "Rutas", titulo: "Glosario", detalle: "Cada concepto explicado desde cero", icono: "Aa", ruta: "/glosario", buscar: "" },
+  { id: "r-neg", grupo: "Rutas", titulo: "Presentación Negocio", detalle: "El proyecto para un comité directivo, sin tecnicismos", icono: "▣", ruta: "/negocio", buscar: "" },
 ].map((o) => ({ ...o, buscar: sinTildes(`${o.titulo} ${o.detalle}`) }) as Opcion);
 
 const CAPITULOS: Opcion[] = PASOS.map((p) => ({
@@ -72,6 +74,7 @@ function Paleta({ onCerrar }: { onCerrar: () => void }) {
   const [q, setQ] = useState("");
   const [sel, setSel] = useState(0);
   const [figuras, setFiguras] = useState<Opcion[]>([]);
+  const [terminos, setTerminos] = useState<Opcion[]>([]);
   const nav = useNavigate();
   const input = useRef<HTMLInputElement>(null);
   const lista = useRef<HTMLUListElement>(null);
@@ -99,6 +102,22 @@ function Paleta({ onCerrar }: { onCerrar: () => void }) {
         ),
       )
       .catch(() => setFiguras([]));
+    // Términos del glosario (chunk aparte: se carga al abrir la paleta).
+    import("@/content/glosario")
+      .then(({ GLOSARIO }) =>
+        setTerminos(
+          GLOSARIO.map((e) => ({
+            id: `g-${e.id}`,
+            grupo: "Glosario" as const,
+            titulo: e.termino,
+            detalle: e.corto,
+            icono: "Aa",
+            ruta: `/glosario#${e.id}`,
+            buscar: sinTildes(`${e.termino} ${e.alias.join(" ")} ${e.corto}`),
+          })),
+        ),
+      )
+      .catch(() => setTerminos([]));
     return () => {
       document.body.style.overflow = ov;
       previo.current?.focus?.();
@@ -107,11 +126,11 @@ function Paleta({ onCerrar }: { onCerrar: () => void }) {
 
   const resultados = useMemo(() => {
     const t = sinTildes(q.trim());
-    const todas = [...RUTAS, ...CAPITULOS, ...figuras];
+    const todas = [...RUTAS, ...CAPITULOS, ...terminos, ...figuras];
     if (!t) return [...RUTAS, ...CAPITULOS, ...figuras.slice(0, 6)];
     const palabras = t.split(/\s+/);
     return todas.filter((o) => palabras.every((w) => o.buscar.includes(w))).slice(0, 40);
-  }, [q, figuras]);
+  }, [q, figuras, terminos]);
 
   useEffect(() => setSel(0), [q]);
   useEffect(() => {

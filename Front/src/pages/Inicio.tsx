@@ -67,6 +67,9 @@ function Hero() {
             <Boton to="/metodologia" tamano="l">
               Cómo se hizo
             </Boton>
+            <Boton to="/negocio" tamano="l">
+              Versión para negocio
+            </Boton>
           </motion.div>
           <motion.dl className="hero__datos" {...ent(0.42)}>
             <div>

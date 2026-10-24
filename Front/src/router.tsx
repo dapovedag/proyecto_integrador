@@ -1,5 +1,5 @@
 /**
- * Rutas lazy: / · /metodologia (paso 0) · /paso/:n (1–11) · /simulador · /trazabilidad · 404.
+ * Rutas lazy: / · /metodologia (paso 0) · /paso/:n (1–11) · /simulador · /trazabilidad · /glosario · /negocio · 404.
  */
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
@@ -10,9 +10,11 @@ const Metodologia = lazy(() => import("@/pages/Metodologia"));
 const Paso = lazy(() => import("@/pages/Paso"));
 const Simulador = lazy(() => import("@/pages/Simulador"));
 const Trazabilidad = lazy(() => import("@/pages/Trazabilidad"));
+const Glosario = lazy(() => import("@/pages/Glosario"));
+const Negocio = lazy(() => import("@/pages/Negocio"));
 const NoEncontrado = lazy(() => import("@/pages/NoEncontrado"));
 
-export const RUTAS_APP = ["/", "/metodologia", ...Array.from({ length: 11 }, (_, i) => `/paso/${i + 1}`), "/simulador", "/trazabilidad"];
+export const RUTAS_APP = ["/", "/metodologia", ...Array.from({ length: 11 }, (_, i) => `/paso/${i + 1}`), "/simulador", "/trazabilidad", "/glosario", "/negocio"];
 
 export const router = createBrowserRouter(
   [
@@ -25,6 +27,8 @@ export const router = createBrowserRouter(
         { path: "/paso/:n", element: <Paso /> },
         { path: "/simulador", element: <Simulador /> },
         { path: "/trazabilidad", element: <Trazabilidad /> },
+        { path: "/glosario", element: <Glosario /> },
+        { path: "/negocio", element: <Negocio /> },
         { path: "*", element: <NoEncontrado /> },
       ],
     },
