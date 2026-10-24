@@ -146,7 +146,7 @@ historias:
     puntos: 5
     sprint: S5
     sprint_mvp: S1
-    estado: En progreso
+    estado: Hecho
     paso: 0
     ids_enunciado: [E1, R3]
     evidencia:
@@ -740,7 +740,7 @@ historias:
         entonces: el build falla
     puntos: 8
     sprint: S8
-    estado: Pendiente
+    estado: Hecho
     paso: 11
     ids_enunciado: [R1, R4, F5]
     evidencia:
@@ -762,11 +762,11 @@ historias:
         entonces: el reproductor se posiciona en la celda exacta que lo produjo
     puntos: 5
     sprint: S8
-    estado: Pendiente
+    estado: Hecho
     paso: 11
     ids_enunciado: [PF1, F5]
     evidencia:
-      - Front/src/components/NotebookPlayer.tsx
+      - Front/src/features/notebook/NotebookPlayer.tsx
 
   - id: HU-26
     epica: E-10
@@ -782,7 +782,7 @@ historias:
         entonces: coincide con la card y con resultados_*.json (test de consistencia)
     puntos: 8
     sprint: S8
-    estado: Pendiente
+    estado: Hecho
     paso: 11
     ids_enunciado: [F5, E4, E1]
     evidencia:
@@ -804,12 +804,12 @@ historias:
         entonces: responde el motor local con la misma forma que /predict
     puntos: 5
     sprint: S8
-    estado: Pendiente
+    estado: Hecho
     paso: 10
     ids_enunciado: [IA3.4, IA3.E3, F5]
     evidencia:
-      - Front/src/components/ApiConsole.tsx
-      - Front/public/run/api_capturas.json
+      - Front/src/features/api/ApiConsole.tsx
+      - Front/src/data/generated/api_capturas.json
 
   - id: HU-28
     epica: E-10
@@ -828,7 +828,7 @@ historias:
         entonces: excluye .env*, Back/, db/ y docs/
     puntos: 5
     sprint: S8
-    estado: Pendiente
+    estado: Hecho
     paso: 12
     ids_enunciado: [R4, F5]
     evidencia:
@@ -851,7 +851,7 @@ historias:
         entonces: responde cada hallazgo de report_qa.md con su evidencia
     puntos: 5
     sprint: S8
-    estado: Pendiente
+    estado: Hecho
     paso: 11
     ids_enunciado: [E2, F5, R3]
     evidencia:
@@ -876,7 +876,7 @@ historias:
         entonces: indica qué se aprende y en qué notebook o paso se evidencia
     puntos: 3
     sprint: S8
-    estado: En progreso
+    estado: Hecho
     paso: 0
     ids_enunciado: [E1, R3, E4]
     evidencia:
@@ -922,7 +922,7 @@ historias:
         entonces: un test falla si aparece un archivo .R, .ps1 u otro lenguaje distinto de Python
     puntos: 5
     sprint: S5
-    estado: Pendiente
+    estado: Hecho
     paso: 0
     ids_enunciado: [R3, R1]
     evidencia:
@@ -1004,6 +1004,6 @@ historias:
     sprint: S8
     estado: Pendiente
     paso: 8
-    ids_enunciado: [P2.E3, IA2.E2]
+    ids_enunciado: []
     evidencia: []
-    nota: Detectado en nb03 (señal débil en Spearman, información mutua e importancia del bosque) y confirmado por la permutación de nb05 (~0). Se mantiene en v2.0.0 porque la regularización L2 las atenúa y no cambian la decisión; candidata a salir del sprint si S8 se desvía.
+    nota: Mejora opcional de v2.1, sin ID del enunciado propio (P2.E3 e IA2.E2 ya los acredita HU-03/HU-04). Detectado en nb03 (señal débil en Spearman, información mutua e importancia del bosque) y confirmado por la permutación de nb05 (~0). Se mantiene en v2.0.0 porque la regularización L2 las atenúa y no cambian la decisión; candidata a salir del sprint si S8 se desvía.

@@ -1,5 +1,5 @@
 {
-  "capturado": "2026-10-23T18:44:25",
+  "capturado": "2026-10-23T19:00:40",
   "servidor": "FastAPI (TestClient, mismo proceso)",
   "llamadas": [
     {
@@ -8,14 +8,14 @@
       "ruta": "/health",
       "peticion": null,
       "estado": 200,
-      "latencia_ms": 3.7,
+      "latencia_ms": 2.9,
       "respuesta": {
         "status": "ok",
         "modelo_version": "2.0.0",
         "modelo_cargado": true,
         "api_version": "2.0.0"
       },
-      "request_id": "b7d825756991"
+      "request_id": "ac9347c836e8"
     },
     {
       "nombre": "model_info",
@@ -23,7 +23,7 @@
       "ruta": "/model/info",
       "peticion": null,
       "estado": 200,
-      "latencia_ms": 6.9,
+      "latencia_ms": 3.7,
       "respuesta": {
         "nombre": "riesgo_credito",
         "version": "2.0.0",
@@ -617,7 +617,7 @@
         "variable_excluida_auditoria": "sexo",
         "duracion_entrenamiento_s": 490.1
       },
-      "request_id": "2a34cb63b0f4"
+      "request_id": "9e07e9dc2c38"
     },
     {
       "nombre": "predict_bajo",
@@ -645,7 +645,7 @@
         "texto_solicitud": "Solicito el credito para financiar una maestria. Tengo un empleo estable desde hace varios anios y he cumplido puntualmente con todas mis obligaciones anteriores."
       },
       "estado": 200,
-      "latencia_ms": 103.0,
+      "latencia_ms": 71.9,
       "respuesta": {
         "probabilidad_impago": 0.0106,
         "decision": "aprobar",
@@ -686,7 +686,7 @@
         ],
         "modelo_version": "2.0.0"
       },
-      "request_id": "9ad0bc9f6aa7"
+      "request_id": "1c734c7dca57"
     },
     {
       "nombre": "predict_medio",
@@ -714,7 +714,7 @@
         "texto_solicitud": "Quiero el credito para organizar mis gastos y hacer unas mejoras en mi negocio."
       },
       "estado": 200,
-      "latencia_ms": 96.0,
+      "latencia_ms": 65.0,
       "respuesta": {
         "probabilidad_impago": 0.3315,
         "decision": "revisar",
@@ -755,7 +755,7 @@
         ],
         "modelo_version": "2.0.0"
       },
-      "request_id": "042253355908"
+      "request_id": "6c5ac0c33b10"
     },
     {
       "nombre": "predict_alto",
@@ -783,7 +783,7 @@
         "texto_solicitud": "Necesito consolidar varias tarjetas de credito porque me atrase en los pagos tras perder el empleo. Tengo deudas acumuladas y dificultades para cubrir la cuota."
       },
       "estado": 200,
-      "latencia_ms": 99.7,
+      "latencia_ms": 61.3,
       "respuesta": {
         "probabilidad_impago": 0.9969,
         "decision": "rechazar",
@@ -824,7 +824,7 @@
         ],
         "modelo_version": "2.0.0"
       },
-      "request_id": "c2f5190836e2"
+      "request_id": "9d3836163d23"
     },
     {
       "nombre": "predict_422",
@@ -852,7 +852,7 @@
         "texto_solicitud": "Quiero el credito para organizar mis gastos y hacer unas mejoras en mi negocio."
       },
       "estado": 422,
-      "latencia_ms": 5.4,
+      "latencia_ms": 2.8,
       "respuesta": {
         "detail": [
           {
@@ -881,7 +881,7 @@
           }
         ]
       },
-      "request_id": "8660b3ab6c1f"
+      "request_id": "d44fe6a561ad"
     },
     {
       "nombre": "predict_text",
@@ -891,14 +891,14 @@
         "texto": "Necesito consolidar varias tarjetas de credito porque me atrase en los pagos tras perder el empleo. Tengo deudas acumuladas y dificultades para cubrir la cuota."
       },
       "estado": 200,
-      "latencia_ms": 8.6,
+      "latencia_ms": 6.9,
       "respuesta": {
         "probabilidad_impago_texto": 0.4816,
         "banda_riesgo": "Alto",
         "sentimiento": "negativo",
         "modelo": "tfidf_logreg_calibrado"
       },
-      "request_id": "da967e1837a1"
+      "request_id": "89ec25a01692"
     },
     {
       "nombre": "predict_batch",
@@ -972,7 +972,7 @@
         ]
       },
       "estado": 200,
-      "latencia_ms": 89.4,
+      "latencia_ms": 69.9,
       "respuesta": {
         "resultados": [
           {
@@ -1098,7 +1098,7 @@
         ],
         "total": 3
       },
-      "request_id": "4ccd105d1909"
+      "request_id": "7f9896a7b24e"
     }
   ],
   "openapi": {

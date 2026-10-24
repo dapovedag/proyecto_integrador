@@ -85,54 +85,62 @@ Detalle en [lecciones_aprendidas.md](lecciones_aprendidas.md).
 
 ## v2 (S5–S8)
 
-> Las secciones de review, retrospectiva y burndown **se completan al cierre de cada sprint** con datos
-> reales; mientras tanto llevan el marcador ⏳. El burndown se registra en `backlog.yaml → sprints[].burndown`
-> como pares `{fecha, puntos_restantes}` y lo dibuja el front.
+> **Ejecución real.** Los cuatro sprints se ejecutaron en una ventana comprimida el **2026-10-23**, en la rama
+> `feat/v2-senior`, con agentes en paralelo sobre archivos disjuntos y ejecución pesada en serie (cola con lock). Las
+> fechas de una semana por sprint eran estimaciones de planificación. El **burndown es real**: lo calcula
+> `generar_evidencia.py` desde los commits que citan cada HU (`git log`), y el front lo dibuja en `/metodologia`.
 
-### S5 · Fundaciones (2026-10-23 → 2026-10-29)
+### S5 · Fundaciones (2026-10-23)
 
 - **Objetivo:** entorno probado y un único paquete `credit_risk` con tests, DoD automatizada y gestión verificable.
-- **Comprometidas (30 pts):**
-  - HU-00 Gestión ágil (5)
-  - HU-13 Paquete único (8)
-  - HU-14 Prueba de entorno (3)
-  - HU-15 DoD automatizada (3)
-  - HU-16 Trazabilidad calculada (3)
-  - HU-31 ADRs (3)
-  - HU-32 Gate de calidad (5)
-- **Incremento esperado:** `pip install -e .` funciona; `pytest` en verde con cobertura ≥ 80 % en el núcleo; `verificar_dod.py` y `generar_evidencia.py` operativos; ADR-005/006 con evidencia.
-- **Review:** ⏳ se completa al cierre.
-- **Retrospectiva:** ⏳ se completa al cierre.
-- **Burndown:** ⏳ se completa al cierre.
+- **Comprometidas (30 pts):** HU-00 (5), HU-13 (8), HU-14 (3), HU-15 (3), HU-16 (3), HU-31 (3), HU-32 (5).
+- **Review:**
+  - `pip install -e .` funciona incluso desde un clon limpio.
+  - Gate en verde: ruff, mypy, pytest con 52 pruebas y cobertura del 91,5 % en el núcleo, `verificar_dod.py` con 0 fallos y build y pruebas del front.
+  - `generar_evidencia.py` calcula el checklist.
+  - ADR-001 a ADR-008 con resultados reales.
+- **Retrospectiva:**
+  - *Bien:* la prueba de entorno antes de escribir notebooks detectó el conflicto de DLL (sklearn → torch/TF) el primer día.
+  - *A mejorar:* el validador del backlog rechazó una HU mal formada que había entrado a un commit porque el código de salida quedaba oculto tras un `tail`. Desde entonces, los comandos del gate no se encadenan con pipes que oculten el código de salida.
 
-### S6 · Datos y modelado (2026-10-30 → 2026-11-05)
+### S6 · Datos y modelado (2026-10-23)
 
 - **Objetivo:** notebooks 01–07 y 09 reescritos sobre `credit_risk`, ejecutados con papermill (kernel `credit-risk`) y con conclusiones escritas después de ver las salidas.
-- **Comprometidas (57 pts):**
-  - HU-01 (3), HU-02 (3), HU-03 (5), HU-04 (8)
-  - HU-05 (5), HU-06 (8), HU-07 (8), HU-09 (5)
-  - HU-17 (3), HU-33 (3), HU-34 (3), HU-35 (3)
-- **Nota de capacidad:** es el sprint más cargado. Los notebooks se escriben en paralelo (agentes con archivos disjuntos) y se ejecutan en serie. Si el burndown se desvía a mitad del sprint, HU-34 (German Credit) es la primera candidata a volver al backlog.
-- **Review:** ⏳ se completa al cierre.
-- **Retrospectiva:** ⏳ se completa al cierre.
-- **Burndown:** ⏳ se completa al cierre.
+- **Comprometidas (57 pts):** HU-01, HU-02, HU-03, HU-04, HU-05, HU-06, HU-07, HU-09, HU-17, HU-33, HU-34, HU-35.
+- **Review:**
+  - Ocho notebooks cumplen la DoD.
+  - Tiempos de la ejecución real: nb01 37 s · nb02 20 s · nb03 162 s · nb04 145 s · nb05 397 s · nb06 300 s · nb07 411 s · nb09 189 s.
+  - Se exportaron 139 figuras nativas.
+  - German Credit (HU-34) entró completo y no hubo que devolverlo al backlog.
+- **Retrospectiva:**
+  - *A mejorar:* la cola tenía dos defectos reales. Hubo un `Errno 22` al guardar in-place en Windows y una carrera en el lock (dos procesos lo tomaban a la vez). Ambos se corrigieron: escritura atómica y `O_CREAT | O_EXCL`. Además, el nb09 FAST tardó 34 min por escribir Parquet sobre el montaje de Windows (unos 390 s por escritura). Con el disco local del contenedor tarda 3 s.
+  - *Bien:* escribir en paralelo y ejecutar en serie evitó que los agentes saturaran la CPU.
 
-### S7 · Modelo v2.0.0 (2026-11-06 → 2026-11-12)
+### S7 · Modelo v2.0.0 (2026-10-23)
 
 - **Objetivo:** modelo v2.0.0 seleccionado sin fuga y calibrado, con la política aprobar/revisar/rechazar y la equidad evaluada. Servido por la API v2 en Docker y con el paquete de corrida exportado.
-- **Comprometidas (48 pts):**
-  - HU-08 (8), HU-10 (5), HU-18 (5), HU-19 (8)
-  - HU-20 (8), HU-21 (3), HU-22 (3), HU-23 (8)
-- **Review:** ⏳ se completa al cierre, con las cifras de `model_card.json` v2.0.0.
-- **Retrospectiva:** ⏳ se completa al cierre.
-- **Burndown:** ⏳ se completa al cierre.
+- **Comprometidas (48 pts):** HU-08, HU-10, HU-18, HU-19, HU-20, HU-21, HU-22, HU-23.
+- **Review:**
+  - El modelo es una LR calibrada con *reweighing*: AUC CV 0,858 y AUC test 0,846.
+  - Umbrales 0,178 y 0,467. En test: aprobar 39,7 %, revisar 28,8 %, rechazar 31,5 % e impago entre aprobados 9,8 %.
+  - Equidad en test: DI edad 0,896 y sexo 0,970.
+  - Docker *healthy* y probado desde pytest, sin root y sin dependencias pesadas.
+  - nb08 coincide con la card por construcción.
+- **Retrospectiva:**
+  - *Bien:* portar el modelo a TypeScript con pruebas golden destapó un defecto real de la API. `None` en categorías no se imputaba, porque `SimpleImputer` usa `X != X`. Se corrigió en Python antes de publicar.
+  - *A mejorar:* el cliente demo "medio" se había supuesto y caía en "rechazar" (p = 0,52). Ahora se elige contra el modelo real y una prueba lo fija.
 
-### S8 · Producto y comunicación (2026-11-13 → 2026-11-19)
+### S8 · Producto y comunicación (2026-10-23)
 
 - **Objetivo:** front estático autónomo con un capítulo por entregable y motor exacto, documentación coherente con v2.0.0 y checklist del enunciado acreditado por cálculo.
-- **Comprometidas (47 pts):**
-  - HU-11 (5), HU-12 (3), HU-24 (8), HU-25 (5), HU-26 (8)
-  - HU-27 (5), HU-28 (5), HU-29 (5), HU-30 (3)
-- **Review:** ⏳ se completa al cierre (incluye la prueba desde un clon limpio y el 47/47 de `generar_evidencia.py`).
-- **Retrospectiva:** ⏳ se completa al cierre.
-- **Burndown:** ⏳ se completa al cierre.
+- **Comprometidas (50 pts):** HU-11, HU-12, HU-24, HU-25, HU-26, HU-27, HU-28, HU-29, HU-30, HU-36.
+- **Review:**
+  - nb00 (PF1) cumple la DoD: 10/10 notebooks.
+  - Front con 85 pruebas Vitest y 66 e2e en escritorio y móvil, con el back apagado y 0 peticiones fuera del origen.
+  - Paridad |Δp| < 1e-6.
+  - Arranque verificado desde un clon limpio.
+  - Documentación v2 coherente.
+  - HU-36 (variables de señal débil) queda en el backlog para v2.1, como se planeó.
+- **Retrospectiva:**
+  - *Bien:* los requisitos cambiaron a mitad del sprint (back solo en Python, front autónomo que simula la corrida, gráficos nativos de alto nivel). Se registraron en el plan, en la memoria y en un ADR antes de seguir, y nada quedó a medias.
+  - *A mejorar:* la revisión del build destapó que `golden.json` se publicaba. Una cifra de Spark del modo FAST se coló en nb08 hasta re-ejecutarlo. El orden productor → consumidor queda documentado en el libreto.

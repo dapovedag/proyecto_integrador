@@ -21,14 +21,17 @@
 
 ## Lecciones de v2
 
-> ⏳ Se completan en la retrospectiva de cada sprint (S5–S8), con el mismo formato: lección → control → comprobación.
-
 | # | Sprint | Lección | Control | Cómo se comprueba |
 |---|---|---|---|---|
-| — | S5 | ⏳ se completa al cierre | | |
-| — | S6 | ⏳ se completa al cierre | | |
-| — | S7 | ⏳ se completa al cierre | | |
-| — | S8 | ⏳ se completa al cierre | | |
+| V1 | S5 | En Windows, cargar scikit-learn antes que torch o TF rompe sus DLL | `setup(torch_primero / tf_primero)`; kernels separados para TF y torch | ADR-006; nb06 y nb07 ✔ DoD |
+| V2 | S5 | Un pipe que oculta el código de salida deja pasar errores | El gate (`check.py`) evalúa el código de cada paso | `python Back/scripts/check.py` |
+| V3 | S6 | Un lock de "existe → escribo" permite carreras | Creación atómica `O_CREAT \| O_EXCL` | `ejecutar_notebooks.tomar_lock` |
+| V4 | S6 | Escribir sobre montajes de Windows desde Docker es unas 100 veces más lento | Disco local del contenedor y copia final | ADR-005; nb09 en 189 s |
+| V5 | S7 | Portar el modelo con pruebas golden destapa defectos del original | Paridad golden \|Δp\| < 1e-6 en el gate | `scoring.test.ts`, `test_contratos.py` |
+| V6 | S7 | Los ejemplos de demo se verifican contra el modelo, no se suponen | Prueba de que cada cliente demo cae en su banda | `test_clientes_demo_en_su_banda` |
+| V7 | S8 | Un glob de datos generados puede publicar archivos de prueba | Exclusión explícita y revisión del `dist/` | Build sin `golden-*.js` |
+| V8 | S8 | Un consumidor puede quedar con cifras de un productor viejo (FAST frente a real) | Re-ejecutar consumidores tras cada productor; manifest con SHA-256 | `test_manifest_hashes_y_version`, `test_golden_coincide_con_el_artefacto_servido` |
+| V9 | S5–S8 | Los requisitos cambian a mitad de sprint | Registrar en el plan, la memoria y un ADR antes de seguir | Plan v2, ADR-004, memorias del proyecto |
 
 ---
 

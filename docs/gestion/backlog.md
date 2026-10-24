@@ -9,10 +9,10 @@
 
 | Estado | Historias | Puntos |
 |---|---|---|
-| Pendiente | 8 | 44 |
-| En progreso | 2 | 8 |
+| Pendiente | 1 | 3 |
+| En progreso | 0 | 0 |
 | En revisión | 0 | 0 |
-| Hecho | 27 | 133 |
+| Hecho | 36 | 182 |
 | **Total** | **37** | **185** |
 
 ## Puntos por sprint
@@ -23,10 +23,10 @@
 | S2 · Datos listos (MVP) | 2026-10-09 → 2026-10-16 | Datos limpios y EDA avanzado. | HU-03, HU-04 | no estimado | no estimado |
 | S3 · Modelado (MVP) | 2026-10-09 → 2026-10-16 | Modelos clásicos, redes, NLP y evaluación. | HU-05, HU-06, HU-07, HU-08 | no estimado | no estimado |
 | S4 · Despliegue (MVP) | 2026-10-09 → 2026-10-16 | Spark, API, integrador y ejecución local. | HU-09, HU-10, HU-11, HU-12 | no estimado | no estimado |
-| S5 · Fundaciones | 2026-10-23 → 2026-10-23 | Entorno probado y un único paquete credit_risk con tests, DoD automatizada y gestión verificable (backlog único, DoR, DoD multinivel, ADRs, trazabilidad calculada). | HU-00, HU-13, HU-14, HU-15, HU-16, HU-31, HU-32 | 30 | 20 |
+| S5 · Fundaciones | 2026-10-23 → 2026-10-23 | Entorno probado y un único paquete credit_risk con tests, DoD automatizada y gestión verificable (backlog único, DoR, DoD multinivel, ADRs, trazabilidad calculada). | HU-00, HU-13, HU-14, HU-15, HU-16, HU-31, HU-32 | 30 | 30 |
 | S6 · Datos y modelado | 2026-10-23 → 2026-10-23 | Notebooks 01–07 y 09 reescritos sobre credit_risk y ejecutados con papermill (kernel credit-risk), con sus artefactos y conclusiones redactadas después de ver las salidas. | HU-01, HU-02, HU-03, HU-04, HU-05, HU-06, HU-07, HU-09, HU-17, HU-33, HU-34, HU-35 | 57 | 57 |
 | S7 · Modelo v2.0.0 | 2026-10-23 → 2026-10-23 | Modelo v2.0.0 seleccionado sin fuga, calibrado, con política aprobar/revisar/rechazar, equidad evaluada y servido por la API v2 en Docker; paquete de corrida exportado. | HU-08, HU-10, HU-18, HU-19, HU-20, HU-21, HU-22, HU-23 | 48 | 48 |
-| S8 · Producto y comunicación | 2026-10-23 → 2026-10-23 | Front estático autónomo con un capítulo por entregable y motor exacto, documentación coherente con v2.0.0 y checklist del enunciado acreditado por cálculo. | HU-11, HU-12, HU-24, HU-25, HU-26, HU-27, HU-28, HU-29, HU-30, HU-36 | 50 | 8 |
+| S8 · Producto y comunicación | 2026-10-23 → 2026-10-23 | Front estático autónomo con un capítulo por entregable y motor exacto, documentación coherente con v2.0.0 y checklist del enunciado acreditado por cálculo. | HU-11, HU-12, HU-24, HU-25, HU-26, HU-27, HU-28, HU-29, HU-30, HU-36 | 50 | 47 |
 
 S1–S4 son el MVP: sus historias se listan por `sprint_mvp` y no se estimaron. Al reabrirse en v2 se re-estimaron y se comprometieron en S5–S8.
 
@@ -49,7 +49,7 @@ S1–S4 son el MVP: sus historias se listan por `sprint_mvp` y no se estimaron. 
 
 | ID | Épica | Historia | Pts | Sprint (MVP) | Estado | Paso | IDs enunciado | Evidencia |
 |---|---|---|---|---|---|---|---|---|
-| HU-00 | E-01 | Como equipo del proyecto, quiero un backlog único, sprints con objetivo, DoR y DoD verificables, ADRs y retrospectivas, para gestionar el proyecto con Scrum y poder demostrarlo con evidencia. | 5 | S5 (S1) | En progreso | 0 | E1, R3 | 6/6 |
+| HU-00 | E-01 | Como equipo del proyecto, quiero un backlog único, sprints con objetivo, DoR y DoD verificables, ADRs y retrospectivas, para gestionar el proyecto con Scrum y poder demostrarlo con evidencia. | 5 | S5 (S1) | Hecho | 0 | E1, R3 | 6/6 |
 | HU-01 | E-02 | Como analista de crédito, quiero el problema de impago definido con métricas de negocio y riesgos éticos, para confiar en el uso del modelo y conocer sus límites. | 3 | S6 (S1) | Hecho | 1 | IA1.1, IA1.3, E5, F1 | 2/2 |
 | HU-02 | E-03 | Como científico de datos, quiero explorar el dataset con el entorno, las librerías y operaciones básicas, para entender su estructura y calidad antes de prepararlo. | 3 | S6 (S1) | Hecho | 2 | P1.1, P1.2, P1.3, P1.4, P1.5, P1.E1, P1.E2, P1.E3, P1.E4, E3 | 3/3 |
 | HU-03 | E-03 | Como científico de datos, quiero limpiar y preparar los datos con el pipeline del paquete, para entrenar sin fuga y con las mismas transformaciones que se sirven. | 5 | S6 (S2) | Hecho | 3 | P2.1, P2.2, P2.3, P2.4, P2.5, P2.6, P2.E1, P2.E2, P2.E3, P2.E4, F2 | 6/6 |
@@ -73,19 +73,19 @@ S1–S4 son el MVP: sus historias se listan por `sprint_mvp` y no se estimaron. 
 | HU-21 | E-05 | Como analista de riesgo de modelos, quiero el PSI por variable y del score entre train y test, para detectar deriva y saber cuándo recalibrar. | 3 | S7 | Hecho | 8 | R4 | 2/2 |
 | HU-22 | E-07 | Como equipo de operaciones, quiero la API v2 en una imagen Docker probada, para desplegarla igual en local y en la nube. | 3 | S7 | Hecho | 10 | IA3.5, R4 | 5/5 |
 | HU-23 | E-08 | Como equipo del front, quiero un paquete de corrida exportado desde la ejecución real del back, para que el front muestre solo resultados reales, con hashes verificables. | 8 | S7 | Hecho | 11 | F5, E4 | 3/3 |
-| HU-24 | E-10 | Como visitante del sitio, quiero que el simulador calcule en el navegador con el mismo modelo que sirve la API, para probar clientes sin depender del back. | 8 | S8 | Pendiente | 11 | R1, R4, F5 | 3/3 |
-| HU-25 | E-10 | Como docente evaluador, quiero reproducir cada notebook ejecutado celda a celda en el sitio, para revisar la evidencia sin instalar nada. | 5 | S8 | Pendiente | 11 | PF1, F5 | 0/1 |
-| HU-26 | E-10 | Como docente evaluador, quiero un capítulo por entregable con actividades, notebook, visualizaciones, aprendizaje y criterio de hecho, para recorrer el proyecto paso a paso con su evidencia. | 8 | S8 | Pendiente | 11 | F5, E4, E1 | 3/3 |
-| HU-27 | E-10 | Como integrador del banco, quiero ver la API reproducida (Swagger, capturas reales y consola de prueba), para entender el contrato REST sin levantar el servidor. | 5 | S8 | Pendiente | 10 | IA3.4, IA3.E3, F5 | 0/2 |
-| HU-28 | E-10 | Como equipo del proyecto, quiero que el sitio funcione con el back apagado y no haga peticiones fuera de sus estáticos, para desplegarlo como estático en Vercel sin riesgo ni dependencias. | 5 | S8 | Pendiente | 12 | R4, F5 | 4/4 |
-| HU-29 | E-08 | Como docente evaluador, quiero documentación coherente con el modelo v2.0.0, para que ningún documento contradiga lo servido. | 5 | S8 | Pendiente | 11 | E2, F5, R3 | 6/6 |
-| HU-30 | E-01 | Como equipo del proyecto, quiero lecciones aprendidas y el aprendizaje por unidad documentados, para convertir los errores del MVP en controles y mostrar qué aporta cada unidad. | 3 | S8 | En progreso | 0 | E1, R3, E4 | 2/2 |
+| HU-24 | E-10 | Como visitante del sitio, quiero que el simulador calcule en el navegador con el mismo modelo que sirve la API, para probar clientes sin depender del back. | 8 | S8 | Hecho | 11 | R1, R4, F5 | 3/3 |
+| HU-25 | E-10 | Como docente evaluador, quiero reproducir cada notebook ejecutado celda a celda en el sitio, para revisar la evidencia sin instalar nada. | 5 | S8 | Hecho | 11 | PF1, F5 | 1/1 |
+| HU-26 | E-10 | Como docente evaluador, quiero un capítulo por entregable con actividades, notebook, visualizaciones, aprendizaje y criterio de hecho, para recorrer el proyecto paso a paso con su evidencia. | 8 | S8 | Hecho | 11 | F5, E4, E1 | 3/3 |
+| HU-27 | E-10 | Como integrador del banco, quiero ver la API reproducida (Swagger, capturas reales y consola de prueba), para entender el contrato REST sin levantar el servidor. | 5 | S8 | Hecho | 10 | IA3.4, IA3.E3, F5 | 2/2 |
+| HU-28 | E-10 | Como equipo del proyecto, quiero que el sitio funcione con el back apagado y no haga peticiones fuera de sus estáticos, para desplegarlo como estático en Vercel sin riesgo ni dependencias. | 5 | S8 | Hecho | 12 | R4, F5 | 4/4 |
+| HU-29 | E-08 | Como docente evaluador, quiero documentación coherente con el modelo v2.0.0, para que ningún documento contradiga lo servido. | 5 | S8 | Hecho | 11 | E2, F5, R3 | 6/6 |
+| HU-30 | E-01 | Como equipo del proyecto, quiero lecciones aprendidas y el aprendizaje por unidad documentados, para convertir los errores del MVP en controles y mostrar qué aporta cada unidad. | 3 | S8 | Hecho | 0 | E1, R3, E4 | 2/2 |
 | HU-31 | E-01 | Como docente evaluador, quiero las decisiones de arquitectura documentadas como ADR, para entender por qué se eligió cada alternativa y cómo se verifica. | 3 | S5 | Hecho | 0 | R3, E1 | 6/6 |
-| HU-32 | E-09 | Como equipo del proyecto, quiero un gate de calidad local en un solo comando, para no integrar nada que rompa lint, tipos, tests, DoD o build. | 5 | S5 | Pendiente | 0 | R3, R1 | 2/2 |
+| HU-32 | E-09 | Como equipo del proyecto, quiero un gate de calidad local en un solo comando, para no integrar nada que rompa lint, tipos, tests, DoD o build. | 5 | S5 | Hecho | 0 | R3, R1 | 2/2 |
 | HU-33 | E-03 | Como científico de datos, quiero consultas analíticas con DuckDB sobre el CSV de registro, para hacer filtrado, selección y agregaciones en SQL, reproducibles y rápidas. | 3 | S6 | Hecho | 4 | P1.4, IA2.2 | 3/3 |
 | HU-34 | E-03 | Como docente evaluador, quiero la metodología replicada sobre un dataset real (German Credit, UCI), para comprobar que el enfoque no depende del dataset sintético. | 3 | S6 | Hecho | 5 | E3 | 2/2 |
 | HU-35 | E-03 | Como científico de datos, quiero los verbos de dplyr y la gramática de ggplot2 aplicados con equivalentes en Python, para cubrir IA2.1 e IA2.3 sin salir de Python. | 3 | S6 | Hecho | 4 | IA2.1, IA2.3 | 1/1 |
-| HU-36 | E-04 | Como científico de datos, quiero evaluar si retirar las variables de señal débil (estado_civil, tasa_interes_anual, plazo_meses) mejora la parsimonia sin perder desempeño, para un modelo más simple y explicable en la versión 2.1. | 3 | S8 | Pendiente | 8 | P2.E3, IA2.E2 | 0/0 |
+| HU-36 | E-04 | Como científico de datos, quiero evaluar si retirar las variables de señal débil (estado_civil, tasa_interes_anual, plazo_meses) mejora la parsimonia sin perder desempeño, para un modelo más simple y explicable en la versión 2.1. | 3 | S8 | Pendiente | 8 |  | 0/0 |
 
 ## Criterios de aceptación
 
@@ -342,7 +342,7 @@ Evidencia: `Front/src/engine/scoring.ts` ✓, `Front/src/engine/texto.ts` ✓, `
 1. **Dado** el JSON de un notebook exportado, **cuando** se pulsa Ejecutar todo, **entonces** el contador [n] avanza y las salidas aparecen con la duración real comprimida.
 2. **Dado** un KPI del sitio, **cuando** se abre su fuente, **entonces** el reproductor se posiciona en la celda exacta que lo produjo.
 
-Evidencia: `Front/src/components/NotebookPlayer.tsx` ✗
+Evidencia: `Front/src/features/notebook/NotebookPlayer.tsx` ✓
 
 ### HU-26 · Un capítulo por entregable con actividades, notebook, visualizaciones, aprendizaje y criterio de hecho
 
@@ -360,7 +360,7 @@ Evidencia: `Front/package.json` ✓, `Front/src/main.tsx` ✓, `Front/src/data/g
 1. **Dado** las capturas reales de /health, /model/info, /predict, un 422 y /predict/text, **cuando** se abre el capítulo del paso 10, **entonces** se muestran petición, respuesta, estado y latencia medidos.
 2. **Dado** el formulario de la consola, **cuando** se pulsa Probar, **entonces** responde el motor local con la misma forma que /predict.
 
-Evidencia: `Front/src/components/ApiConsole.tsx` ✗, `Front/public/run/api_capturas.json` ✗
+Evidencia: `Front/src/features/api/ApiConsole.tsx` ✓, `Front/src/data/generated/api_capturas.json` ✓
 
 ### HU-28 · Que el sitio funcione con el back apagado y no haga peticiones fuera de sus estáticos
 
@@ -442,4 +442,4 @@ Evidencia: `Back/notebooks/04_eda_transformacion_visualizacion.ipynb` ✓
 2. **Dado** el resultado de la comparación, **cuando** se toma la decisión, **entonces** queda registrada en un ADR y en la model card de la versión 2.1.
 
 Evidencia: 
-Nota: Detectado en nb03 (señal débil en Spearman, información mutua e importancia del bosque) y confirmado por la permutación de nb05 (~0). Se mantiene en v2.0.0 porque la regularización L2 las atenúa y no cambian la decisión; candidata a salir del sprint si S8 se desvía.
+Nota: Mejora opcional de v2.1, sin ID del enunciado propio (P2.E3 e IA2.E2 ya los acredita HU-03/HU-04). Detectado en nb03 (señal débil en Spearman, información mutua e importancia del bosque) y confirmado por la permutación de nb05 (~0). Se mantiene en v2.0.0 porque la regularización L2 las atenúa y no cambian la decisión; candidata a salir del sprint si S8 se desvía.
